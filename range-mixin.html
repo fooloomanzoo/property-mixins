@@ -66,6 +66,12 @@
             min: max,
             max: min
           })
+        } else if (min !== undefined && max !== undefined && this.value === undefined) {
+          if (min <= 0 && max >= 0) {
+            this.value = 0;
+          } else {
+            this.value = this._checkStep((this.max - this.min) / 2, this.step)
+          }
         } else {
           this._updateValue();
         }
@@ -87,7 +93,7 @@
           if (!isNaN(oldValue)) {
             return oldValue;
           }
-          return (this.min !== undefined && this.max !== undefined) ? ( (this.min > 0 || this.max < 0) ? this._checkStep((this.max - this.min) / 2, this.step) : 0) : (this.min || this.max || 0);
+          return (this.min !== undefined) ? this.min : (this.max !== undefined ? this.max : 0);
         }
         const saturate = this.saturate,
           min = this.min,
