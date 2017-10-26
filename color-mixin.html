@@ -12,6 +12,20 @@
       static get properties() {
         return {
           /**
+           * hex-color
+           */
+          hex: {
+            type: String,
+            notify: true
+          },
+          /**
+           * hsv-color
+           */
+          hsv: {
+            type: String,
+            notify: true
+          },
+          /**
            * rgb-color
            */
           rgb: {
@@ -27,14 +41,6 @@
             value: 1
           },
           /**
-           * css value string
-           */
-          cssValue: {
-            type: String,
-            notify: true,
-            computed: '_computeCssValue(rgb, alpha)'
-          },
-          /**
            * hex-color
            */
           value: {
@@ -47,8 +53,99 @@
 
       static get observers() {
         return [
-          '_rgbChanged(rgb)'
+          '_computeValue(rgb, alpha)',
+          '_computeValue(hex, alpha)',
+          '_hsvChanged(hsv)'
         ];
+      }
+
+      get _regExpRGBA() {
+        return /^\s*rgb(a)?/i
+      }
+
+      get _regExpNum() {
+        return /\d+/g
+      }
+
+      get _regExpHex() {
+        return /#[0-9A-Fa-f]{6}/g
+      }
+
+      _valueChanged(value) {
+        if (value === undefined) return;
+
+        let test = this._regExpRGBA.exec(value),
+          rgb = [],
+          hsv = [],
+          hex,
+          alpha,
+          num = [],
+          toSet = {};
+
+        if (test !== null) {
+          num = value.match(/\d+/g);
+          if (num.length === 1) {
+            hex = this._regExpHex.exec(value);
+            rgb = this.hexToRgb(hex);
+            alpha = (num[0] < 0) ? 0 : (num[0] > 1) ? 1 : num[0];
+          } else if (num.length > 2){
+            for (let i = 0; i < 3; i++) {
+              rgb.push((num[i] >= 0 && num[i] < 256) ? num[i] : 0);
+            }
+            hex = this.rgbToHex(rgb);
+            if (num.length > 3) {
+              alpha = (num[3] < 0) ? 0 : (num[3] > 1) ? 1 : num[0];
+            }
+          }
+        } else {
+          hex = this._regExpHex.exec(value);
+          rgb = this.hexToRgb(hex);
+          alpha = 1;
+        }
+        if (this._arrayEqual(this.rgb, rgb) === false) {
+          toSet.rgb = rgb;
+          hsv = this.rgbToHsv(rgb);
+        }
+        if (this._arrayEqual(this.hsv, hsv) === false) {
+          toSet.hsv = hsv;
+        }
+        if (hex && this.hex !== hex) {
+          toSet.hex = hex;
+        }
+        if (alpha && this.alpha !== alpha) {
+          toSet.alpha = alpha;
+        }
+        this.setProperties(toSet);
+      }
+
+      _computeValue(prop, alpha) {
+        const valueIsRgb = Boolean(this._regExpRGBA.exec(this.value));
+        if (alpha === undefined || alpha > 1) {
+          alpha = 1;
+          return;
+        } else if (alpha < 0) {
+          alpha = 0;
+          return;
+        }
+        let hex = this._regExpHex.exec(prop), str;
+        if (hex && hex[0]) {
+          str = valueIsRgb ? this.hexToRgb(hex[0]) : hex[0];
+        } else if (Array.isArray(prop) && prop.length === 3 && prop.every(e => {
+            return !isNaN(e) && e >= 0 && e < 256;
+          })) {
+          str = valueIsRgb ? prop.join(',') : this.rgbToHex(prop);
+        }
+        if (str) {
+          if (alpha === 1) {
+            this.value = valueIsRgb ? `rgb(${str})` : str;
+          } else {
+            this.value = `rgba(${str},${alpha})`;
+          }
+          return;
+        }
+        if (this.value !== undefined) {
+          this._valueChanged(this.value)
+        }
       }
 
       /**
@@ -59,41 +156,35 @@
         return [Math.round(255 * Math.random()), Math.round(255 * Math.random()), Math.round(255 * Math.random())];
       }
 
-      _valueChanged(hex) {
-        if (hex === undefined) {
+      _hsvChanged(hsv) {
+        if (!(Array.isArray(hsv) && hsv.every(e => {
+            return !isNaN(e);
+          }))) {
           return;
         }
-        const rgb = this.hexToRgb(hex);
-        if (this._arrayEqual(this.rgb, rgb) === false) {
+        const rgb = this.hsvToRgb(hsv);
+        const eq = this._arrayEqual(this.rgb, rgb);
+        if (eq === false) {
           this.set('rgb', rgb);
+        } else if (eq === null && this.rgb !== undefined) {
+          this.set('hsv', this.rgbToHsv(this.rgb));
         }
       }
 
-      _rgbChanged(rgb) {
-        if (!(Array.isArray(rgb) && rgb.every(e => { return !isNaN(e);}))) {
-          return;
-        }
-        this.value = this.rgbToHex(rgb);
-      }
-
-      _computeCssValue(rgb, alpha) {
-        if (!(Array.isArray(rgb) && rgb.length === 3)) {
-          return;
-        }
-        if (alpha === undefined || alpha < 0 || alpha > 1) {
-          this.alpha = 1;
-          return;
-        }
-        return (alpha === 1) ? `${this.rgbToHex(rgb)}` : `rgba(${rgb.join(',')},${alpha})`;
+      random() {
+        this.set('rgb' ,this._randomRGB());
       }
 
       hexToRgb(hex) {
-          hex = hex.replace('#', '');
-          if (hex.length === 3) {
-              hex = hex.replace(/(.)(.)(.)/, "$1$1$2$2$3$3");
-          }
+        hex = (this._regExpHex.exec(hex) || ['']).shift();
+        if (hex === '') return;
 
-          return [parseInt(hex.substr(0, 2), 16), parseInt(hex.substr(2, 2), 16), parseInt(hex.substr(4, 2), 16)];
+        hex = hex.replace('#', '');
+        if (hex.length === 3) {
+          hex = hex.replace(/(.)(.)(.)/, "$1$1$2$2$3$3");
+        }
+
+        return [parseInt(hex.substr(0, 2), 16), parseInt(hex.substr(2, 2), 16), parseInt(hex.substr(4, 2), 16)];
       }
 
       hsvToRgb(hsv) {
@@ -102,14 +193,14 @@
         }
 
         let h = hsv[0],
-        s = hsv[1],
-        v = hsv[2];
+          s = hsv[1],
+          v = hsv[2];
 
         h /= 60; // 0 to 5
 
         // Achromatic grayscale
         if (s === 0) {
-            return [Math.round(v * 255), Math.round(v * 255), Math.round(v * 255)];
+          return [Math.round(v * 255), Math.round(v * 255), Math.round(v * 255)];
         }
 
         const _i = Math.floor(h);
@@ -119,38 +210,44 @@
         const _t = v * (1 - s * (1 - _f));
 
         const _result = (() => {
-            switch (_i) {
-                case 0:
-                    return [v, _t, _p];
-                case 1:
-                    return [_q, v, _p];
-                case 2:
-                    return [_p, v, _t];
-                case 3:
-                    return [_p, _q, v];
-                case 4:
-                    return [_t, _p, v];
-                case 5:
-                    return [v, _p, _q];
-                default:
-                    return [v, _t, _p];
-            }
+          switch (_i) {
+            case 0:
+              return [v, _t, _p];
+            case 1:
+              return [_q, v, _p];
+            case 2:
+              return [_p, v, _t];
+            case 3:
+              return [_p, _q, v];
+            case 4:
+              return [_t, _p, v];
+            case 5:
+              return [v, _p, _q];
+            default:
+              return [v, _t, _p];
+          }
         })();
 
         return [Math.round(_result[0] * 255), Math.round(_result[1] * 255), Math.round(_result[2] * 255)];
       }
 
       rgbToHex(rgb) {
-          const _componentToHex = function (component) {
-              const _hex = component.toString(16);
-              if (_hex.length === 1) {
-                  return `0${_hex}`;
-              } else {
-                  return _hex;
-              }
-          };
+        if (!(Array.isArray(rgb) && rgb.length === 3 && rgb.every(e => {
+            return !isNaN(e) && e >= 0 && e < 256;
+          }))) {
+          return;
+        }
 
-          return '#' + [_componentToHex(rgb[0]), _componentToHex(rgb[1]), _componentToHex(rgb[2])].join('');
+        const _componentToHex = function(component) {
+          const _hex = component.toString(16);
+          if (_hex.length === 1) {
+            return `0${_hex}`;
+          } else {
+            return _hex;
+          }
+        };
+
+        return '#' + [_componentToHex(rgb[0]), _componentToHex(rgb[1]), _componentToHex(rgb[2])].join('');
       }
 
       rgbToHsv(rgb) {
@@ -159,18 +256,18 @@
         }
 
         let r = rgb[0],
-        g = rgb[1],
-        b = rgb[2];
+          g = rgb[1],
+          b = rgb[2];
 
         let h = 0;
         let s = 0;
         let v = 0;
 
         if (r == null || g == null || b == null || isNaN(r) || isNaN(g) || isNaN(b)) {
-            return;
+          return;
         }
         if (r < 0 || g < 0 || b < 0 || r > 255 || g > 255 || b > 255) {
-            return;
+          return;
         }
 
         r = r / 255;
@@ -182,8 +279,8 @@
 
         // Black-gray-white
         if (minRGB === maxRGB) {
-            v = minRGB;
-            return [0, 0, v];
+          v = minRGB;
+          return [0, 0, v];
         }
 
         // Colors other than black-gray-white:
@@ -198,7 +295,9 @@
       }
 
       _arrayEqual(a, b) {
-        if (!(Array.isArray(b) && b.every(e => {return !isNaN(e)}))) {
+        if (!(Array.isArray(b) && b.every(e => {
+            return !isNaN(e)
+          }))) {
           return;
         }
         if (!(Array.isArray(a))) {
