@@ -9,6 +9,12 @@
 
     return class extends superClass {
 
+      constructor() {
+        super();
+        this._regExpRGBA = /\s*rgba?\(\s*(?:(25[0-5]|2[0-4]\d|1\d{1,2}|\d\d?)\s*,\s*(25[0-5]|2[0-4]\d|1\d{1,2}|\d\d?)\s*,\s*(25[0-5]|2[0-4]\d|1\d{1,2}|\d\d?))?(#(?:[a-f0-9]{6}|[a-f0-9]{3}))?\s*,?\s*([01]\.?\d*?)?\)/i;
+        this._regExpHex = /\s*(#(?:[a-f0-9]{6}|[a-f0-9]{3}))/i;
+      }
+
       static get properties() {
         return {
           /**
@@ -51,15 +57,7 @@
         ];
       }
 
-      get _regExpRGBA() {
-        return /\s*rgba?\(\s*(?:(25[0-5]|2[0-4]\d|1\d{1,2}|\d\d?)\s*,\s*(25[0-5]|2[0-4]\d|1\d{1,2}|\d\d?)\s*,\s*(25[0-5]|2[0-4]\d|1\d{1,2}|\d\d?))?(#(?:[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3}))?\s*,?\s*([01]\.?\d*?)?\)/i
-      }
-
-      get _regExpHex() {
-        return /\s*(#(?:[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3}))/g
-      }
-
-      _valueChanged(value) {
+      _valueChanged(value, oldValue) {
         if (value === undefined) return;
 
         let test = this._regExpRGBA.exec(value),
@@ -98,10 +96,15 @@
             toSet.alpha = alpha;
           }
           this.setProperties(toSet);
-        } else if (this.hex) {
-          this._hexChanged(this.hex, this.alpha);
-        } else if (this.rgb) {
-          this._rgbChanged(this.rgb, this.alpha);
+        // } else if (value && oldValue && value !== oldValue) {
+        //   console.log('oldValue', oldValue);
+        //   this.value = oldValue;
+        // } else if (this.hex && (test === null || test[4] !== undefined)) {
+        //   this._hexChanged(this.hex, this.alpha)
+        // } else if (this.rgb) {
+        //   this._rgbChanged(this.rgb, this.alpha)
+      } else if (oldValue) {
+          this._valueChanged(oldValue); // provide at hex, rgb, values to be reset when wrong
         }
       }
 
@@ -130,9 +133,7 @@
           } else {
             this.value = `rgba(${str},${alpha})`;
           }
-          return;
-        }
-        if (this.value !== undefined) {
+        } else if (this.value !== undefined) {
           this._valueChanged(this.value)
         }
       }
@@ -152,9 +153,8 @@
           alpha = 0;
         }
         alpha = +alpha;
-        const valueHasHex = Boolean(this._regExpHex.exec(this.value));
+        const valueHasHex = Boolean(this.value === undefined || this._regExpHex.exec(this.value));
         const str = valueHasHex ? this.rgbToHex(rgb) : rgb.join(',');
-
         if (str) {
           if (alpha === 1) {
             this.value = valueHasHex ? str : `rgb(${str})`;
