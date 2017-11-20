@@ -92,7 +92,6 @@
             let str = '' + Math.abs(n);
             const decimal = str.slice(str.indexOf('.')).length - 1;
 
-            console.log(n, str, decimal, this.minimumFractionDigits, this.minimumIntegerDigits);
             if (this.minimumFractionDigits > 0) {
               if (decimal === 0) {
                 str += '.';
@@ -120,8 +119,7 @@
         this.setProperties({
           formatNumber: formatNumber,
           decimalSeparator: decimalSeparator
-        })
-        this._checkInput();
+        });
       }
 
     }
