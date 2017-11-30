@@ -285,13 +285,6 @@
        * @param {[Date]} d [the date to set]
        */
       _setDate(d) {
-        try {
-          throw new Error(d);
-        } catch (e) {
-          console.log(e);
-        } finally {
-
-        }
         if (!isNaN(+d)) {
           if (this.min && this._checkMin(d) === false) {
             d = new Date(this.min);
