@@ -151,7 +151,7 @@
         const bDecimal = b.slice(b.indexOf('.')).length - 1;
 
         const decimal = aDecimal + bDecimal;
-        const endSign = (a[0] === '-' ? b[0] !== '-' : b[0] === '-') ? '-' : '';
+        const sign = (a[0] === '-' ? b[0] !== '-' : b[0] === '-') ? '-' : '';
 
         a = a.replace(/\D/g, '');
         b = b.replace(/\D/g, '');
@@ -164,7 +164,7 @@
         for (let i = whole.length; i < decimal; i++) {
           whole = '0' + whole;
         }
-        return Number(endSign + whole.slice(0, whole.length - decimal) + '.' + whole.slice(whole.length - decimal));
+        return Number(sign + whole.slice(0, whole.length - decimal) + '.' + whole.slice(whole.length - decimal));
       }
 
       /**
@@ -184,11 +184,14 @@
 
         let whole = Math.round( Math.pow(10, decimal) * Number(a) +
                                 Math.pow(10, decimal) * Number(b) );
-        whole = '' + whole;
+
+        const sign = whole < 0 ? '-' : '';
+        whole = '' + Math.abs(whole);
         for (let i = whole.length; i < decimal; i++) {
           whole = '0' + whole;
         }
-        return Number(whole.slice(0, whole.length - decimal) + '.' + whole.slice(whole.length - decimal));
+
+        return Number(sign + whole.slice(0, whole.length - decimal) + '.' + whole.slice(whole.length - decimal));
       }
 
     }
