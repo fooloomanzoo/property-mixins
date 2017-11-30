@@ -15,14 +15,14 @@
       static get properties() {
         return {
           /**
-           * the selected date and time (format: iso8061)
+           * the selected date and time (format: iso8601)
            */
           datetime: {
             type: String,
             notify: true
           },
           /**
-           * the selected date (format: iso8061)
+           * the selected date (format: iso8601)
            */
           date: {
             type: String,
@@ -30,7 +30,7 @@
           },
 
           /**
-           * the selected time (format: iso8061)
+           * the selected time (format: iso8601)
            */
           time: {
             type: String,
@@ -104,7 +104,7 @@
           },
 
           /**
-           * The minimal date (format: iso8061)
+           * The minimal date (format: iso8601)
            */
           min: {
             type: String,
@@ -113,7 +113,7 @@
           },
 
           /**
-           * The maximal date (format: iso8061)
+           * The maximal date (format: iso8601)
            */
           max: {
             type: String,
@@ -223,8 +223,13 @@
             }
           },
 
+          /**
+           * exclusive max day of month
+           * @type {number}
+           */
           _maxDayOfMonth: {
-            type: Number
+            type: Number,
+            computed: '_computeMaxDayOfMonth(year, month)'
           }
         }
       }
@@ -233,8 +238,7 @@
         return [
           '_computeDatetime(year, month, day, hours, minutes, seconds, milliseconds)',
           '_computeValue(date, time)',
-          '_computeValue(datetime)',
-          '_computeMaxDayOfMonth(year, month)'
+          '_computeValue(datetime)'
         ]
       }
 
@@ -251,17 +255,22 @@
 
       _computeValue(date, time) {
         if (date === undefined && time === undefined) return;
-        let d;
+
         if (typeof date === 'object') {
-          d = date;
-        } else if (time !== undefined) {
-          d = new Date((date || this.date || this._toDate(new Date()) ) + 'T' + time);
-        } else if (typeof date === 'string' && !date.match(/[T]/i)) {
-          d = new Date(date + 'T' + (this.time || '00:00:00'));
-        } else {
-          d = new Date(date);
+          // 'date' is a Date Object
+          this._setDate(date);
+        } else if (typeof date === 'string') {
+          if (date.match(/[T]/i)) {
+            // 'date' is in datetime format
+            this._setDate(new Date(date));
+          } else {
+            // 'date' is in date format
+            this._setDate(new Date(date + 'T' + (time || '00:00:00')));
+          }
+        } else if (typeof time === 'string') {
+          // 'date' is not defined but time
+          this._setDate(new Date(this._toDate(new Date()) + 'T' + time));
         }
-        this._setDate(d);
       }
 
       _valueChanged(value) {
@@ -276,6 +285,13 @@
        * @param {[Date]} d [the date to set]
        */
       _setDate(d) {
+        try {
+          throw new Error(d);
+        } catch (e) {
+          console.log(e);
+        } finally {
+
+        }
         if (!isNaN(+d)) {
           if (this.min && this._checkMin(d) === false) {
             d = new Date(this.min);
@@ -520,10 +536,11 @@
       }
 
       _computeMaxDayOfMonth(year, month) {
-        const d = new Date(year, month - 1);
+        const d = new Date(year, month, 0);
         if (!isNaN(+d)) {
-          this._maxDayOfMonth = (new Date(year, month, 0)).getDate();
+          return d.getDate() + 1;
         }
+        return 32;
       }
     }
   }
