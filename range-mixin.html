@@ -61,16 +61,16 @@
       }
 
       _minMaxChanged(min, max) {
-        if (max < min) {
+        if (+max < +min) {
           this.setProperties({
-            min: max,
-            max: min
+            min: +max,
+            max: +min
           })
         } else if (min !== undefined && max !== undefined && this.value === undefined) {
-          if (min <= 0 && max >= 0) {
+          if (+min <= 0 && +max >= 0) {
             this.value = 0;
           } else {
-            this.value = this._checkStep((this.max - this.min) / 2, this.step)
+            this.value = this._checkStep((+max - min) / 2, this.step)
           }
         } else {
           this._updateValue();
