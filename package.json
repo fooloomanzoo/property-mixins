@@ -1,6 +1,6 @@
 {
   "name": "property-mixins",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "description": "mixin for custom elements to extends property mixins for data formats",
   "main": [
     "color-mixin.html",
