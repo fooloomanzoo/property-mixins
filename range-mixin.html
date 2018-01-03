@@ -66,15 +66,8 @@
             min: +max,
             max: +min
           })
-        } else if (min !== undefined && max !== undefined && this.value === undefined) {
-          if (+min <= 0 && +max >= 0) {
-            this.value = 0;
-          } else {
-            this.value = this._checkStep((+max - min) / 2, this.step)
-          }
-        } else {
-          this._updateValue();
         }
+        this._updateValue();
       }
 
       _valueChanged(value, oldValue) {
@@ -195,6 +188,6 @@
       }
     }
   }
-  
+
   window.RangeMixin = RangeMixin;
 </script>
