@@ -295,7 +295,9 @@
           this._setDate(d);
         }
         else {
-          this._setDate(new Date(year, month - 1, day, hours, minutes, seconds, milliseconds));
+          var d = new Date(year, month - 1, day, hours, minutes, seconds, milliseconds);
+          d.setFullYear(year);
+          this._setDate(d);
         }
       }
 
@@ -648,6 +650,7 @@
 
       _computeMaxDayOfMonth(year, month) {
         const d = new Date(year, month, 0);
+        d.setFullYear(year);
         if (!isNaN(+d)) {
           return d.getDate() + 1;
         }
