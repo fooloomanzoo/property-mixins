@@ -253,10 +253,10 @@
 
       connectedCallback() {
         super.connectedCallback();
+
         setTimeout(() => {
           if (this.value === undefined && !this.date && !this.time && !this.datetime) {
-            // console.log('new Date', this.value, this.date, this.time, this.datetime, this.value === undefined && !this.date && !this.time && !this.datetime);
-            this._setDate(new Date());
+            this.now();
           }
         }, 0);
       }
@@ -300,7 +300,6 @@
       }
 
       _computeValue(date, time) {
-        // console.log(date, time);
         if (date === undefined && time === undefined) return;
 
         if (this.timezoneOffset === undefined) {
@@ -356,7 +355,6 @@
        */
       _setDate(d) {
         if (!isNaN(+d)) {
-          // console.log(d);
           if (this.min && this._checkMin(d) === false) {
             d = new Date(this.min);
           } else if (this.max && this._checkMax(d) === false) {
@@ -377,7 +375,6 @@
             toSet.datetime = datetime;
             toSet.date = date;
             toSet.time = time;
-            // console.log(toSet);
             this.setProperties(toSet);
             return;
           }
@@ -398,7 +395,6 @@
             toSet.minutes = minutes;
             toSet.seconds = seconds;
             toSet.milliseconds = milliseconds;
-            // console.log(toSet);
             this.setProperties(toSet);
             return;
           }
