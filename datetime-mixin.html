@@ -15,14 +15,15 @@
       static get properties() {
         return {
           /**
-           * the selected date and time (format: iso8601)
+           * the selected local date and time (format: iso8601)
            */
           datetime: {
             type: String,
-            notify: true
+            notify: true,
+            observer: '_computeValue'
           },
           /**
-           * the selected date (format: iso8601)
+           * the selected local date (format: iso8601)
            */
           date: {
             type: String,
@@ -30,7 +31,7 @@
           },
 
           /**
-           * the selected time (format: iso8601)
+           * the selected local time (format: iso8601)
            */
           time: {
             type: String,
@@ -38,7 +39,7 @@
           },
 
           /**
-           * The year of the selected date
+           * The year of the selected local date
            */
           year: {
             type: Number,
@@ -46,7 +47,7 @@
           },
 
           /**
-           * The month of the selected date (starts with 1)
+           * The month of the selected local date (starts with 1)
            */
           month: {
             type: Number,
@@ -54,7 +55,7 @@
           },
 
           /**
-           * The day of the selected date
+           * The day of the selected local date
            */
           day: {
             type: Number,
@@ -62,7 +63,7 @@
           },
 
           /**
-           * The hours of the selected time
+           * The hours of the selected local time
            */
           hours: {
             type: Number,
@@ -71,7 +72,7 @@
           },
 
           /**
-           * The minutes of the selected time
+           * The minutes of the selected local time
            */
           minutes: {
             type: Number,
@@ -79,7 +80,7 @@
           },
 
           /**
-           * The seconds of the selected time
+           * The seconds of the selected local time
            */
           seconds: {
             type: Number,
@@ -87,7 +88,7 @@
           },
 
           /**
-           * The milliseconds of the selected time
+           * The milliseconds of the selected local time
            */
           milliseconds: {
             type: Number,
@@ -95,7 +96,7 @@
           },
 
           /**
-           * The value of the selected date
+           * The value of the selected local date
            */
           value: {
             type: Number,
@@ -104,7 +105,7 @@
           },
 
           /**
-           * The minimal date (format: iso8601)
+           * The minimal local date (format: iso8601)
            */
           min: {
             type: String,
@@ -113,7 +114,7 @@
           },
 
           /**
-           * The maximal date (format: iso8601)
+           * The maximal local date (format: iso8601)
            */
           max: {
             type: String,
@@ -122,7 +123,7 @@
           },
 
           /**
-           * when true 12-hour local time format, else 24-hour
+           * when true, 12-hour time format, else 24-hour
            * @type {boolean}
            */
           hour12: {
@@ -167,7 +168,7 @@
           },
 
           /**
-           * The timezone offset in '±hh:mm' format
+           * The local timezone offset in '±hh:mm' format
            */
           timezoneOffset: {
             type: String,
@@ -245,17 +246,16 @@
 
       static get observers() {
         return [
-          '_computeDatetime(year, month, day, hours, minutes, seconds, milliseconds)',
           '_computeValue(date, time)',
-          '_computeValue(datetime)'
+          '_computeDatetime(year, month, day, hours, minutes, seconds, milliseconds)'
         ]
       }
 
       connectedCallback() {
         super.connectedCallback();
-        // console.log('connectedCallback', this.value, this.date, this.time, this.datetime);
         setTimeout(() => {
           if (this.value === undefined && !this.date && !this.time && !this.datetime) {
+            // console.log('new Date', this.value, this.date, this.time, this.datetime, this.value === undefined && !this.date && !this.time && !this.datetime);
             this._setDate(new Date());
           }
         }, 0);
@@ -281,7 +281,7 @@
           if (year !== undefined)
             d.setFullYear(year);
           if (month !== undefined)
-            d.setMonth(month);
+            d.setMonth(month - 1);
           if (day !== undefined)
             d.setDate(day);
           if (hours !== undefined)
@@ -300,6 +300,7 @@
       }
 
       _computeValue(date, time) {
+        // console.log(date, time);
         if (date === undefined && time === undefined) return;
 
         if (this.timezoneOffset === undefined) {
@@ -313,8 +314,8 @@
         }
         if (typeof date === 'string' && date.match(/[T]/i)) {
           // 'date' is in datetime format
-          this._setDate(new Date(date + this.timezoneOffset));
-          return;
+          time = date.split('T')[1];
+          date = date.split('T')[0];
         }
         let d = new Date();
         if (!date) {
@@ -322,7 +323,7 @@
           if (this.year !== undefined)
             d.setFullYear(this.year);
           if (this.month !== undefined)
-            d.setMonth(this.month);
+            d.setMonth(this.month - 1);
           if (this.day !== undefined)
             d.setDate(this.day);
           date = this._toDate(d);
@@ -339,7 +340,7 @@
             d.setMilliseconds(this.milliseconds);
           time = this._toTime(d);
         }
-        this._setDate(new Date(date + 'T' + time + this.timezoneOffset));
+        this._setDate(new Date(date + 'T' + this._extendTimeString(time) + this.timezoneOffset));
       }
 
       _valueChanged(value) {
@@ -355,6 +356,7 @@
        */
       _setDate(d) {
         if (!isNaN(+d)) {
+          // console.log(d);
           if (this.min && this._checkMin(d) === false) {
             d = new Date(this.min);
           } else if (this.max && this._checkMax(d) === false) {
@@ -370,16 +372,12 @@
             time = this._toTime(d),
             datetime = date + 'T' + time;
 
-          if (this.date !== date || this.time !== time || this.datetime !== datetime) {
+          if (this.value !== value || this.datetime !== datetime || this.date !== date || this.time !== time) {
+            toSet.value = value;
+            toSet.datetime = datetime;
             toSet.date = date;
             toSet.time = time;
-            toSet.datetime = datetime;
-            this.setProperties(toSet);
-            return;
-          }
-
-          if (this.value !== value) {
-            toSet.value = value;
+            // console.log(toSet);
             this.setProperties(toSet);
             return;
           }
@@ -400,9 +398,11 @@
             toSet.minutes = minutes;
             toSet.seconds = seconds;
             toSet.milliseconds = milliseconds;
+            // console.log(toSet);
             this.setProperties(toSet);
             return;
           }
+
         } else if (!isNaN(this.value)) {
           this._valueChanged(this.value);
         } else if (this.date && this.time) {
@@ -516,6 +516,24 @@
           return '';
 
         return this._pad(d.getHours(), 2) + ':' + this._pad(d.getMinutes(), 2) + ':' + this._pad(d.getSeconds(), 2) + '.' + this._pad(d.getMilliseconds(), 3);
+      }
+
+      _extendTimeString(str) {
+        const matches = /^(\d\d:\d\d)(?::(\d\d)(?:\.(\d\d\d))?)?$/.exec(str);
+        if (Array.isArray(matches)) {
+          if (matches[1] !== undefined) { // time-string has hours and minutes
+            if (matches[2] !== undefined) { // time-string has seconds
+              if (matches[3] !== undefined) { // time-string has milliseconds
+                return matches[0];
+              } else {
+                return matches[0] + '.000';
+              }
+            } else {
+              return matches[0] + ':00';
+            }
+          }
+        }
+        return this._toTime(new Date());
       }
 
       _hoursChanged(hours) {
@@ -649,7 +667,7 @@
       _computeMaxDayOfMonth(year, month) {
         const d = new Date(year, month, 0);
         if (!isNaN(+d)) {
-          return d.getDate() + 1;
+          return d.getDate();
         }
         return 31;
       }

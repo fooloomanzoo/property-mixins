@@ -44,6 +44,13 @@
             observer: '_valueChanged'
           },
           /**
+           * default-value of the input
+           * @type {number}
+           */
+          default: {
+            type: Number
+          },
+          /**
            * if true, the value does not revolve the range according to the maximum or the minimum
            * @type {boolean}
            */
@@ -60,32 +67,19 @@
         ]
       }
 
+      connectedCallback() {
+        super.connectedCallback();
+        if (this.value === undefined && !isNaN(this.default)) {
+          this.value = this.default;
+        }
+      }
+
       _minMaxChanged(min, max) {
         if (+max < +min) {
           this.setProperties({
             min: +max,
             max: +min
           })
-        } else if (this.value === undefined && (min !== undefined || max !== undefined)) {
-          if (min !== undefined) {
-            if (+min > 0) {
-              this.value = min;
-            } else if (max === undefined || +max >= 0) {
-              this.value = 0;
-            } else {
-              this.value = this._checkStep((+max - min) / 2, this.step || 1);
-            }
-          } else if (max !== undefined) {
-            if (+max > 0) {
-              this.value = min;
-            } else if (min === undefined || +min <= 0) {
-              this.value = 0;
-            } else {
-              this.value = this._checkStep((+max - min) / 2, this.step || 1);
-            }
-          } else {
-            this.value = 0;
-          }
         } else {
           this._updateValue();
         }
@@ -107,14 +101,18 @@
           if (!isNaN(oldValue)) {
             return oldValue;
           }
-          return (this.min !== undefined) ? this.min : (this.max !== undefined ? this.max : 0);
+          if (!isNaN(this.default)) {
+            return this.default;
+          }
+          return (this.min !== undefined) ? this.min : (this.max !== undefined ? this._checkStep(this.max, this.step) : 0);
         }
+
         const saturate = this.saturate,
           min = this.min,
           max = this.max;
 
         if (min !== undefined && value <= min) {
-          if (saturate || max === undefined || oldValue !== min) {
+          if (saturate || value === min || max === undefined || oldValue !== min) {
             return min;
           }
           return max;
@@ -122,7 +120,7 @@
         }
         if (max !== undefined && value >= max) {
           // max = this._checkStep(max, this.step);
-          if (saturate || min === undefined || max !== oldValue) {
+          if (saturate || value === max || min === undefined || max !== oldValue) {
             return max;
           }
           return min;
