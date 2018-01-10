@@ -295,7 +295,9 @@
           this._setDate(d);
         }
         else {
-          this._setDate(new Date(year, month - 1, day, hours, minutes, seconds, milliseconds));
+          let d = new Date(year, month - 1, day, hours, minutes, seconds, milliseconds);
+          d.setFullYear(year);
+          this._setDate(d);
         }
       }
 
