@@ -506,7 +506,7 @@
         if (isNaN(+d) || !d.getTime)
           return '';
 
-        return d.getFullYear() + '-' + this._pad(d.getMonth() + 1, 2) + '-' + this._pad(d.getDate(), 2);
+        return this._pad(d.getFullYear(), 4) + '-' + this._pad(d.getMonth() + 1, 2) + '-' + this._pad(d.getDate(), 2);
       }
 
       _toTime(d) {
@@ -664,6 +664,9 @@
 
       _computeMaxDayOfMonth(year, month) {
         const d = new Date(year, month, 0);
+        
+        d.setFullYear(year);
+
         if (!isNaN(+d)) {
           return d.getDate();
         }
