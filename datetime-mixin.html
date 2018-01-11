@@ -253,7 +253,6 @@
 
       connectedCallback() {
         super.connectedCallback();
-
         setTimeout(() => {
           if (this.value === undefined && !this.date && !this.time && !this.datetime) {
             this.now();
@@ -584,12 +583,10 @@
         });
 
         // date separator
-        const dateSeparator = dateString.split(/\d|\s/g).filter(s => {
-          return s !== '';
-        })[0];
+        const dateSeparator = dateString.split(/\d+/g).filter(Boolean).pop();
 
         // order of the date parts
-        let parts = dateString.split(/\D/);
+        let parts = dateString.match(/\d+/g);
         parts.splice(1, 0, '');
         parts.splice(3, 0, '');
 
@@ -664,7 +661,6 @@
 
       _computeMaxDayOfMonth(year, month) {
         const d = new Date(year, month, 0);
-        
         d.setFullYear(year);
 
         if (!isNaN(+d)) {
