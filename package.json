@@ -9,6 +9,7 @@
     "range-mixin.html"
   ],
   "scripts": {
+    "prepublish": "git add . && git commit -m \"publish new version\" && git push && npm version patch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
