@@ -427,18 +427,11 @@
       }
 
       _pad(n, padLength) {
-        let str = '' + n;
-        let targetLength = padLength || this.padLength || (this.placeholder && this.placeholder.length) || Math.log10(+n);
-        const padString = '0';
-        if (str.length > targetLength) {
-          return str;
-        } else {
-          targetLength = targetLength - str.length;
-          for (let i = 0; i < targetLength; i++) {
-            str = padString + str;
-          }
-          return str;
-        }
+        const sign = n < 0 ? '-' : '';
+        let str = '' + Math.abs(n);
+        while (str.length < padLength)
+          str = '0' + str;
+        return sign + str;
       }
 
       _minChanged(min) {
