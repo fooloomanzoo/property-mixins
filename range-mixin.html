@@ -57,6 +57,14 @@
           saturate: {
             type: Boolean,
             observer: '_updateValue'
+          },
+          /**
+           * if true, the value does not clamp according to the given step
+           * @type {boolean}
+           */
+          noClamp: {
+            type: Boolean,
+            observer: '_updateValue'
           }
         }
       }
@@ -135,7 +143,7 @@
       }
 
       _checkStep(value, step) {
-        if (!step) {
+        if (!step || this.noClamp) {
           return value;
         }
         const min = this.min,
