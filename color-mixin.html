@@ -222,13 +222,13 @@
             if (this.alpha === 1 && this.hex !== undefined) {
               this.value = this.hex;
             } else if (this.r !== undefined && this.g !== undefined && this.b !== undefined) {
-              this.value = `rgba(${Math.round(this.r)},${Math.round(this.g)},${Math.round(this.b)},${this.alpha || 1})`;
+              this.value = `rgba(${Math.round(this.r)},${Math.round(this.g)},${Math.round(this.b)},${this.alpha === undefined ? 0 : this.alpha})`;
             }
             break;
           case 'rgb':
             if (this.r !== undefined && this.g !== undefined && this.b !== undefined) {
               if (this.alphaMode === true) {
-                this.value = `rgba(${Math.round(this.r)},${Math.round(this.g)},${Math.round(this.b)},${this.alpha || 1})`;
+                this.value = `rgba(${Math.round(this.r)},${Math.round(this.g)},${Math.round(this.b)},${this.alpha === undefined ? 0 : this.alpha})`;
               } else {
                 this.value = `rgb(${Math.round(this.r)},${Math.round(this.g)},${Math.round(this.b)})`;
               }
@@ -237,7 +237,7 @@
           case 'hsl':
             if (this.h !== undefined && this.s !== undefined && this.l !== undefined) {
               if (this.alphaMode === true) {
-                this.value = `hsla(${+this.h.toFixed(this.hslPrecision || 0)},${+(this.s*100).toFixed(this.hslPrecision || 0)}%,${+(this.l*100).toFixed(this.hslPrecision || 0)}%,${this.alpha || 1})`;
+                this.value = `hsla(${+this.h.toFixed(this.hslPrecision || 0)},${+(this.s*100).toFixed(this.hslPrecision || 0)}%,${+(this.l*100).toFixed(this.hslPrecision || 0)}%,${this.alpha === undefined ? 0 : this.alpha})`;
               } else {
                 this.value = `hsl(${+this.h.toFixed(this.hslPrecision || 0)},${+(this.s*100).toFixed(this.hslPrecision || 0)}%,${+(this.l*100).toFixed(this.hslPrecision || 0)}%)`;
               }
