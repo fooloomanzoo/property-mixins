@@ -4,7 +4,6 @@
   "main": [
     "color-mixin.html",
     "datetime-mixin.html",
-    "intl-number-mixin.html",
     "range-mixin.html"
   ],
   "authors": [
