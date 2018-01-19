@@ -147,7 +147,7 @@
       connectedCallback() {
         super.connectedCallback();
         // create a random color, if value or hex is not set
-        if (this.value === undefined && this.hex === undefined) {
+        if (!this.value && this.hex === undefined) {
           if (this.h !== undefined || this.s !== undefined || this.l !== undefined) {
             const hsl = this.randomHsl();
             this.setProperties({
@@ -193,57 +193,56 @@
         let toSet = {},
           match;
         // input-format detection
-        switch (this.format) {
-          case 'hsl':
-            if (match = value.match(this._validateHsl)) {
-              if (match[1] === undefined) { // no alpha
-                toSet.alpha = 1;
-                toSet.alphaMode = false;
-              } else { // with alpha
-                toSet.alpha = this._normalizedClamp(+match[5]);
-                toSet.alphaMode = true;
-              }
-              toSet.h = this._mathMod(+match[2], 360);
-              let matchPercent;
-              if (matchPercent = match[3].match(this._validatePercent)) { // s in percentage value
-                toSet.s = this._normalizedClamp(+matchPercent[1] * 0.01);
-              } else {
-                toSet.s = this._normalizedClamp(+match[3]);
-              }
-              if (matchPercent = match[4].match(this._validatePercent)) { // l in percentage value
-                toSet.l = this._normalizedClamp(+matchPercent[1] * 0.01);
-              } else {
-                toSet.l = this._normalizedClamp(+match[4]);
-              }
-            }
-            break;
-          case 'hex': // falls through
-            if (match = value.match(this._validateHex)) {
-              if (match[1] !== undefined) { // no alpha
-                toSet.hex = match[1];
-                toSet.alpha = 1;
-                toSet.alphaMode = false;
-              } else { // with alpha
-                toSet.hex = match[2];
-                toSet.alpha = this._normalizedClamp(+match[3]);
-                toSet.alphaMode = true;
-              }
-              break;
-            }
-          case 'rgb': // falls through
-          default:
-            if (match = value.match(this._validateRgb)) {
-              if (match[1] === undefined) { // no alpha
-                toSet.alpha = 1;
-                toSet.alphaMode = false;
-              } else { // with alpha
-                toSet.alpha = this._normalizedClamp(+match[5]);
-                toSet.alphaMode = true;
-              }
-              toSet.r = this._mathMod(+match[2], 256);
-              toSet.g = this._mathMod(+match[3], 256);
-              toSet.b = this._mathMod(+match[4], 256);
-            }
+        if (match = value.match(this._validateHsl)) {
+          if (match[1] === undefined) { // no alpha
+            toSet.alpha = 1;
+            toSet.alphaMode = false;
+          } else { // with alpha
+            toSet.alpha = this._normalizedClamp(+match[5]);
+            toSet.alphaMode = true;
+          }
+          toSet.h = this._mathMod(+match[2], 360);
+          let matchPercent;
+          if (matchPercent = match[3].match(this._validatePercent)) { // s in percentage value
+            toSet.s = this._normalizedClamp(+matchPercent[1] * 0.01);
+          } else {
+            toSet.s = this._normalizedClamp(+match[3]);
+          }
+          if (matchPercent = match[4].match(this._validatePercent)) { // l in percentage value
+            toSet.l = this._normalizedClamp(+matchPercent[1] * 0.01);
+          } else {
+            toSet.l = this._normalizedClamp(+match[4]);
+          }
+          if (this.format !== 'hsl') {
+            toSet.format = 'hsl';
+          }
+        } else if (match = value.match(this._validateHex)) {
+          if (match[1] !== undefined) { // no alpha
+            toSet.hex = match[1];
+            toSet.alpha = 1;
+            toSet.alphaMode = false;
+          } else { // with alpha
+            toSet.hex = match[2];
+            toSet.alpha = this._normalizedClamp(+match[3]);
+            toSet.alphaMode = true;
+          }
+          if (this.format !== 'hex') {
+            toSet.format = 'hex';
+          }
+        } else if (match = value.match(this._validateRgb)) {
+          if (match[1] === undefined) { // no alpha
+            toSet.alpha = 1;
+            toSet.alphaMode = false;
+          } else { // with alpha
+            toSet.alpha = this._normalizedClamp(+match[5]);
+            toSet.alphaMode = true;
+          }
+          toSet.r = this._mathMod(+match[2], 256);
+          toSet.g = this._mathMod(+match[3], 256);
+          toSet.b = this._mathMod(+match[4], 256);
+          if (this.format !== 'rgb') {
+            toSet.format = 'rgb';
+          }
         }
         if (!match && oldValue !== undefined) {
           this._valueChanged(oldValue);
