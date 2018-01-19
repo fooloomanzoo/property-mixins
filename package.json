@@ -5,11 +5,11 @@
   "main": [
     "color-mixin.html",
     "datetime-mixin.html",
-    "intl-number-mixin.html",
     "range-mixin.html"
   ],
   "scripts": {
-    "prepublish": "git add . && git commit -m \"publish new version\" && git push && npm version patch",
+    "prepublish": "npm run build && git add . && git commit -m \"publish new version\" && git push && npm version patch",
+    "build": "git pull && bower update -f && polymer analyze > analysis.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
