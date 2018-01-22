@@ -2,11 +2,6 @@
   "name": "property-mixins",
   "version": "2.0.3",
   "description": "mixin for custom elements to extends property mixins for data formats",
-  "main": [
-    "color-mixin.html",
-    "datetime-mixin.html",
-    "range-mixin.html"
-  ],
   "scripts": {
     "prepublish": "npm run build && git add . && git commit -m \"publish new version\" && git push && npm version patch",
     "build": "git pull && bower update -f && polymer analyze > analysis.json",
