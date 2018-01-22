@@ -333,20 +333,27 @@
       }
 
       _dateTimeChanged(date, time) {
-        if (date === undefined && time === undefined) return;
-
-        this._datetimeChanged(date || this.date || this._toDate(new Date())) + 'T' + (time || this.time || this._toTime(new Date())) + this.timezoneOffset;
+        if (date === undefined || time === undefined) return;
+        if (!this.timezoneOffset) {
+          return;
+        }
+        if (this._activeSetJob) {
+          clearTimeout(this._activeSetJob);
+        }
+        this._activeSetJob = setTimeout(() => {
+          this._datetimeChanged(date + 'T' + time + this.timezoneOffset);
+        })
       }
 
       _datetimeChanged(datetime) {
         if (datetime === undefined) return;
 
-        if (typeof date === 'object') {
+        if (typeof datetime === 'object') {
           // 'date' is a Date Object
-          this._setDate(date);
+          this._setDate(datetime);
           return;
         }
-        let d = new Date();
+        let d = new Date(datetime);
         const match = this._regexpDatetime.exec(datetime);
         if (match) {
           if (match[1] !== undefined) {
@@ -748,7 +755,7 @@
         if (offset === undefined) {
           return;
         } else if (offset === 0) {
-          return 'Z';
+          return '+00:00';
         }
         const hours = '' + Math.floor(Math.abs(offset) / 60);
         const minutes = '' + Math.abs(offset) % 60;
