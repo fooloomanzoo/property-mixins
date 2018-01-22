@@ -1,6 +1,6 @@
 {
   "name": "property-mixins",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "mixin for custom elements to extends property mixins for data formats",
   "scripts": {
     "prepublish": "npm run build && git add . && git commit -m \"publish new version\" && git push && npm version patch",
@@ -13,9 +13,13 @@
   },
   "keywords": [
     "mixin",
-    "custom elements",
-    "property",
-    "data"
+    "polymer",
+    "customElements",
+    "properties",
+    "date",
+    "time",
+    "range",
+    "color"
   ],
   "author": "fooloomanzoo",
   "license": "MIT",
