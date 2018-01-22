@@ -319,15 +319,13 @@
           if (milliseconds !== undefined)
             d.setMilliseconds(milliseconds);
 
-          if (this._offsetMinutes !== undefined)
-            d.setMinutes(d.getMinutes() + offsetMinutes - d.getTimezoneOffset());
+          d.setMinutes(d.getMinutes() + offsetMinutes - d.getTimezoneOffset());
           this._setDate(d);
         }
         else {
           let d = new Date(year, month - 1, day, hours, minutes, seconds, milliseconds);
           d.setFullYear(year);
-          if (this._offsetMinutes !== undefined)
-            d.setMinutes(d.getMinutes() + offsetMinutes - d.getTimezoneOffset());
+          d.setMinutes(d.getMinutes() + offsetMinutes - d.getTimezoneOffset());
           this._setDate(d);
         }
       }
@@ -341,7 +339,7 @@
           clearTimeout(this._activeSetJob);
         }
         this._activeSetJob = setTimeout(() => {
-          this._datetimeChanged(date + 'T' + time + this.timezoneOffset);
+          this._datetimeChanged(date + 'T' + time);
         })
       }
 
@@ -384,16 +382,15 @@
                 d.setSeconds(this.seconds);
             }
             if (match[8] !== undefined) {
-              d.setMinutes(d.getMinutes() + this._computeOffsetMinutes(match[8]) - d.getTimezoneOffset());
-            } else {
-              d.setMinutes(d.getMinutes() + this._offsetMinutes - d.getTimezoneOffset());
+              this.timezoneOffset = match[8];
             }
           } else {
             if (this.hours !== undefined)
               d.setHours(this.hours);
             if (this.minutes !== undefined)
-              d.setMinutes(this.minutes + this._offsetMinutes - d.getTimezoneOffset());
+              d.setMinutes(this.minutes);
           }
+          d.setMinutes(d.getMinutes() + this._offsetMinutes - d.getTimezoneOffset());
           this._setDate(d);
         }
       }
@@ -422,7 +419,7 @@
           d.setMinutes(d.getMinutes() - this._offsetMinutes + d.getTimezoneOffset());
           const date = this._toDate(d),
             time = this._toTime(d),
-            datetime = date + 'T' + time + this.timezoneOffset;
+            datetime = date + 'T' + time;
 
           if (this.value !== value || this.datetime !== datetime || this.date !== date || this.time !== time) {
             toSet.value = value;
@@ -521,11 +518,8 @@
             d.setMinutes(0);
             // TODO: set timezone
           }
-          if (match[8] !== undefined) {
-            d.setMinutes(d.getMinutes() + this._computeOffsetMinutes(match[8]) - d.getTimezoneOffset());
-          } else {
-            d.setMinutes(d.getMinutes() + this._offsetMinutes - d.getTimezoneOffset());
-          }
+          const offsetMinutes = (match[8] === undefined) ? this._offsetMinutes : this._computeOffsetMinutes(match[8]);
+          d.setMinutes(d.getMinutes() + offsetMinutes - d.getTimezoneOffset());
           return d;
         }
       }
