@@ -138,7 +138,7 @@
           }
           return min;
         } else if (this.noClamp) {
-          return this.value;
+          return value;
         }
         return this._checkStep(value, this.step);
       }
@@ -246,6 +246,7 @@
       }
 
       _computeIsInteger(step) {
+        return step === Math.round(step);
       }
     }
   }
