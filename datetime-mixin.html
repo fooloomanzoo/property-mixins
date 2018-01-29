@@ -332,9 +332,7 @@
 
       _dateTimeChanged(date, time) {
         if (date === undefined || time === undefined) return;
-        if (!this.timezoneOffset) {
-          return;
-        }
+
         if (this._activeSetJob) {
           clearTimeout(this._activeSetJob);
         }
