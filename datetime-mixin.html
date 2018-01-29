@@ -488,7 +488,7 @@
         if (datetime === undefined) {
           return;
         }
-        if (typeof datetime === 'object' && d.getDate) {
+        if (typeof datetime === 'object' && datetime.getDate) {
           // 'datetime' is a Date Object
           return datetime;
         }
