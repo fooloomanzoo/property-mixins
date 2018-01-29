@@ -490,7 +490,12 @@
         }
         if (typeof datetime === 'object' && datetime.getDate) {
           // 'datetime' is a Date Object
+          datetime.setMinutes(datetime.getMinutes() + this._offsetMinutes - datetime.getTimezoneOffset());
           return datetime;
+        }
+        if (typeof datetime === 'number' && !isNaN(datetime)) {
+          // 'datetime' is a number
+          return new Date(datetime);
         }
         let d = new Date();
         const match = this._regexpDatetime.exec(datetime);
