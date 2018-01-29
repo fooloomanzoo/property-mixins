@@ -272,7 +272,7 @@
 
       static get observers() {
         return [
-          '_dateTimeChanged(date, time)',
+          '_dateTimeChanged(date, time, _offsetMinutes)',
           '_computeDatetime(year, month, day, hours, minutes, seconds, milliseconds, _offsetMinutes)'
         ]
       }
@@ -333,7 +333,7 @@
       }
 
       _dateTimeChanged(date, time) {
-        if (date === undefined || time === undefined) return;
+        if (!(date && time)) return;
 
         if (this._activeSetJob) {
           clearTimeout(this._activeSetJob);
@@ -344,7 +344,7 @@
       }
 
       _datetimeChanged(datetime) {
-        if (datetime === undefined) return;
+        if (!datetime) return;
 
         if (typeof datetime === 'object') {
           // 'date' is a Date Object
@@ -396,7 +396,7 @@
       }
 
       _valueChanged(value) {
-        if (value === undefined) return;
+        if (isNaN(value)) return;
         let d = typeof value === 'object' ? value : new Date(+value);
         this._setDate(d);
       }
@@ -452,8 +452,6 @@
           }
         } else if (!isNaN(this.value)) {
           this._valueChanged(this.value);
-        } else if (this.date && this.time) {
-          this._computeValue(this.date, this.time);
         }
       }
 
