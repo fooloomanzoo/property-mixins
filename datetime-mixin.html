@@ -466,8 +466,8 @@
       _minChanged(min) {
         const d = this._fromDatetime(min);
         if (isNaN(d)) {
-          this.min = '';
           this._min = null;
+          this.min = '';
           return;
         }
         const max = this.max && this._fromDatetime(this.max);
@@ -486,8 +486,8 @@
       _maxChanged(max) {
         const d = this._fromDatetime(max);
         if (isNaN(d)) {
-          this.max = '';
           this._max = null;
+          this.max = '';
           return;
         }
         const min = this.min && this._fromDatetime(this.min);
