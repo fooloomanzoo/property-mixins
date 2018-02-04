@@ -104,6 +104,14 @@
           },
 
           /**
+           * The default value of the input
+           */
+          default: {
+            type: String,
+            notify: true
+          },
+
+          /**
            * The minimal local date,
            * could be a number, a date-object or an iso-string
            */
@@ -263,7 +271,7 @@
            */
           _regexpDatetime: {
             type: RegExp,
-            value: /^(-?\d+-\d\d-\d\d(?:T?(?:(\d\d:\d\d(?::\d\d(?:\.\d\d\d)?)?)([+-]\d\d:\d\d|Z)?)?))$/
+            value: /^(-?\d+-\d\d-\d\d)(?:T?(?:(\d\d:\d\d(?::\d\d(?:\.\d\d\d)?)?)([+-]\d\d:\d\d|Z)?)?)$/
           },
 
           /**
@@ -280,8 +288,22 @@
         return [
           '_dateTimeChanged(date, time, timezoneOffset)',
           '_datetimeChanged(datetime)',
-          '_computeDatetime(year, month, day, hours, minutes, seconds, milliseconds, offsetMinutes)'
+          '_computeDatetime(year, month, day, hours, minutes, seconds, milliseconds, offsetMinutes)',
+          '_defaultChanged(default)'
         ]
+      }
+
+      _defaultChanged(def) {
+        if (!def) {
+          return;
+        }
+        const d = this._fromDatetime(def);
+        if (isNaN(d)) {
+          return;
+        }
+        if (this.value === undefined) {
+          this._setDate(d);
+        }
       }
 
       /**
@@ -292,6 +314,9 @@
       }
 
       _computeDatetime(year, month, day, hours, minutes, seconds, milliseconds, offsetMinutes) {
+        if (this.__updatingOffsetMinutes) {
+          return;
+        }
         let d;
         if (year === undefined || month === undefined || day === undefined || hours === undefined || minutes === undefined || seconds === undefined || milliseconds === undefined) {
           d = new Date(this.value !== undefined ? this.value : this.datetime || ((this.date || this._toDate(new Date())) + 'T' + (this.time || '00:00') + this.timezoneOffset));
@@ -302,10 +327,14 @@
           d.setSeconds(seconds || 0);
           d.setMinutes(minutes || 0);
           d.setHours(hours || 0);
-          d.setDate(day || 1);
-          d.setMonth((month || 1) - 1);
+          if (day !== undefined) {
+            d.setDate(day);
+          }
+          if (month !== undefined) {
+            d.setMonth(month - 1);
+          }
           if (year !== undefined) {
-            d.setFullYear(year); // keeping the actual year
+            d.setFullYear(year);
           }
         } else {
           d = new Date(year, month - 1, day, hours, minutes, seconds, milliseconds);
@@ -330,6 +359,9 @@
       }
 
       _dateTimeChanged(date, time, timezoneOffset) {
+        if (this.__updatingOffsetMinutes) {
+          return;
+        }
         this.datetime = (date || '1970-01-01') + 'T' + (time || '00:00') + (timezoneOffset || '');
       }
 
@@ -349,9 +381,9 @@
               this.__updatingOffsetMinutes = false;
             }
             d = new Date(match[0]);
-          } else {
+          } else if (match[2] !== undefined) {
             d = new Date(match[1] + 'T' + match[2] + 'Z');
-            if (this.offsetMinutes !== undefined) {
+            if (this.offsetMinutes === undefined) {
               this.__updatingOffsetMinutes = true;
               this.offsetMinutes = d.getTimezoneOffset();
               this.__updatingOffsetMinutes = false;
@@ -376,7 +408,7 @@
        * @param {[Date]} d [the date to set]
        */
       _setDate(d) {
-        if (!isNaN(+d)) {
+        if (!isNaN(d)) {
           d = this._clamp(d, this.clamp);
           d = this._checkThreshold(d);
 
@@ -427,10 +459,11 @@
             seconds: d.getSeconds(),
             milliseconds: d.getMilliseconds()
           });
+        } else if (!isNaN(d = new Date(this.default))) {
+          this._setDate(d);
         } else if (!isNaN(this.value)) {
           this._valueChanged(this.value);
         }
-
       }
 
       _clamp(d, clamp) {
@@ -527,10 +560,10 @@
 
       _checkThreshold(d) {
         if (this._min > d) {
-          return this._min;
+          return new Date(this._min);
         }
         if (this._max < d) {
-          return this._max;
+          return new Date(this._max);
         }
         return d;
       }
@@ -667,11 +700,9 @@
           this.timezoneOffset = this._computeTimezoneOffset((new Date()).getTimezoneOffset());
           return;
         }
-        console.log(timezoneOffset, this._computeOffsetMinutes(timezoneOffset));
         if (!this.__updatingOffsetMinutes) {
           this.__updatingOffsetMinutes = true;
           this.offsetMinutes = this._computeOffsetMinutes(timezoneOffset);
-          console.log('changed offsetMinutes');
           this.__updatingOffsetMinutes = false;
         }
       }
@@ -680,10 +711,8 @@
         if (offsetMinutes === undefined) {
           return;
         }
-        console.log('offsetMinutesChanged', this._computeTimezoneOffset(offsetMinutes), offsetMinutes);
         this.timezoneOffset = this._computeTimezoneOffset(offsetMinutes);
         if (!this.__updatingOffsetMinutes) {
-          console.log('changed timezoneOffset');
           this._setDate(new Date(this.value));
         }
       }
