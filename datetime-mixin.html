@@ -280,15 +280,23 @@
           _regexpTimezone: {
             type: RegExp,
             value: /^(?:([+-]\d\d):(\d\d)|Z)$/
+          },
+
+          /**
+           * lock to date and ignore time
+           */
+          _dateLocked: {
+            type: Boolean,
+            computed: '_ifClamped(clamp, "hours")'
           }
         }
       }
 
       static get observers() {
         return [
+          '_computeDatetime(year, month, day, hours, minutes, seconds, milliseconds, offsetMinutes)',
           '_datetimeChanged(datetime)',
           '_dateTimeChanged(date, time)',
-          '_computeDatetime(year, month, day, hours, minutes, seconds, milliseconds, offsetMinutes)',
           '_defaultChanged(default)'
         ]
       }
@@ -382,7 +390,9 @@
         const match = this._regexpDatetime.exec(datetime);
         if (match) {
           let d;
-          if (match[3] !== undefined) {
+          if (this._dateLocked) {
+            d = new Date(match[1]);
+          } else if (match[3] !== undefined) {
             d = new Date(match[0]);
             if (match[3] !== this.timezoneOffset) {
               this.__updatingOffsetMinutes = true;
@@ -436,30 +446,42 @@
           }
 
           const localOffsetMinutes = d.getTimezoneOffset();
-          if (this.offsetMinutes === undefined) {
-            this.__updatingOffsetMinutes = true;
-            this.offsetMinutes = localOffsetMinutes;
-            this.__updatingOffsetMinutes = false;
+          if (this._dateLocked === true) {
+            // preserving local timezoneOffset
+            if (this._recentLocalTimezoneOffset !== localOffsetMinutes) {
+              this.__updatingOffsetMinutes = true;
+              this.setProperties({
+                offsetMinutes: localOffsetMinutes,
+                timezoneOffset: this._computeTimezoneOffset(localOffsetMinutes)
+              })
+              this._recentLocalTimezoneOffset = localOffsetMinutes;
+              this.__updatingOffsetMinutes = false;
+            }
+          } else {
+            if (this.offsetMinutes === undefined) {
+              this.__updatingOffsetMinutes = true;
+              this.offsetMinutes = localOffsetMinutes;
+              this.__updatingOffsetMinutes = false;
+            }
+            // preserve the recent local timezone offset for a changing the offset when within a change (like for summer- or winter-time) the timezoneOffset can change
+            if (this._recentLocalTimezoneOffset === undefined) {
+              this._recentLocalTimezoneOffset = localOffsetMinutes;
+            } else if (this._recentLocalTimezoneOffset !== localOffsetMinutes) {
+              this.__updatingOffsetMinutes = true;
+              let offsetMinutes = this.offsetMinutes - this._recentLocalTimezoneOffset + localOffsetMinutes;
+              this.setProperties({
+                offsetMinutes: offsetMinutes,
+                timezoneOffset: this._computeTimezoneOffset(offsetMinutes)
+              })
+              this._recentLocalTimezoneOffset = localOffsetMinutes;
+              this.__updatingOffsetMinutes = false;
+            }
+            // transform the date to timezoneOffset, for fitting attributes
+            d.setMinutes(d.getMinutes() - this.offsetMinutes + localOffsetMinutes);
           }
-          // preserve the recent local timezone offset for a changing the offset when within a change (like for summer- or winter-time) the timezoneOffset can change
-          if (this._recentLocalTimezoneOffset === undefined) {
-            this._recentLocalTimezoneOffset = localOffsetMinutes;
-          } else if (this._recentLocalTimezoneOffset !== localOffsetMinutes) {
-            this.__updatingOffsetMinutes = true;
-            let offsetMinutes = this.offsetMinutes - this._recentLocalTimezoneOffset + localOffsetMinutes;
-            this.setProperties({
-              offsetMinutes: offsetMinutes,
-              timezoneOffset: this._computeTimezoneOffset(offsetMinutes)
-            })
-            this._recentLocalTimezoneOffset = localOffsetMinutes;
-            this.__updatingOffsetMinutes = false;
-          }
-
-          // transform the date back
-          d.setMinutes(d.getMinutes() - this.offsetMinutes + d.getTimezoneOffset());
 
           const date = this._toDate(d),
-            time = this._toTime(d),
+            time = this._dateLocked ? '00:00' : this._toTime(d),
             datetime = date + 'T' + time + this.timezoneOffset;
 
           if (this.datetime !== datetime) {
