@@ -319,8 +319,8 @@
         }
         let d;
         if (year === undefined || month === undefined || day === undefined || hours === undefined || minutes === undefined || seconds === undefined || milliseconds === undefined) {
-          d = new Date(this.value !== undefined ? this.value : this.datetime || ((this.date || this._toDate(new Date())) + 'T' + (this.time || '00:00') + this.timezoneOffset));
-          if (isNaN(+d)) {
+          d = new Date(this.value !== undefined ? this.value : this.datetime || ((this.date || this._toDate(new Date())) + 'T' + (this.time || '00:00') + (this.timezoneOffset || 'Z')));
+          if (isNaN(d)) {
             d = new Date();
           }
           d.setMilliseconds(milliseconds || 0);
@@ -343,9 +343,10 @@
         const localOffsetMinutes = d.getTimezoneOffset();
         if (offsetMinutes === undefined) {
           this.__updatingOffsetMinutes = true;
+          offsetMinutes = localOffsetMinutes;
           this.setProperties({
-            offsetMinutes: localOffsetMinutes,
-            timezoneOffset: this._computeTimezoneOffset(localOffsetMinutes)
+            offsetMinutes: offsetMinutes,
+            timezoneOffset: this._computeTimezoneOffset(offsetMinutes)
           })
           this.__updatingOffsetMinutes = false;
         }
@@ -399,7 +400,7 @@
               this._recentLocalTimezoneOffset = d.getTimezoneOffset();
               this.setProperties({
                 offsetMinutes: this._recentLocalTimezoneOffset,
-                timezoneOffset: this._computeTimezoneOffset(_recentLocalTimezoneOffset)
+                timezoneOffset: this._computeTimezoneOffset(this._recentLocalTimezoneOffset)
               })
               this.__updatingOffsetMinutes = false;
             }
@@ -507,7 +508,7 @@
       _pad(n, padLength) {
         const sign = n < 0 ? '-' : '';
         let str = '' + Math.abs(n);
-        while (str.length < padLength - sign.length)
+        while (str.length < padLength)
           str = '0' + str;
         return sign + str;
       }
@@ -588,7 +589,8 @@
       }
 
       _toDate(d) {
-        return this._pad(d.getFullYear(), 4) + '-' + this._pad(d.getMonth() + 1, 2) + '-' + this._pad(d.getDate(), 2);
+        const year = d.getFullYear();
+        return this._pad(year, year < 0 ? 6 : 4) + '-' + this._pad(d.getMonth() + 1, 2) + '-' + this._pad(d.getDate(), 2);
       }
 
       _toTime(d) {
@@ -719,7 +721,9 @@
           this.timezoneOffset = this._computeTimezoneOffset((new Date()).getTimezoneOffset());
           return;
         }
+        this.__updatingOffsetMinutes = true;
         this.offsetMinutes = this._computeOffsetMinutes(timezoneOffset);
+        this.__updatingOffsetMinutes = false;
       }
 
       offsetMinutesChanged(offsetMinutes) {
