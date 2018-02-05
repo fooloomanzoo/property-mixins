@@ -339,19 +339,19 @@
           if (isNaN(d)) {
             d = new Date();
           }
-          d.setMilliseconds(milliseconds || 0);
-          d.setSeconds(seconds || 0);
-          d.setMinutes(minutes || 0);
-          d.setHours(hours || 0);
-          if (day !== undefined) {
-            d.setDate(day);
+          if (year !== undefined) {
+            d.setFullYear(year);
           }
           if (month !== undefined) {
             d.setMonth(month - 1);
           }
-          if (year !== undefined) {
-            d.setFullYear(year);
+          if (day !== undefined) {
+            d.setDate(day);
           }
+          d.setHours(hours || 0);
+          d.setMinutes(minutes || 0);
+          d.setSeconds(seconds || 0);
+          d.setMilliseconds(milliseconds || 0);
         } else {
           d = new Date(year, month - 1, day, hours, minutes, seconds, milliseconds);
           d.setFullYear(year);
