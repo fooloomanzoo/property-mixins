@@ -179,18 +179,18 @@
           /**
            * The local timezone offset in '±hh:mm' format
            */
-          timezoneOffset: {
+          timezone: {
             type: String,
             notify: true,
-            observer: '_timezoneOffsetChanged'
+            observer: '_timezoneChanged'
           },
 
           /**
            * The offset minutes of the set timezone
            */
-          _offsetMinutes: {
+          _timezoneOffset: {
             type: Number,
-            observer: '_offsetMinutesChanged'
+            observer: '_timezoneOffsetChanged'
           },
 
           _timeZoneHours: {
@@ -204,7 +204,7 @@
           /**
            * The offset minutes of the current datetime
            */
-          _recentLocalOffsetMinutes: {
+          _recentLocalTimezoneOffset: {
             type: Number
           },
 
@@ -339,12 +339,12 @@
       }
 
       _computeDatetime(year, month, day, hours, minutes, seconds, milliseconds) {
-        if (this.__updatingOffsetMinutes) {
+        if (this.__updatingTimezoneOffset) {
           return;
         }
         let d;
         if (year === undefined || month === undefined || day === undefined || hours === undefined || minutes === undefined || seconds === undefined || milliseconds === undefined) {
-          d = new Date(this.value !== undefined ? this.value : this.datetime || ((this.date || this._toDate(new Date())) + 'T' + (this.time || '00:00') + (this.timezoneOffset || 'Z')));
+          d = new Date(this.value !== undefined ? this.value : this.datetime || ((this.date || this._toDate(new Date())) + 'T' + (this.time || '00:00') + (this.timezone || 'Z')));
           if (isNaN(d)) {
             d = new Date();
           }
@@ -365,37 +365,37 @@
           d = new Date(year, month - 1, day, hours, minutes, seconds, milliseconds);
           d.setFullYear(year);
         }
-        const localOffsetMinutes = d.getTimezoneOffset();
-        if (this._recentLocalOffsetMinutes === undefined) {
-          this._recentLocalOffsetMinutes = localOffsetMinutes;
+        const localTimezoneOffset = d.getTimezoneOffset();
+        if (this._recentLocalTimezoneOffset === undefined) {
+          this._recentLocalTimezoneOffset = localTimezoneOffset;
         }
-        if (this._offsetMinutes === undefined) {
-          this.__updatingOffsetMinutes = true;
-          this.setProperties(this._computeTimezoneOffset(localOffsetMinutes));
-          this.__updatingOffsetMinutes = false;
+        if (this._timezoneOffset === undefined) {
+          this.__updatingTimezoneOffset = true;
+          this.setProperties(this._computeTimezone(localTimezoneOffset));
+          this.__updatingTimezoneOffset = false;
         }
-        if (this._recentLocalOffsetMinutes !== localOffsetMinutes) {
-          this.__updatingOffsetMinutes = true;
+        if (this._recentLocalTimezoneOffset !== localTimezoneOffset) {
+          this.__updatingTimezoneOffset = true;
           // fixing offset when an inner shift occures (e.g. summer- or wintertime)
-          this.setProperties(this._computeTimezoneOffset(this._offsetMinutes - this._recentLocalOffsetMinutes + localOffsetMinutes));
-          this._recentLocalOffsetMinutes = localOffsetMinutes;
-          this.__updatingOffsetMinutes = false;
+          this.setProperties(this._computeTimezone(this._timezoneOffset - this._recentLocalTimezoneOffset + localTimezoneOffset));
+          this._recentLocalTimezoneOffset = localTimezoneOffset;
+          this.__updatingTimezoneOffset = false;
         }
-        d.setMinutes(d.getMinutes() + this._offsetMinutes - localOffsetMinutes);
+        d.setMinutes(d.getMinutes() + this._timezoneOffset - localTimezoneOffset);
         this._setDate(d);
       }
 
       _dateTimeChanged(date, time) {
-        if (this.__updatingOffsetMinutes) {
+        if (this.__updatingTimezoneOffset) {
           return;
         }
-        this.datetime = (date || '1970-01-01') + 'T' + (time || '00:00') + (this.timezoneOffset || '');
+        this.datetime = (date || '1970-01-01') + 'T' + (time || '00:00') + (this.timezone || '');
       }
 
       _datetimeChanged(datetime) {
         if (typeof datetime === 'object') {
           // 'date' is a Date Object
-          this._recentLocalOffsetMinutes = datetime.getTimezoneOffset();
+          this._recentLocalTimezoneOffset = datetime.getTimezoneOffset();
           this._setDate(datetime);
           return;
         }
@@ -407,23 +407,23 @@
         }
         if (match[3] === undefined) {
           d = new Date(match[1] + 'T' + match[2] + 'Z');
-          if (this._offsetMinutes === undefined) {
-            this.__updatingOffsetMinutes = true;
-            this.setProperties(this._computeTimezoneOffset(d.getTimezoneOffset()));
-            this.__updatingOffsetMinutes = false;
+          if (this._timezoneOffset === undefined) {
+            this.__updatingTimezoneOffset = true;
+            this.setProperties(this._computeTimezone(d.getTimezoneOffset()));
+            this.__updatingTimezoneOffset = false;
           }
-          d.setMinutes(d.getMinutes() + this._offsetMinutes);
+          d.setMinutes(d.getMinutes() + this._timezoneOffset);
         } else {
           d = new Date(match[0]);
-          if (match[3] !== this.timezoneOffset) {
-            this.__updatingOffsetMinutes = true;
-            this.setProperties(this._computeOffsetMinutes(match[3]));
-            this.__updatingOffsetMinutes = false;
+          if (match[3] !== this.timezone) {
+            this.__updatingTimezoneOffset = true;
+            this.setProperties(this._computeTimezoneOffset(match[3]));
+            this.__updatingTimezoneOffset = false;
           }
         }
 
         if (!isNaN(d)) {
-          this._recentLocalOffsetMinutes = d.getTimezoneOffset();
+          this._recentLocalTimezoneOffset = d.getTimezoneOffset();
           this._setDate(d);
         }
       }
@@ -433,7 +433,7 @@
           const d = typeof value === 'object' ? value : new Date(+value);
           this._setDate(d);
         } else {
-          this._setDate(new Date(this.datetime + this.timezoneOffset));
+          this._setDate(new Date(this.datetime + this.timezone));
         }
       }
 
@@ -452,13 +452,13 @@
             return;
           }
 
-          this._recentLocalOffsetMinutes = d.getTimezoneOffset();
-          if (this._offsetMinutes === undefined) {
-            this.__updatingOffsetMinutes = true;
-            this.setProperties(this._computeTimezoneOffset(this._recentLocalOffsetMinutes));
-            this.__updatingOffsetMinutes = false;
+          this._recentLocalTimezoneOffset = d.getTimezoneOffset();
+          if (this._timezoneOffset === undefined) {
+            this.__updatingTimezoneOffset = true;
+            this.setProperties(this._computeTimezone(this._recentLocalTimezoneOffset));
+            this.__updatingTimezoneOffset = false;
           }
-          d.setMinutes(d.getMinutes() - this._offsetMinutes + this._recentLocalOffsetMinutes);
+          d.setMinutes(d.getMinutes() - this._timezoneOffset + this._recentLocalTimezoneOffset);
 
           d = this._clamp(d, this.clamp);
           const year = d.getFullYear(),
@@ -484,7 +484,7 @@
 
           const date = this._toDate(d),
             time = this._dateLocked ? '00:00' : this._toTime(d),
-            datetime = date + 'T' + time + this.timezoneOffset;
+            datetime = date + 'T' + time + this.timezone;
           if (this.datetime !== datetime || this.time !== time || this.date !== date) {
             this.setProperties({
               datetime: datetime,
@@ -726,35 +726,35 @@
         });
       }
 
-      _timezoneOffsetChanged(timezoneOffset, oldValue) {
-        if (!(this._regexpTimezone.exec(timezoneOffset))) {
+      _timezoneChanged(timezone, oldValue) {
+        if (!(this._regexpTimezone.exec(timezone))) {
           if (this._regexpTimezone.exec(oldValue)) {
-            this.setProperties(this._computeTimezoneOffset(oldValue));
+            this.setProperties(this._computeTimezone(oldValue));
             return;
           }
-          this.setProperties(this._computeTimezoneOffset((this.value === undefined ? new Date() : new Date(this.value)).getTimezoneOffset()));
+          this.setProperties(this._computeTimezone((this.value === undefined ? new Date() : new Date(this.value)).getTimezoneOffset()));
           return;
         }
-        if (this.__updatingOffsetMinutes) {
+        if (this.__updatingTimezoneOffset) {
           return;
         }
 
-        const toSet = this._computeOffsetMinutes(timezoneOffset);
-        if (toSet._offsetMinutes !== this._offsetMinutes) {
-          this.__updatingOffsetMinutes = true;
-          this.setProperties(this._computeOffsetMinutes(timezoneOffset));
-          this.__updatingOffsetMinutes = false;
+        const toSet = this._computeTimezoneOffset(timezone);
+        if (toSet._timezoneOffset !== this._timezoneOffset) {
+          this.__updatingTimezoneOffset = true;
+          this.setProperties(this._computeTimezoneOffset(timezone));
+          this.__updatingTimezoneOffset = false;
         }
       }
 
-      _offsetMinutesChanged(offsetMinutes, oldOffsetMinutes) {
+      _timezoneOffsetChanged(offsetMinutes, oldTimezoneOffset) {
         if (offsetMinutes === undefined) {
           return;
         }
-        if (this.__updatingOffsetMinutes) {
+        if (this.__updatingTimezoneOffset) {
           return;
         }
-        this.setProperties(this._computeTimezoneOffset(offsetMinutes));
+        this.setProperties(this._computeTimezone(offsetMinutes));
       }
 
       _timeZoneHoursMinutesChanged(hours, minutes) {
@@ -762,57 +762,57 @@
           return;
         }
         const offsetMinutes = -Math.sign(hours)*(Math.abs(hours) * 60 + minutes),
-          timezoneOffset = (hours >= 0 ? '+' : '') + this._pad(hours, 2) + ':' + this._pad(minutes, 2);
-        if (offsetMinutes !== this._offsetMinutes) {
-          this.__updatingOffsetMinutes = true;
+          timezone = (hours >= 0 ? '+' : '') + this._pad(hours, 2) + ':' + this._pad(minutes, 2);
+        if (offsetMinutes !== this._timezoneOffset) {
+          this.__updatingTimezoneOffset = true;
           this.setProperties({
-            _offsetMinutes: offsetMinutes,
-            timezoneOffset: timezoneOffset
+            _timezoneOffset: offsetMinutes,
+            timezone: timezone
           });
-          this.__updatingOffsetMinutes = false;
-        } else if (this.timezoneOffset !== timezoneOffset) {
-          this.timezoneOffset = timezoneOffset;
+          this.__updatingTimezoneOffset = false;
+        } else if (this.timezone !== timezone) {
+          this.timezone = timezone;
         }
         if (this.date && this.time) {
-          this.datetime = this.date + 'T' + this.time + this.timezoneOffset;
+          this.datetime = this.date + 'T' + this.time + this.timezone;
         }
       }
 
-      _computeTimezoneOffset(offsetMinutes) { // offset in minutes
+      _computeTimezone(offsetMinutes) { // offset in minutes
         if (offsetMinutes === undefined) {
           return {};
         } else if (offsetMinutes === 0) {
           return {
             _timeZoneHours: 0,
             _timeZoneMinutes: 0,
-            timezoneOffset: '+00:00'
+            timezone: '+00:00'
           };
         }
         const hours = -Math.sign(offsetMinutes)*Math.floor(Math.abs(offsetMinutes) / 60),
         minutes = Math.abs(offsetMinutes) % 60;
         return {
-          _offsetMinutes: offsetMinutes,
+          _timezoneOffset: offsetMinutes,
           _timeZoneHours: hours,
           _timeZoneMinutes: minutes,
-          timezoneOffset: (hours >= 0 ? '+' : '') + this._pad(hours, 2) + ':' + this._pad(minutes, 2)
+          timezone: (hours >= 0 ? '+' : '') + this._pad(hours, 2) + ':' + this._pad(minutes, 2)
         }
       }
 
-      _computeOffsetMinutes(timezoneOffset) {
-        if (timezoneOffset === 'Z') {
+      _computeTimezoneOffset(timezone) {
+        if (timezone === 'Z') {
           return {
-            _offsetMinutes: 0,
+            _timezoneOffset: 0,
             _timeZoneHours: 0,
             _timeZoneMinutes: 0
           };
         }
-        const match = this._regexpTimezone.exec(timezoneOffset);
+        const match = this._regexpTimezone.exec(timezone);
         if (match) {
           const hours = +match[1],
             minutes = +match[2];
           return {
-            timezoneOffset: timezoneOffset,
-            _offsetMinutes: -Math.sign(hours)*(Math.abs(hours) * 60 + minutes),
+            timezone: timezone,
+            _timezoneOffset: -Math.sign(hours)*(Math.abs(hours) * 60 + minutes),
             _timeZoneHours: hours,
             _timeZoneMinutes: minutes
           };
