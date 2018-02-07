@@ -283,14 +283,6 @@
           },
 
           /**
-           * Regular Expression for date-string
-           */
-          _regexpDate: {
-            type: RegExp,
-            value: /-?\d+-\d\d-\d\d/
-          },
-
-          /**
            * Regular Expression for datetime-string
            */
           _regexpTimezone: {
@@ -461,6 +453,7 @@
           d.setMinutes(d.getMinutes() - this._timezoneOffset + this._recentLocalTimezoneOffset);
 
           d = this._clamp(d, this.clamp);
+
           const year = d.getFullYear(),
             month = d.getMonth() + 1,
             day = d.getDate(),
@@ -485,6 +478,7 @@
           const date = this._toDate(d),
             time = this._dateLocked ? '00:00' : this._toTime(d),
             datetime = date + 'T' + time + this.timezone;
+
           if (this.datetime !== datetime || this.time !== time || this.date !== date) {
             this.setProperties({
               datetime: datetime,
@@ -492,7 +486,6 @@
               time: time
             });
           }
-
         } else if (!isNaN(d = new Date(this.default))) {
           this._setDate(d);
         } else if (!isNaN(this.value)) {
@@ -729,7 +722,7 @@
       _timezoneChanged(timezone, oldValue) {
         if (!(this._regexpTimezone.exec(timezone))) {
           if (this._regexpTimezone.exec(oldValue)) {
-            this.setProperties(this._computeTimezone(oldValue));
+            this.setProperties(this._computeTimezoneOffset(oldValue));
             return;
           }
           this.setProperties(this._computeTimezone((this.value === undefined ? new Date() : new Date(this.value)).getTimezoneOffset()));
@@ -783,6 +776,7 @@
           return {};
         } else if (offsetMinutes === 0) {
           return {
+            _timezoneOffset: 0,
             _timeZoneHours: 0,
             _timeZoneMinutes: 0,
             timezone: '+00:00'
@@ -803,7 +797,8 @@
           return {
             _timezoneOffset: 0,
             _timeZoneHours: 0,
-            _timeZoneMinutes: 0
+            _timeZoneMinutes: 0,
+            timezone: '+00:00'
           };
         }
         const match = this._regexpTimezone.exec(timezone);
@@ -811,10 +806,10 @@
           const hours = +match[1],
             minutes = +match[2];
           return {
-            timezone: timezone,
             _timezoneOffset: -Math.sign(hours)*(Math.abs(hours) * 60 + minutes),
             _timeZoneHours: hours,
-            _timeZoneMinutes: minutes
+            _timeZoneMinutes: minutes,
+            timezone: timezone
           };
         }
       }
