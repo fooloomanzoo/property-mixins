@@ -89,7 +89,7 @@
            */
           hslPrecision: {
             type: Number,
-            value: 2
+            value: 0
           },
           /**
            * format of the value (possible values: 'rgb', 'hex', 'hsl')
@@ -106,7 +106,6 @@
           value: {
             type: String,
             notify: true,
-            reflectToAttribute: true,
             observer: '_valueChanged'
           },
 
@@ -144,28 +143,6 @@
         ];
       }
 
-      connectedCallback() {
-        super.connectedCallback();
-        // create a random color, if any rbg or hsl value is set
-        if (!this.value && this.hex === undefined) {
-          if (this.h !== undefined || this.s !== undefined || this.l !== undefined) {
-            const hsl = this.randomHsl();
-            this.setProperties({
-              h: this.h === undefined ? hsl.h : this.h,
-              s: this.s === undefined ? hsl.s : this.s,
-              l: this.l === undefined ? hsl.l : this.l
-            });
-          } else if (this.r !== undefined || this.g !== undefined || this.b !== undefined) {
-            const rgb = this.randomRgb();
-            this.setProperties({
-              r: this.r === undefined ? rgb.r : this.r,
-              g: this.g === undefined ? rgb.g : this.g,
-              b: this.b === undefined ? rgb.b : this.b
-            });
-          }
-        }
-      }
-
       _alphaModeChanged(alphaMode) {
         if (alphaMode !== true) {
           this.alpha = 1;
@@ -191,8 +168,10 @@
         if (value === undefined) return;
 
         let toSet = {},
-          match;
+          match,
+          format;
         // input-format detection
+        // hsl-format
         if (match = value.match(this._validateHsl)) {
           if (match[1] === undefined) { // no alpha
             toSet.alpha = 1;
@@ -214,8 +193,13 @@
             toSet.l = this._normalizedClamp(+match[4]);
           }
           if (this.format !== 'hsl') {
-            toSet.format = 'hsl';
+            format = 'hsl';
+          } else {
+            toSet.h = +toSet.h.toFixed(this.hslPrecision || 0);
+            toSet.s = +toSet.s.toFixed((this.hslPrecision || 0) + 2);
+            toSet.l = +toSet.l.toFixed((this.hslPrecision || 0) + 2);
           }
+        // hex-format
         } else if (match = value.match(this._validateHex)) {
           if (match[1] !== undefined) { // no alpha
             toSet.hex = match[1];
@@ -227,8 +211,9 @@
             toSet.alphaMode = true;
           }
           if (this.format !== 'hex') {
-            toSet.format = 'hex';
+            format = 'hex';
           }
+        // rgb-format
         } else if (match = value.match(this._validateRgb)) {
           if (match[1] === undefined) { // no alpha
             toSet.alpha = 1;
@@ -241,11 +226,19 @@
           toSet.g = this._mathMod(+match[3], 256);
           toSet.b = this._mathMod(+match[4], 256);
           if (this.format !== 'rgb') {
-            toSet.format = 'rgb';
+            format = 'rgb';
+          } else {
+            toSet.r = Math.round(toSet.r);
+            toSet.g = Math.round(toSet.g);
+            toSet.b = Math.round(toSet.b);
           }
         }
         if (!match && oldValue !== undefined) {
           this._valueChanged(oldValue);
+          return;
+        }
+        if (format && this.format !== format) {
+          toSet.format = format;
         }
         this.setProperties(toSet);
       }
@@ -260,20 +253,20 @@
       _setValue() {
         switch (this.format) {
           case 'hsl':
-            if (this.h !== undefined && this.s !== undefined && this.l !== undefined) {
+            if (!isNaN(this.h) && !isNaN(this.s) && !isNaN(this.l)) {
               if (this.alphaMode === true) {
-                this.value = `hsla(${+this.h.toFixed(this.hslPrecision || 0)},${+(this.s*100).toFixed(this.hslPrecision || 0)}%,${+(this.l*100).toFixed(this.hslPrecision || 0)}%,${this.alpha === undefined ? 0 : this.alpha})`;
+                this.value = `hsla(${+this.h.toFixed(this.hslPrecision || 0)}, ${+(this.s*100).toFixed(this.hslPrecision || 0)}%, ${+(this.l*100).toFixed(this.hslPrecision || 0)}%, ${this.alpha === undefined ? 0 : this.alpha})`;
               } else {
-                this.value = `hsl(${+this.h.toFixed(this.hslPrecision || 0)},${+(this.s*100).toFixed(this.hslPrecision || 0)}%,${+(this.l*100).toFixed(this.hslPrecision || 0)}%)`;
+                this.value = `hsl(${+this.h.toFixed(this.hslPrecision || 0)}, ${+(this.s*100).toFixed(this.hslPrecision || 0)}%, ${+(this.l*100).toFixed(this.hslPrecision || 0)}%)`;
               }
             }
             break;
           case 'rgb':
-            if (this.r !== undefined && this.g !== undefined && this.b !== undefined) {
+            if (!isNaN(this.r) && !isNaN(this.g) && !isNaN(this.b)) {
               if (this.alphaMode === true) {
-                this.value = `rgba(${Math.round(this.r)},${Math.round(this.g)},${Math.round(this.b)},${this.alpha === undefined ? 0 : this.alpha})`;
+                this.value = `rgba(${Math.round(this.r)}, ${Math.round(this.g)}, ${Math.round(this.b)}, ${this.alpha === undefined ? 0 : this.alpha})`;
               } else {
-                this.value = `rgb(${Math.round(this.r)},${Math.round(this.g)},${Math.round(this.b)})`;
+                this.value = `rgb(${Math.round(this.r)}, ${Math.round(this.g)}, ${Math.round(this.b)})`;
               }
             }
             break;
@@ -282,7 +275,7 @@
             if (this.alpha === 1 && this.hex !== undefined) {
               this.value = this.hex;
             } else if (this.r !== undefined && this.g !== undefined && this.b !== undefined) {
-              this.value = `rgba(${Math.round(this.r)},${Math.round(this.g)},${Math.round(this.b)},${this.alpha === undefined ? 0 : this.alpha})`;
+              this.value = `rgba(${Math.round(this.r)}, ${Math.round(this.g)}, ${Math.round(this.b)}, ${this.alpha === undefined ? 0 : this.alpha})`;
             }
         }
       }
@@ -320,6 +313,7 @@
         }
         let toSet = {};
         const rgb = this.hexToRgb(hex);
+
         if (rgb.r !== Math.round(this.r)) {
           toSet.r = rgb.r;
         }
@@ -334,35 +328,85 @@
       }
 
       _rgbChanged(r, g, b) {
-        if (r === undefined || g === undefined || b === undefined) {
+        if (isNaN(r) && isNaN(g) && isNaN(b)) {
           return;
         }
-        r = this._mathMod(r, 256);
-        g = this._mathMod(g, 256);
-        b = this._mathMod(b, 256);
-        let toSet = {};
-        // avoid multiple conversion to hsl by checking if the current hsl-values convert to the same rgb-values
-        const rgbFromCurrentHsl = this.hslToRgb(this.h, this.s, this.l) || {};
-        if (r !== rgbFromCurrentHsl.r || g !== rgbFromCurrentHsl.g || b !== rgbFromCurrentHsl.b) {
-          toSet = this.rgbToHsl(r, g, b);
+        if (isNaN(this.r) || isNaN(this.g) || isNaN(this.b)) {
+          const rgb = this.randomRgb();
+          this.setProperties({
+            r: isNaN(this.r) ? rgb.r : this.r,
+            g: isNaN(this.g) ? rgb.g : this.g,
+            b: isNaN(this.b) ? rgb.b : this.b
+          });
+          return;
         }
+
+        r = this._mathMod(this.format === 'hsl' ? r : Math.round(r), 256);
+        g = this._mathMod(this.format === 'hsl' ? g : Math.round(g), 256);
+        b = this._mathMod(this.format === 'hsl' ? b : Math.round(b), 256);
+
+        let toSet = {};
+        let hsl = this.rgbToHsl(r, g, b);
+
+        if (this.format === 'hsl') {
+          hsl.h = +hsl.h.toFixed(this.hslPrecision || 0);
+          hsl.s = +hsl.s.toFixed((this.hslPrecision || 0) + 2);
+          hsl.l = +hsl.l.toFixed((this.hslPrecision || 0) + 2);
+        }
+        if (hsl.h !== this.h) {
+          toSet.h = hsl.h;
+        }
+        if (hsl.s !== this.s) {
+          toSet.s = hsl.s;
+        }
+        if (hsl.l !== this.l) {
+          toSet.l = hsl.l;
+        }
+        if (r !== this.r) {
+          toSet.r = r;
+        }
+        if (g !== this.g) {
+          toSet.g = g;
+        }
+        if (b !== this.b) {
+          toSet.b = b;
+        }
+
         const hex = this.rgbToHex(r, g, b);
         if (hex !== this.hex) {
           toSet.hex = hex;
         }
+
         this.setProperties(toSet);
         this._debouncedSetValue();
       }
 
       _hslChanged(h, s, l) {
-        if (h === undefined || s === undefined || l === undefined) {
+        if (isNaN(h) && isNaN(s) && isNaN(l)) {
           return;
         }
-        h = this._mathMod(h, 360);
-        s = this._normalizedClamp(s);
-        l = this._normalizedClamp(l);
+        if (isNaN(this.h) || isNaN(this.s) || isNaN(this.l)) {
+          const hsl = this.randomHsl();
+          this.setProperties({
+            h: isNaN(this.h) ? hsl.h : this.h,
+            s: isNaN(this.s) ? hsl.s : this.s,
+            l: isNaN(this.l) ? hsl.l : this.l
+          });
+          return;
+        }
+
+        h = this._mathMod(this.format !== 'hsl' ? h : +h.toFixed(this.hslPrecision || 0), 360);
+        s = this._normalizedClamp(this.format !== 'hsl' ? s : +s.toFixed((this.hslPrecision || 0) + 2));
+        l = this._normalizedClamp(this.format !== 'hsl' ? l : +l.toFixed((this.hslPrecision || 0) + 2));
+
         let toSet = {};
         const rgb = this.hslToRgb(h, s, l);
+
+        if (this.format !== 'hsl') {
+          rgb.r = Math.round(rgb.r);
+          rgb.g = Math.round(rgb.g);
+          rgb.b = Math.round(rgb.b);
+        }
         if (rgb.r !== this.r) {
           toSet.r = rgb.r;
         }
@@ -372,6 +416,16 @@
         if (rgb.b !== this.b) {
           toSet.b = rgb.b;
         }
+        if (h !== this.h) {
+          toSet.h = h;
+        }
+        if (s !== this.s) {
+          toSet.s = s;
+        }
+        if (l !== this.l) {
+          toSet.l = l;
+        }
+
         this.setProperties(toSet);
         this._debouncedSetValue();
       }
@@ -424,7 +478,7 @@
       }
 
       rgbToHex(r, g, b) {
-        if (r === undefined || g === undefined || b === undefined) {
+        if (isNaN(r) || isNaN(g) || isNaN(b)) {
           return;
         }
         return '#' + this._componentToHex(Math.round(r)) + this._componentToHex(Math.round(g)) + this._componentToHex(Math.round(b));
@@ -440,15 +494,15 @@
       }
 
       hslToRgb(h, s, l) { // not rounded yet
-        if (h === undefined || s === undefined || l === undefined) {
+        if (isNaN(h) || isNaN(s) || isNaN(l)) {
           return;
         }
         const t2 = ((l <= 0.5) ? l * (s + 1) : l + s - (l * s)) * 255,
           t1 = l * 2 * 255 - t2;
         return {
-          r: Math.round(this.hueToComponent(t1, t2, h + 120)),
-          g: Math.round(this.hueToComponent(t1, t2, h)),
-          b: Math.round(this.hueToComponent(t1, t2, h - 120))
+          r: this.hueToComponent(t1, t2, h + 120),
+          g: this.hueToComponent(t1, t2, h),
+          b: this.hueToComponent(t1, t2, h - 120)
         };
       }
 
@@ -462,7 +516,7 @@
       }
 
       rgbToHsl(r, g, b) {
-        if (r === undefined || g === undefined || b === undefined) {
+        if (isNaN(r) || isNaN(g) || isNaN(b)) {
           return;
         }
         const max = Math.max(r, g, b),
