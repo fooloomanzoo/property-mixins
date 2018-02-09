@@ -148,14 +148,14 @@
         super.connectedCallback();
         // create a random color, if any rbg or hsl value is set
         if (!this.value && this.hex === undefined) {
-          if (this.h === undefined || this.s !== undefined || this.l !== undefined) {
+          if (this.h !== undefined || this.s !== undefined || this.l !== undefined) {
             const hsl = this.randomHsl();
             this.setProperties({
               h: this.h === undefined ? hsl.h : this.h,
               s: this.s === undefined ? hsl.s : this.s,
               l: this.l === undefined ? hsl.l : this.l
             });
-          } else if (this.r === undefined || this.g !== undefined || this.b !== undefined) {
+          } else if (this.r !== undefined || this.g !== undefined || this.b !== undefined) {
             const rgb = this.randomRgb();
             this.setProperties({
               r: this.r === undefined ? rgb.r : this.r,
