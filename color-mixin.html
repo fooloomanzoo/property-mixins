@@ -146,21 +146,21 @@
 
       connectedCallback() {
         super.connectedCallback();
-        // create a random color, if value or hex is not set
+        // create a random color, if any rbg or hsl value is set
         if (!this.value && this.hex === undefined) {
-          if (this.h !== undefined || this.s !== undefined || this.l !== undefined) {
+          if (this.h === undefined || this.s !== undefined || this.l !== undefined) {
             const hsl = this.randomHsl();
             this.setProperties({
-              h: this.h || hsl.h,
-              s: this.s || hsl.s,
-              l: this.l || hsl.l
+              h: this.h === undefined ? hsl.h : this.h,
+              s: this.s === undefined ? hsl.s : this.s,
+              l: this.l === undefined ? hsl.l : this.l
             });
-          } else {
+          } else if (this.r === undefined || this.g !== undefined || this.b !== undefined) {
             const rgb = this.randomRgb();
             this.setProperties({
-              r: this.r || rgb.r,
-              g: this.g || rgb.g,
-              b: this.b || rgb.b
+              r: this.r === undefined ? rgb.r : this.r,
+              g: this.g === undefined ? rgb.g : this.g,
+              b: this.b === undefined ? rgb.b : this.b
             });
           }
         }
