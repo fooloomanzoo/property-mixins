@@ -10,7 +10,8 @@
       "typeof": true
     } ],
     "no-console": "off",
-    "valid-jsdoc": "off"
+    "valid-jsdoc": "off",
+    "no-cond-assign": "off"
   },
   "env": {
     "browser": true,
