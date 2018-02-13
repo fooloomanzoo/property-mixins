@@ -1,563 +1,830 @@
 <script>
   /**
-   * Mixin that provides web-color-properties. Its value converts automatically beetween different formats (hex, rgb and hsl) and provides an alpha-value.
+   * Mixin that provides datetime-properties
    *
    * @mixinFunction
    * @polymer
+   *
+   * @param {Object} superClass class to extend
+   * @return {Object} extended class
    */
-  const ColorMixin = (superClass) => { // eslint-disable-line no-unused-vars no-undef
+  const DatetimeMixin = (superClass) => { // eslint-disable-line no-unused-vars no-undef
 
     return class extends superClass {
-
-      constructor() {
-        super();
-        this._validFormats = ['rgb', 'hex', 'hsl'];
-      }
 
       static get properties() {
         return {
           /**
-           * Hex-color
+           * the selected local date and time (format: iso8601)
            */
-          hex: {
+          datetime: {
             type: String,
-            notify: true,
-            observer: '_hexChanged'
-          },
-          /**
-           * Red
-           */
-          r: {
-            type: Number,
             notify: true
           },
           /**
-           * Green
+           * the selected local date (format: iso8601)
            */
-          g: {
-            type: Number,
+          date: {
+            type: String,
             notify: true
-          },
-          /**
-           * Blue
-           */
-          b: {
-            type: Number,
-            notify: true
-          },
-          /**
-           * Hue
-           */
-          h: {
-            type: Number,
-            notify: true
-          },
-          /**
-           * Saturation (hsl)
-           */
-          s: {
-            type: Number,
-            notify: true
-          },
-          /**
-           * Lightness
-           */
-          l: {
-            type: Number,
-            notify: true
-          },
-          /**
-           * Alpha
-           */
-          alpha: {
-            type: Number,
-            notify: true,
-            value: 1,
-            observer: '_alphaChanged'
           },
 
           /**
-           * if true, value has alpha
+           * the selected local time (format: iso8601)
            */
-          alphaMode: {
-            type: Boolean,
-            notify: true,
-            observer: '_alphaModeChanged'
-          },
-          /**
-           * Precision of hsl-values, if the format is 'hsl' (for saturation and lightness it is applied according to their percentage value)
-           */
-          hslPrecision: {
-            type: Number,
-            value: 0
-          },
-          /**
-           * format of the value (possible values: 'rgb', 'hex', 'hsl')
-           */
-          format: {
+          time: {
             type: String,
-            notify: true,
-            value: 'hex',
-            observer: '_formatChanged'
+            notify: true
           },
+
           /**
-           * hex-color
+           * The year of the selected local date
+           */
+          year: {
+            type: Number,
+            notify: true
+          },
+
+          /**
+           * The month of the selected local date (starts with 1)
+           */
+          month: {
+            type: Number,
+            notify: true
+          },
+
+          /**
+           * The day of the selected local date
+           */
+          day: {
+            type: Number,
+            notify: true
+          },
+
+          /**
+           * The hours of the selected local time
+           */
+          hours: {
+            type: Number,
+            notify: true,
+            observer: '_hoursChanged'
+          },
+
+          /**
+           * The minutes of the selected local time
+           */
+          minutes: {
+            type: Number,
+            notify: true
+          },
+
+          /**
+           * The seconds of the selected local time
+           */
+          seconds: {
+            type: Number,
+            notify: true
+          },
+
+          /**
+           * The milliseconds of the selected local time
+           */
+          milliseconds: {
+            type: Number,
+            notify: true
+          },
+
+          /**
+           * The value of the selected local date
            */
           value: {
-            type: String,
+            type: Number,
             notify: true,
             observer: '_valueChanged'
           },
 
-          _validateHex: {
-            type: RegExp,
-            readOnly: true,
-            value: /^\s*(?:(#(?:[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3}))|rgba\(\s*(#(?:[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3}))\s*,\s*(-?\d*(?:\.(?:\d*)?)?)\s*\))\s*$/
+          /**
+           * The default value of the input
+           */
+          default: {
+            type: String,
+            notify: true
           },
 
-          _validateRgb: {
-            type: RegExp,
-            readOnly: true,
-            value: /^\s*rgb(a)?\(\s*(-?\d+)\s*,\s*(-?\d+)\s*,\s*(-?\d+)(?:\s*,\s*(-?\d*(?:\.(?:\d*)?)?))?\s*\)\s*$/
+          /**
+           * The minimal local date,
+           * could be a number, a date-object or an iso-string
+           */
+          min: {
+            type: String,
+            notify: true,
+            observer: '_minChanged'
           },
 
-          _validateHsl: {
-            type: RegExp,
-            readOnly: true,
-            value: /^\s*hsl(a)?\(\s*(-?\d+(?:\.\d*)?)\s*,\s*(-?\d*(?:\.(?:\d*)?)?%?)\s*,\s*(-?\d*(?:\.(?:\d*)?)?%?)(?:\s*,\s*(-?\d*(?:\.(?:\d*)?)?))?\s*\)\s*$/
+          /**
+           * The maximal local date,
+           * could be a number, a date-object or an iso-string
+           */
+          max: {
+            type: String,
+            notify: true,
+            observer: '_maxChanged'
           },
 
-          _validatePercent: {
+          /**
+           * when true, 12-hour time format, else 24-hour
+           * @type {boolean}
+           */
+          hour12: {
+            type: Boolean,
+            value: false
+          },
+
+          /**
+           * true, when A.M. (when `hours` < 12)
+           * @type {boolean}
+           */
+          isAm: {
+            type: Boolean,
+            observer: '_isAmChanged'
+          },
+
+          /**
+           * hours in 12-hour-format
+           * @type {number}
+           */
+          hours12: {
+            type: Number,
+            notify: true,
+            observer: '_hours12Changed'
+          },
+
+          /**
+           * Clamp datetime to a property
+           * possible values:'month', 'day', 'hours', 'minutes', 'seconds', 'milliseconds'
+           */
+          clamp: {
+            type: String
+          },
+
+          /**
+           * The current locale
+           */
+          locale: {
+            type: String,
+            value: window.navigator.language,
+            observer: '_localeChanged'
+          },
+
+          /**
+           * The local timezone offset in '±hh:mm' format
+           */
+          timezone: {
+            type: String,
+            notify: true,
+            observer: '_timezoneChanged'
+          },
+
+          /**
+           * The offset minutes of the set timezone
+           */
+          _timezoneOffset: {
+            type: Number,
+            observer: '_timezoneOffsetChanged'
+          },
+
+          _timeZoneHours: {
+            type: Number
+          },
+
+          _timeZoneMinutes: {
+            type: Number
+          },
+
+          /**
+           * The offset minutes of the current datetime
+           */
+          _recentLocalTimezoneOffset: {
+            type: Number
+          },
+
+          /**
+           * locale representation of 'AM'
+           */
+          _am: {
+            type: String
+          },
+
+          /**
+           * locale representation of 'PM'
+           */
+          _pm: {
+            type: String
+          },
+
+          /**
+           * Separator for local date values (date-string is still in ISO-Format)
+           * @type {string}
+           */
+          _localDateSeparator: {
+            type: String,
+            value: '-'
+          },
+
+          /**
+           * Separator for local time values (time-string is still in ISO-Format)
+           * @type {string}
+           */
+          _localTimeSeparator: {
+            type: String,
+            value: ':'
+          },
+
+          /**
+           * Separator for local decimal values
+           * @type {string}
+           */
+          _localDecimalSeparator: {
+            type: String,
+            value: '.'
+          },
+
+          /**
+           * order of date-parts
+           */
+          _orderDate: {
+            type: Object,
+            value: function() {
+              return {
+                year: 1,
+                separatorYearMonth: 2,
+                month: 3,
+                separatorMonthDay: 4,
+                day: 5
+              };
+            }
+          },
+
+          /**
+           * exclusive max day of month
+           * @type {number}
+           */
+          _maxDayOfMonth: {
+            type: Number,
+            computed: '_computeMaxDayOfMonth(year, month)'
+          },
+
+          /**
+           * Regular Expression for datetime-string
+           */
+          _regexpDatetime: {
             type: RegExp,
-            readOnly: true,
-            value: /(-?\d*(?:\.(?:\d*)?)?)%/
+            value: /^(-?\d+-\d\d-\d\d)(?:T?(?:(\d\d:\d\d(?::\d\d(?:\.\d\d\d)?)?)([+-]\d\d:\d\d|Z)?)?)$/
+          },
+
+          /**
+           * Regular Expression for datetime-string
+           */
+          _regexpTimezone: {
+            type: RegExp,
+            value: /^(?:([+-]\d\d):(\d\d)|Z)$/
+          },
+
+          /**
+           * lock to date and ignore time
+           */
+          _dateLocked: {
+            type: Boolean,
+            computed: '_ifClamped(clamp, "hours")'
           }
-
         }
       }
 
       static get observers() {
         return [
-          '_rgbChanged(r, g, b)',
-          '_hslChanged(h, s, l)'
-        ];
+          '_computeDatetime(year, month, day, hours, minutes, seconds, milliseconds)',
+          '_datetimeChanged(datetime)',
+          '_dateTimeChanged(date, time)',
+          '_defaultChanged(default)',
+          '_timeZoneHoursMinutesChanged(_timeZoneHours, _timeZoneMinutes)'
+        ]
       }
 
-      _alphaModeChanged(alphaMode) {
-        if (alphaMode !== true) {
-          this.alpha = 1;
-        }
-      }
-
-      _formatChanged(format, oldFormat) {
-        if (format === undefined) {
+      _defaultChanged(def) {
+        if (!def) {
           return;
         }
-        if (this._validFormats.indexOf(format) === -1) {
-          if (oldFormat && this._validFormats.indexOf(oldFormat) !== -1) {
-            this.format = oldFormat;
-            return;
-          }
-          this.format = 'hex';
+        const d = this._fromDatetime(def);
+        if (isNaN(d)) {
           return;
         }
-        this._debouncedSetValue();
-      }
-
-      _valueChanged(value, oldValue) {
-        if (value === undefined) return;
-
-        let toSet = {},
-          match,
-          format;
-        // input-format detection
-        // hsl-format
-        if (match = value.match(this._validateHsl)) {
-          if (match[1] === undefined) { // no alpha
-            toSet.alpha = 1;
-            toSet.alphaMode = false;
-          } else { // with alpha
-            toSet.alpha = this._normalizedClamp(+match[5]);
-            toSet.alphaMode = true;
-          }
-          toSet.h = this._mathMod(+match[2], 360);
-          let matchPercent;
-          if (matchPercent = match[3].match(this._validatePercent)) { // s in percentage value
-            toSet.s = this._normalizedClamp(+matchPercent[1] * 0.01);
-          } else {
-            toSet.s = this._normalizedClamp(+match[3]);
-          }
-          if (matchPercent = match[4].match(this._validatePercent)) { // l in percentage value
-            toSet.l = this._normalizedClamp(+matchPercent[1] * 0.01);
-          } else {
-            toSet.l = this._normalizedClamp(+match[4]);
-          }
-          if (this.format !== 'hsl') {
-            format = 'hsl';
-          } else {
-            toSet.h = +toSet.h.toFixed(this.hslPrecision || 0);
-            toSet.s = +toSet.s.toFixed((this.hslPrecision || 0) + 2);
-            toSet.l = +toSet.l.toFixed((this.hslPrecision || 0) + 2);
-          }
-        // hex-format
-        } else if (match = value.match(this._validateHex)) {
-          if (match[1] !== undefined) { // no alpha
-            toSet.hex = match[1];
-            toSet.alpha = 1;
-            toSet.alphaMode = false;
-          } else { // with alpha
-            toSet.hex = match[2];
-            toSet.alpha = this._normalizedClamp(+match[3]);
-            toSet.alphaMode = true;
-          }
-          if (this.format !== 'hex') {
-            format = 'hex';
-          }
-        // rgb-format
-        } else if (match = value.match(this._validateRgb)) {
-          if (match[1] === undefined) { // no alpha
-            toSet.alpha = 1;
-            toSet.alphaMode = false;
-          } else { // with alpha
-            toSet.alpha = this._normalizedClamp(+match[5]);
-            toSet.alphaMode = true;
-          }
-          toSet.r = this._mathMod(+match[2], 256);
-          toSet.g = this._mathMod(+match[3], 256);
-          toSet.b = this._mathMod(+match[4], 256);
-          if (this.format !== 'rgb') {
-            format = 'rgb';
-          } else {
-            toSet.r = Math.round(toSet.r);
-            toSet.g = Math.round(toSet.g);
-            toSet.b = Math.round(toSet.b);
-          }
+        if (this.value === undefined) {
+          this._setDate(d);
         }
-        if (!match && oldValue !== undefined) {
-          this._valueChanged(oldValue);
-          return;
-        }
-        if (format && this.format !== format) {
-          toSet.format = format;
-        }
-        this.setProperties(toSet);
-      }
-
-      _debouncedSetValue() {
-        if (this._activeSetValueJob) {
-          window.cancelAnimationFrame(this._activeSetValueJob);
-        }
-        this._activeSetValueJob = window.requestAnimationFrame(this._setValue.bind(this))
-      }
-
-      _setValue() {
-        switch (this.format) {
-          case 'hsl':
-            if (!isNaN(this.h) && !isNaN(this.s) && !isNaN(this.l)) {
-              if (this.alphaMode === true) {
-                this.value = `hsla(${+this.h.toFixed(this.hslPrecision || 0)}, ${+(this.s*100).toFixed(this.hslPrecision || 0)}%, ${+(this.l*100).toFixed(this.hslPrecision || 0)}%, ${this.alpha === undefined ? 0 : this.alpha})`;
-              } else {
-                this.value = `hsl(${+this.h.toFixed(this.hslPrecision || 0)}, ${+(this.s*100).toFixed(this.hslPrecision || 0)}%, ${+(this.l*100).toFixed(this.hslPrecision || 0)}%)`;
-              }
-            }
-            break;
-          case 'rgb':
-            if (!isNaN(this.r) && !isNaN(this.g) && !isNaN(this.b)) {
-              if (this.alphaMode === true) {
-                this.value = `rgba(${Math.round(this.r)}, ${Math.round(this.g)}, ${Math.round(this.b)}, ${this.alpha === undefined ? 0 : this.alpha})`;
-              } else {
-                this.value = `rgb(${Math.round(this.r)}, ${Math.round(this.g)}, ${Math.round(this.b)})`;
-              }
-            }
-            break;
-          case 'hex':
-          default:
-            if (this.alpha === 1 && this.hex !== undefined) {
-              this.value = this.hex;
-            } else if (this.r !== undefined && this.g !== undefined && this.b !== undefined) {
-              this.value = `rgba(${Math.round(this.r)}, ${Math.round(this.g)}, ${Math.round(this.b)}, ${this.alpha === undefined ? 0 : this.alpha})`;
-            }
-        }
-      }
-
-      _alphaChanged(alpha, oldAlpha) {
-        if (isNaN(alpha)) {
-          this.alpha = 1;
-          return;
-        }
-        if (alpha > 1) {
-          if (oldAlpha !== undefined) {
-            this.alpha = oldAlpha;
-            return;
-          }
-          this.alpha = 1;
-          return;
-        }
-        if (alpha < 0) {
-          if (oldAlpha !== undefined) {
-            this.alpha = oldAlpha;
-            return;
-          }
-          this.alpha = 0;
-          return;
-        }
-        if (alpha !== 1) {
-          this.alphaMode = true;
-        }
-        this._debouncedSetValue();
-      }
-
-      _hexChanged(hex) {
-        if (hex === undefined) {
-          return;
-        }
-        let toSet = {};
-        const rgb = this.hexToRgb(hex);
-
-        if (rgb.r !== Math.round(this.r)) {
-          toSet.r = rgb.r;
-        }
-        if (rgb.g !== Math.round(this.g)) {
-          toSet.g = rgb.g;
-        }
-        if (rgb.b !== Math.round(this.b)) {
-          toSet.b = rgb.b;
-        }
-        this.setProperties(toSet);
-        this._debouncedSetValue();
-      }
-
-      _rgbChanged(r, g, b) {
-        if (isNaN(r) && isNaN(g) && isNaN(b)) {
-          return;
-        }
-        if (isNaN(this.r) || isNaN(this.g) || isNaN(this.b)) {
-          const rgb = this.randomRgb();
-          this.setProperties({
-            r: isNaN(this.r) ? rgb.r : this.r,
-            g: isNaN(this.g) ? rgb.g : this.g,
-            b: isNaN(this.b) ? rgb.b : this.b
-          });
-          return;
-        }
-
-        r = this._mathMod(this.format === 'hsl' ? r : Math.round(r), 256);
-        g = this._mathMod(this.format === 'hsl' ? g : Math.round(g), 256);
-        b = this._mathMod(this.format === 'hsl' ? b : Math.round(b), 256);
-
-        let toSet = {};
-        let hsl = this.rgbToHsl(r, g, b);
-
-        if (this.format === 'hsl') {
-          hsl.h = +hsl.h.toFixed(this.hslPrecision || 0);
-          hsl.s = +hsl.s.toFixed((this.hslPrecision || 0) + 2);
-          hsl.l = +hsl.l.toFixed((this.hslPrecision || 0) + 2);
-        }
-        if (hsl.h !== this.h) {
-          toSet.h = hsl.h;
-        }
-        if (hsl.s !== this.s) {
-          toSet.s = hsl.s;
-        }
-        if (hsl.l !== this.l) {
-          toSet.l = hsl.l;
-        }
-        if (r !== this.r) {
-          toSet.r = r;
-        }
-        if (g !== this.g) {
-          toSet.g = g;
-        }
-        if (b !== this.b) {
-          toSet.b = b;
-        }
-
-        const hex = this.rgbToHex(r, g, b);
-        if (hex !== this.hex) {
-          toSet.hex = hex;
-        }
-
-        this.setProperties(toSet);
-        this._debouncedSetValue();
-      }
-
-      _hslChanged(h, s, l) {
-        if (isNaN(h) && isNaN(s) && isNaN(l)) {
-          return;
-        }
-        if (isNaN(this.h) || isNaN(this.s) || isNaN(this.l)) {
-          const hsl = this.randomHsl();
-          this.setProperties({
-            h: isNaN(this.h) ? hsl.h : this.h,
-            s: isNaN(this.s) ? hsl.s : this.s,
-            l: isNaN(this.l) ? hsl.l : this.l
-          });
-          return;
-        }
-
-        h = this._mathMod(this.format !== 'hsl' ? h : +h.toFixed(this.hslPrecision || 0), 360);
-        s = this._normalizedClamp(this.format !== 'hsl' ? s : +s.toFixed((this.hslPrecision || 0) + 2));
-        l = this._normalizedClamp(this.format !== 'hsl' ? l : +l.toFixed((this.hslPrecision || 0) + 2));
-
-        let toSet = {};
-        const rgb = this.hslToRgb(h, s, l);
-
-        if (this.format !== 'hsl') {
-          rgb.r = Math.round(rgb.r);
-          rgb.g = Math.round(rgb.g);
-          rgb.b = Math.round(rgb.b);
-        }
-        if (rgb.r !== this.r) {
-          toSet.r = rgb.r;
-        }
-        if (rgb.g !== this.g) {
-          toSet.g = rgb.g;
-        }
-        if (rgb.b !== this.b) {
-          toSet.b = rgb.b;
-        }
-        if (h !== this.h) {
-          toSet.h = h;
-        }
-        if (s !== this.s) {
-          toSet.s = s;
-        }
-        if (l !== this.l) {
-          toSet.l = l;
-        }
-
-        this.setProperties(toSet);
-        this._debouncedSetValue();
       }
 
       /**
-       * generate random color
-       */
-      random() {
-        this.setProperties(this.randomRgb());
+       *  Sets value to the actual date
+       **/
+      now() {
+        this._setDate(new Date());
       }
 
-      /**
-       * generate random rgb-color
-       * @return {object} rgb-value object
-       */
-      randomRgb() {
-        return {
-          r: Math.round(255 * Math.random()),
-          g: Math.round(255 * Math.random()),
-          b: Math.round(255 * Math.random())
-        };
-      }
-
-      /**
-       * generate random hsl-color
-       * @return {object} rgb-value object
-       */
-      randomHsl() {
-        return {
-          h: Math.round(359 * Math.random()),
-          s: Math.random(),
-          l: Math.random()
-        };
-      }
-
-      hexToRgb(hex) {
-        if (hex === undefined) {
+      _computeDatetime(year, month, day, hours, minutes, seconds, milliseconds) {
+        if (this.__updatingTimezoneOffset) {
           return;
         }
-        hex = hex.replace(/[#\s]/g, '');
-        if (hex.length === 3) {
-          hex = hex.replace(/(.)(.)(.)/, "$1$1$2$2$3$3");
-        }
-
-        return {
-          r: parseInt(hex.substr(0, 2), 16),
-          g: parseInt(hex.substr(2, 2), 16),
-          b: parseInt(hex.substr(4, 2), 16)
-        };
-      }
-
-      rgbToHex(r, g, b) {
-        if (isNaN(r) || isNaN(g) || isNaN(b)) {
-          return;
-        }
-        return '#' + this._componentToHex(Math.round(r)) + this._componentToHex(Math.round(g)) + this._componentToHex(Math.round(b));
-      }
-
-      _componentToHex(component) {
-        const _hex = component.toString(16);
-        if (_hex.length === 1) {
-          return `0${_hex}`;
+        let d;
+        if (year === undefined || month === undefined || day === undefined || hours === undefined || minutes === undefined || seconds === undefined || milliseconds === undefined) {
+          d = new Date(this.value !== undefined ? this.value : this.datetime || ((this.date || this._toDate(new Date())) + 'T' + (this.time || '00:00') + (this.timezone || 'Z')));
+          if (isNaN(d)) {
+            d = new Date();
+          }
+          if (year !== undefined) {
+            d.setFullYear(year);
+          }
+          if (month !== undefined) {
+            d.setMonth(month - 1);
+          }
+          if (day !== undefined) {
+            d.setDate(day);
+          }
+          d.setHours(hours || 0);
+          d.setMinutes(minutes || 0);
+          d.setSeconds(seconds || 0);
+          d.setMilliseconds(milliseconds || 0);
         } else {
-          return _hex.slice(0, 2);
+          d = new Date(year, month - 1, day, hours, minutes, seconds, milliseconds);
+          d.setFullYear(year);
         }
+        const localTimezoneOffset = d.getTimezoneOffset();
+        if (this._recentLocalTimezoneOffset === undefined) {
+          this._recentLocalTimezoneOffset = localTimezoneOffset;
+        }
+        if (this._timezoneOffset === undefined) {
+          this.__updatingTimezoneOffset = true;
+          this.setProperties(this._computeTimezone(localTimezoneOffset));
+          this.__updatingTimezoneOffset = false;
+        }
+        if (this._recentLocalTimezoneOffset !== localTimezoneOffset) {
+          this.__updatingTimezoneOffset = true;
+          // fixing offset when an inner shift occures (e.g. summer- or wintertime)
+          this.setProperties(this._computeTimezone(this._timezoneOffset - this._recentLocalTimezoneOffset + localTimezoneOffset));
+          this._recentLocalTimezoneOffset = localTimezoneOffset;
+          this.__updatingTimezoneOffset = false;
+        }
+        d.setMinutes(d.getMinutes() + this._timezoneOffset - localTimezoneOffset);
+        this._setDate(d);
       }
 
-      hslToRgb(h, s, l) { // not rounded yet
-        if (isNaN(h) || isNaN(s) || isNaN(l)) {
+      _dateTimeChanged(date, time) {
+        if (this.__updatingTimezoneOffset) {
           return;
         }
-        const t2 = ((l <= 0.5) ? l * (s + 1) : l + s - (l * s)) * 255,
-          t1 = l * 2 * 255 - t2;
-        return {
-          r: this.hueToComponent(t1, t2, h + 120),
-          g: this.hueToComponent(t1, t2, h),
-          b: this.hueToComponent(t1, t2, h - 120)
-        };
+        this.datetime = (date || '1970-01-01') + 'T' + (time || '00:00') + (this.timezone || '');
       }
 
-      hueToComponent(t1, t2, h) {
-        if (h < 0) h += 360;
-        if (h >= 360) h -= 360;
-        if (h < 60) return (((t2 - t1) * h) / 60 + t1);
-        else if (h < 180) return t2;
-        else if (h < 240) return (((t2 - t1) * (240 - h)) / 60 + t1);
-        else return t1;
-      }
-
-      rgbToHsl(r, g, b) {
-        if (isNaN(r) || isNaN(g) || isNaN(b)) {
+      _datetimeChanged(datetime) {
+        if (typeof datetime === 'object') {
+          // 'date' is a Date Object
+          this._recentLocalTimezoneOffset = datetime.getTimezoneOffset();
+          this._setDate(datetime);
           return;
         }
-        const max = Math.max(r, g, b),
-          min = Math.min(r, g, b);
 
-        const l = (max + min) / (2 * 255);
-        const _c = max - min; // not-normalized chroma (for precision)
-
-        if (_c === 0) {
-          return [0, 0, l];
+        let d;
+        const match = this._regexpDatetime.exec(datetime);
+        if (match === null) {
+          return;
+        }
+        if (match[3] === undefined) {
+          d = new Date(match[1] + 'T' + match[2] + 'Z');
+          if (this._timezoneOffset === undefined) {
+            this.__updatingTimezoneOffset = true;
+            this.setProperties(this._computeTimezone(d.getTimezoneOffset()));
+            this.__updatingTimezoneOffset = false;
+          }
+          d.setMinutes(d.getMinutes() + this._timezoneOffset);
+        } else {
+          d = new Date(match[0]);
+          if (match[3] !== this.timezone) {
+            this.__updatingTimezoneOffset = true;
+            this.setProperties(this._computeTimezoneOffset(match[3]));
+            this.__updatingTimezoneOffset = false;
+          }
         }
 
-        const s = _c / (255 - Math.abs(max + min - 255));
-        let h;
-        switch (max) {
-          case r:
-            h = ((g - b) * 60) / _c;
-            break;
-          case g:
-            h = (((b - r) * 60) / _c) + 120;
-            break;
-          case b:
-            h = (((r - g) * 60) / _c) + 240;
-            break;
+        if (!isNaN(d)) {
+          this._recentLocalTimezoneOffset = d.getTimezoneOffset();
+          this._setDate(d);
         }
+      }
+
+      _valueChanged(value) {
+        if (!isNaN(value)) {
+          const d = typeof value === 'object' ? value : new Date(+value);
+          this._setDate(d);
+        } else {
+          this._setDate(new Date(this.datetime + this.timezone));
+        }
+      }
+
+      /**
+       * [_setDate sets date to all necessary properties]
+       * @param {[Date]} d [the date to set]
+       */
+      _setDate(d) {
+        if (!isNaN(d)) {
+          d = this._checkThreshold(d);
+
+          const value = +d;
+
+          if (this.value !== value) {
+            this.value = value;
+            return;
+          }
+
+          this._recentLocalTimezoneOffset = d.getTimezoneOffset();
+          if (this._timezoneOffset === undefined) {
+            this.__updatingTimezoneOffset = true;
+            this.setProperties(this._computeTimezone(this._recentLocalTimezoneOffset));
+            this.__updatingTimezoneOffset = false;
+          }
+          d.setMinutes(d.getMinutes() - this._timezoneOffset + this._recentLocalTimezoneOffset);
+
+          d = this._clamp(d, this.clamp);
+
+          const year = d.getFullYear(),
+            month = d.getMonth() + 1,
+            day = d.getDate(),
+            hours = d.getHours(),
+            minutes = d.getMinutes(),
+            seconds = d.getSeconds(),
+            milliseconds = d.getMilliseconds();
+
+          if (year !== this.year || month !== this.month || day !== this.day || hours !== this.hours || minutes !== this.minutes || milliseconds !== this.milliseconds) {
+            this.setProperties({
+              year: year,
+              month: month,
+              day: day,
+              hours: hours,
+              minutes: minutes,
+              seconds: seconds,
+              milliseconds: milliseconds
+            });
+            return;
+          }
+
+          const date = this._toDate(d),
+            time = this._dateLocked ? '00:00' : this._toTime(d),
+            datetime = date + 'T' + time + this.timezone;
+
+          if (this.datetime !== datetime || this.time !== time || this.date !== date) {
+            this.setProperties({
+              datetime: datetime,
+              date: date,
+              time: time
+            });
+          }
+        } else if (!isNaN(d = new Date(this.default))) {
+          this._setDate(d);
+        } else if (!isNaN(this.value)) {
+          this._valueChanged(this.value);
+        }
+      }
+
+      _clamp(d, clamp) {
+        switch (clamp) {
+          case 'year':
+          case 'month':
+            d.setMonth(0); // falls through
+          case 'day':
+            d.setDate(1); // falls through
+          case 'hours':
+            d.setHours(0); // falls through
+          case 'minutes':
+            d.setMinutes(0); // falls through
+          case 'seconds':
+            d.setSeconds(0); // falls through
+          case 'milliseconds':
+            d.setMilliseconds(0);
+        }
+        return d;
+      }
+
+      _pad(n, padLength) {
+        const sign = n < 0 ? '-' : '';
+        let str = '' + Math.abs(n);
+        while (str.length < padLength)
+          str = '0' + str;
+        return sign + str;
+      }
+
+      _fromDatetime(datetime) {
+        if (datetime === undefined) {
+          return;
+        }
+        if (typeof datetime === 'object' && datetime.getDate) {
+          // 'datetime' is a Date Object
+          return datetime;
+        }
+        if (typeof datetime === 'number' && !isNaN(datetime)) {
+          // 'datetime' is a number
+          return new Date(datetime);
+        }
+        let d;
+        const match = this._regexpDatetime.exec(datetime);
+        if (match) {
+          if (match[3] !== undefined) {
+            d = new Date(match[0]);
+          } else if (match[2] !== undefined) {
+
+          } else {
+            d = new Date(match[1] + 'T' + (match[2] || '00:00') + 'Z');
+            d.setMinutes(d.getMinutes() + d.getTimezoneOffset());
+          }
+        }
+        return d;
+      }
+
+      _minChanged(min) {
+        const d = this._fromDatetime(min);
+        if (isNaN(d)) {
+          return;
+        }
+        const max = this.max && this._fromDatetime(this.max);
+        if (d > max) {
+          this.setProperties({
+            min: this.max,
+            max: min
+          });
+          return;
+        }
+        this._min = d;
+        if (!isNaN(this.value)) {
+          this.value = +this._checkThreshold(new Date(this.value));
+        }
+      }
+
+      _maxChanged(max) {
+        const d = this._fromDatetime(max);
+        if (isNaN(d)) {
+          return;
+        }
+        const min = this.min && this._fromDatetime(this.min);
+        if (min > d) {
+          this.setProperties({
+            min: max,
+            max: this.min
+          });
+          return;
+        }
+        this._max = d;
+        if (!isNaN(this.value)) {
+          this.value = +this._checkThreshold(new Date(this.value));
+        }
+      }
+
+      _checkThreshold(d) {
+        if (this._min > d) {
+          return new Date(this._min);
+        }
+        if (this._max < d) {
+          return new Date(this._max);
+        }
+        return d;
+      }
+
+      _toDate(d) {
+        const year = d.getFullYear();
+        return this._pad(year, year < 0 ? 6 : 4) + '-' + this._pad(d.getMonth() + 1, 2) + '-' + this._pad(d.getDate(), 2);
+      }
+
+      _toTime(d) {
+        return this._pad(d.getHours(), 2) + ':' + this._pad(d.getMinutes(), 2) + ':' + this._pad(d.getSeconds(), 2) + '.' + this._pad(d.getMilliseconds(), 3);
+      }
+
+      _hoursChanged(hours) {
+        this.isAm = hours < 12;
+        this.hours12 = (hours === 0) ? 12 : (hours > 12 ? hours - 12 : hours);
+      }
+
+      _hours12Changed(hours12) {
+        this.hours = (hours12 === 12) ? (this.isAm ? 0 : 12) : (this.isAm ? hours12 : hours12 + 12);
+      }
+
+      _isAmChanged(isAm) {
+        if (isAm === undefined) return;
+
+        if (this.hours >= 12 && isAm === true) {
+          this.hours -= 12;
+        } else if (this.hours <= 12 && isAm === false) {
+          this.hours += 12;
+        }
+      }
+
+      /**
+       * clamp to date component
+       * @param  {string} clamp 'clamp'-property
+       * @param  {string} comp the property to compare to
+       * @return {boolean}     true when should be hidden
+       */
+      _ifClamped(clamp, comp) {
+        const features = ['month', 'day', 'hours', 'minutes', 'seconds', 'milliseconds'];
+        const pos = features.indexOf(clamp);
+        const index = features.indexOf(comp);
+        return pos !== -1 && index !== -1 && pos <= index;
+      }
+
+      _localeChanged(locale) {
+        if (!locale) {
+          this.locale = window.navigator.language;
+          return;
+        }
+        // test locale (currently just for Latin letters and Western Arabic/European numerals)
+        locale += '-u-nu-latn-ca-iso8601';
+
+        let date = new Date(1970, 10, 15, 6, 24, 25);
+
+        // check date
+        const dateString = date.toLocaleDateString(locale, {
+          year: 'numeric',
+          month: 'numeric',
+          day: 'numeric'
+        });
+
+        // date separator
+        const dateSeparator = dateString.split(/\d+/g).filter(Boolean).pop();
+
+        // order of the date parts
+        let parts = dateString.match(/\d+/g);
+        parts.splice(1, 0, '');
+        parts.splice(3, 0, '');
+
+        let order = {};
+        order.year = parts.indexOf('1970') + 1;
+        order.month = parts.indexOf('11') + 1;
+        order.day = parts.indexOf('15') + 1;
+        order.separatorYearMonth = order.year > order.month ? order.year - 1 : order.month - 1;
+        order.separatorMonthDay = order.month > order.day ? order.month - 1 : order.day - 1;
+
+        // check time
+        let timeString = date.toLocaleTimeString(locale, {
+          hour: 'numeric',
+          minute: 'numeric',
+          second: 'numeric',
+          hour12: false
+        });
+
+        // time separator
+        const timeSeparator = timeString.split(/\d/g).filter(s => {
+          return s !== '';
+        }).pop();
+
+        // am-string
+        timeString = date.toLocaleTimeString(locale, {
+          hour: 'numeric',
+          minute: 'numeric',
+          second: 'numeric',
+          hour12: true
+        });
+        const am = timeString.split(/\d/g).filter(s => {
+          return /[^\s:|\/,;\.]{1}/.test(s);
+        }).pop();
+
+        // pm-string
+        date = new Date(1970, 10, 15, 18, 24, 25);
+        timeString = date.toLocaleTimeString(locale, {
+          hour: 'numeric',
+          minute: 'numeric',
+          second: 'numeric',
+          hour12: true
+        });
+        const pm = timeString.split(/\d/g).filter(s => {
+          return /[^\s:|\/,;\.]{1}/.test(s);
+        }).pop();
+
+        // decimal separator
+        let decimalSeparator = new Intl.NumberFormat(locale).format(1.2).split(/\d/g).filter(s => {
+          return s !== '';
+        }).pop();
+
+        this.setProperties({
+          _orderDate: order,
+          _localDateSeparator: dateSeparator,
+          _localTimeSeparator: timeSeparator,
+          _localDecimalSeparator: decimalSeparator,
+          _am: am,
+          _pm: pm
+        });
+      }
+
+      _timezoneChanged(timezone, oldValue) {
+        if (!(this._regexpTimezone.exec(timezone))) {
+          if (this._regexpTimezone.exec(oldValue)) {
+            this.setProperties(this._computeTimezoneOffset(oldValue));
+            return;
+          }
+          this.setProperties(this._computeTimezone((this.value === undefined ? new Date() : new Date(this.value)).getTimezoneOffset()));
+          return;
+        }
+        if (this.__updatingTimezoneOffset) {
+          return;
+        }
+
+        const toSet = this._computeTimezoneOffset(timezone);
+        if (toSet._timezoneOffset !== this._timezoneOffset) {
+          this.__updatingTimezoneOffset = true;
+          this.setProperties(this._computeTimezoneOffset(timezone));
+          this.__updatingTimezoneOffset = false;
+        }
+      }
+
+      _timezoneOffsetChanged(offsetMinutes, oldTimezoneOffset) {
+        if (offsetMinutes === undefined) {
+          return;
+        }
+        if (this.__updatingTimezoneOffset) {
+          return;
+        }
+        this.setProperties(this._computeTimezone(offsetMinutes));
+      }
+
+      _timeZoneHoursMinutesChanged(hours, minutes) {
+        if (hours === undefined || minutes === undefined) {
+          return;
+        }
+        const offsetMinutes = -Math.sign(hours)*(Math.abs(hours) * 60 + minutes),
+          timezone = (hours >= 0 ? '+' : '') + this._pad(hours, 2) + ':' + this._pad(minutes, 2);
+        if (offsetMinutes !== this._timezoneOffset) {
+          this.__updatingTimezoneOffset = true;
+          this.setProperties({
+            _timezoneOffset: offsetMinutes,
+            timezone: timezone
+          });
+          this.__updatingTimezoneOffset = false;
+        } else if (this.timezone !== timezone) {
+          this.timezone = timezone;
+        }
+        if (this.date && this.time) {
+          this.datetime = this.date + 'T' + this.time + this.timezone;
+        }
+      }
+
+      _computeTimezone(offsetMinutes) { // offset in minutes
+        if (offsetMinutes === undefined) {
+          return {};
+        } else if (offsetMinutes === 0) {
+          return {
+            _timezoneOffset: 0,
+            _timeZoneHours: 0,
+            _timeZoneMinutes: 0,
+            timezone: '+00:00'
+          };
+        }
+        const hours = -Math.sign(offsetMinutes)*Math.floor(Math.abs(offsetMinutes) / 60),
+        minutes = Math.abs(offsetMinutes) % 60;
         return {
-          h: h,
-          s: s,
-          l: l
-        };
+          _timezoneOffset: offsetMinutes,
+          _timeZoneHours: hours,
+          _timeZoneMinutes: minutes,
+          timezone: (hours >= 0 ? '+' : '') + this._pad(hours, 2) + ':' + this._pad(minutes, 2)
+        }
       }
 
-      _mathMod(dividend, divisor) {
-        return ((dividend % divisor) + divisor) % divisor;
+      _computeTimezoneOffset(timezone) {
+        if (timezone === 'Z') {
+          return {
+            _timezoneOffset: 0,
+            _timeZoneHours: 0,
+            _timeZoneMinutes: 0,
+            timezone: '+00:00'
+          };
+        }
+        const match = this._regexpTimezone.exec(timezone);
+        if (match) {
+          const hours = +match[1],
+            minutes = +match[2];
+          return {
+            _timezoneOffset: -Math.sign(hours)*(Math.abs(hours) * 60 + minutes),
+            _timeZoneHours: hours,
+            _timeZoneMinutes: minutes,
+            timezone: timezone
+          };
+        }
       }
 
-      _normalizedClamp(n) {
-        return n > 1 ? 1 : n < 0 ? 0 : n;
+      _computeMaxDayOfMonth(year, month) {
+        const d = new Date(year, month, 0);
+        d.setFullYear(year);
+
+        if (!isNaN(+d)) {
+          return d.getDate();
+        }
+        return 31;
       }
     }
   }
 
-  window.ColorMixin = ColorMixin;
+  window.DatetimeMixin = DatetimeMixin;
 </script>

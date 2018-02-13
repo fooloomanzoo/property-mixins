@@ -334,8 +334,9 @@
         if (this.__updatingTimezoneOffset) {
           return;
         }
-        let d;
-        if (year === undefined || month === undefined || day === undefined || hours === undefined || minutes === undefined || seconds === undefined || milliseconds === undefined) {
+        if (year === undefined && month === undefined && day === undefined && hours === undefined && minutes === undefined && seconds === undefined && milliseconds === undefined) {
+          return;
+        } else if (year === undefined || month === undefined || day === undefined || hours === undefined || minutes === undefined || seconds === undefined || milliseconds === undefined) {
           d = new Date(this.value !== undefined ? this.value : this.datetime || ((this.date || this._toDate(new Date())) + 'T' + (this.time || '00:00') + (this.timezone || 'Z')));
           if (isNaN(d)) {
             d = new Date();
@@ -381,10 +382,17 @@
         if (this.__updatingTimezoneOffset) {
           return;
         }
+        if (date === undefined && tiem === undefined) {
+          return;
+        }
         this.datetime = (date || '1970-01-01') + 'T' + (time || '00:00') + (this.timezone || '');
       }
 
       _datetimeChanged(datetime) {
+        if (datetime === undefined) {
+          return;
+        }
+
         if (typeof datetime === 'object') {
           // 'date' is a Date Object
           this._recentLocalTimezoneOffset = datetime.getTimezoneOffset();
@@ -421,6 +429,9 @@
       }
 
       _valueChanged(value) {
+        if (value === undefined) {
+          return;
+        }
         if (!isNaN(value)) {
           const d = typeof value === 'object' ? value : new Date(+value);
           this._setDate(d);
