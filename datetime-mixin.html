@@ -334,6 +334,7 @@
         if (this.__updatingTimezoneOffset) {
           return;
         }
+        let d;
         if (year === undefined && month === undefined && day === undefined && hours === undefined && minutes === undefined && seconds === undefined && milliseconds === undefined) {
           if (this.value !== undefined) {
             this._setDate(new Date(this.value));
