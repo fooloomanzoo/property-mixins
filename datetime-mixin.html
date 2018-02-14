@@ -478,7 +478,6 @@
       _setDate(d) {
         if (!isNaN(d)) {
           d = this._checkThreshold(d);
-
           const value = +d;
 
           if (this.value !== value) {
@@ -690,10 +689,8 @@
             hours12: undefined
           })
         }
-        this.setProperties({
-          isAm: hours < 12,
-          hours12: (hours === 0) ? 12 : (hours > 12 ? hours - 12 : hours)
-        })
+        this.isAm = hours < 12;
+        this.hours12 = (hours === 0) ? 12 : (hours > 12 ? hours - 12 : hours);
       }
 
       _hours12Changed(hours12) {
