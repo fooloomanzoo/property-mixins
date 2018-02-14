@@ -343,7 +343,12 @@
           }
           return;
         } else if (year === undefined || month === undefined || day === undefined || hours === undefined || minutes === undefined || seconds === undefined || milliseconds === undefined) {
-          d = new Date(this.value !== undefined ? this.value : this.datetime || ((this.date || this._toDate(new Date())) + 'T' + (this.time || this._toTime(new Date()).slice(0, 5)) + (this.timezone || 'Z')));
+          if (this.timezone === undefined) {
+            this.__updatingTimezoneOffset = true;
+            this.setProperties(this._computeTimezone(new Date().getTimezoneOffset()));
+            this.__updatingTimezoneOffset = false;
+          }
+          d = new Date(this.value !== undefined ? this.value : this.datetime || ((this.date || this._toDate(new Date())) + 'T' + (this.time || this._toTime(new Date()).slice(0, 5)) + this.timezone));
           if (isNaN(d)) {
             d = new Date();
           }
@@ -373,19 +378,14 @@
           d.setFullYear(year);
         }
         const localTimezoneOffset = d.getTimezoneOffset();
-        if (this._recentLocalTimezoneOffset === undefined) {
-          this._recentLocalTimezoneOffset = localTimezoneOffset;
-        }
         if (this._timezoneOffset === undefined) {
           this.__updatingTimezoneOffset = true;
-          if (this.timezone) {
-            this.setProperties(this._computeTimezoneOffset(this.timezone));
-          } else {
-            this.setProperties(this._computeTimezone(localTimezoneOffset));
-          }
+          this.setProperties(this._computeTimezoneOffset(this.timezone));
           this.__updatingTimezoneOffset = false;
         }
-        if (this._recentLocalTimezoneOffset !== localTimezoneOffset) {
+        if (this._recentLocalTimezoneOffset === undefined) {
+          this._recentLocalTimezoneOffset = localTimezoneOffset;
+        } else if (this._recentLocalTimezoneOffset !== localTimezoneOffset) {
           this.__updatingTimezoneOffset = true;
           // fixing offset when an inner shift occures (e.g. summer- or wintertime)
           this.setProperties(this._computeTimezone(this._timezoneOffset - this._recentLocalTimezoneOffset + localTimezoneOffset));
