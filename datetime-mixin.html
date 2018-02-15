@@ -478,6 +478,17 @@
       _setDate(d) {
         if (!isNaN(d)) {
           d = this._checkThreshold(d);
+
+          const localTimezoneOffset = d.getTimezoneOffset();
+
+          if (this._timezoneOffset === undefined || this._recentLocalTimezoneOffset !== localTimezoneOffset) {
+            // noticing the possible timezone shift by the threshold check
+            this.__updatingTimezoneOffset = true;
+            this.setProperties(this._computeTimezone(localTimezoneOffset));
+            this.__updatingTimezoneOffset = false;
+          }
+          this._recentLocalTimezoneOffset = localTimezoneOffset;
+
           const value = +d;
 
           if (this.value !== value) {
@@ -485,12 +496,6 @@
             return;
           }
 
-          this._recentLocalTimezoneOffset = d.getTimezoneOffset();
-          if (this._timezoneOffset === undefined) {
-            this.__updatingTimezoneOffset = true;
-            this.setProperties(this._computeTimezone(this._recentLocalTimezoneOffset));
-            this.__updatingTimezoneOffset = false;
-          }
           d.setMinutes(d.getMinutes() - this._timezoneOffset + this._recentLocalTimezoneOffset);
 
           d = this._clamp(d, this.clamp);
