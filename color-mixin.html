@@ -1,141 +1,563 @@
-<link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../number-input/number-input.html">
-<link rel="import" href="../number-input/integer-input.html">
-<link rel="import" href="../text-input/text-input.html">
-<link rel="import" href="color-text-input.html">
-
 <script>
   /**
-   * Mixin for color-input
-   *
-   * @appliesMixin ColorTextInputPattern
+   * Mixin that provides web-color-properties. Its value converts automatically beetween different formats (hex, rgb and hsl) and provides an alpha-value.
    *
    * @mixinFunction
    * @polymer
    */
-  const ColorInputPattern = (superClass) => class extends ColorTextInputPattern(superClass) { // eslint-disable-line no-unused-vars, no-undef
+  const ColorMixin = (superClass) => { // eslint-disable-line no-unused-vars no-undef
 
-    static get customStyleContent() {
-      return `
-        ${super.customStyleContent || ''}
-        number-input,
-        integer-input {
-          align-self: stretch;
-        }
-        label {
-          margin-left: 0.4em;
-        }
-        number-input,
-        integer-input {
-          margin-left: 0.2em;
-        }
-      `;
-    }
+    return class extends superClass {
 
-    static get colorInputTemplate() {
-      return `
-        <div id="colorInput">
-          ${super.colorBadgeTemplate || ''}
-          <template is="dom-if" if="[[_equals(format, 'hex')]]" restamp>
-            <text-input id="valueInput" default="{{default}}" value="{{value}}" pattern="[[_hexPatternString]]" placeholder="#000" minlength="7"></text-input>
-          </template>
-          <template is="dom-if" if="[[_equals(format, 'rgb')]]" restamp>
-            <label>r:</label>
-            <integer-input title="red" value="{{r}}" min="0" max="255" minlength="3"></integer-input>
-            <label>g:</label>
-            <integer-input title="green" value="{{g}}" min="0" max="255" minlength="3"></integer-input>
-            <label>b:</label>
-            <integer-input title="blue" value="{{b}}" min="0" max="255" minlength="3"></integer-input>
-            <label>a:</label>
-            <number-input title="alpha" value="{{alpha}}" default="1" min="0" max="1" saturate no-clamp placeholder="1.00" step="0.01" minlength="3.5"></number-input>
-          </template>
-          <template is="dom-if" if="[[_equals(format, 'hsl')]]" restamp>
-            <label>h:</label>
-            <number-input title="hue" placeholder="0" min="0" max="359" minlength="3" step="[[_hslStep]]" value="{{h}}"></number-input>
-            <label>s:</label>
-            <number-input title="saturation" placeholder="100\u202F%" minlength="2.5" in-percent saturate min="0" max="1" step="[[_hslPercentStep]]" start-at="1" value="{{s}}"></number-input>
-            <label>l:</label>
-            <number-input title="lightness" placeholder="100\u202F%" minlength="2.5" in-percent saturate min="0" max="1" step="[[_hslPercentStep]]" start-at="0.5" value="{{l}}"></number-input>
-            <label>a:</label>
-            <number-input title="alpha" value="{{alpha}}" default="1" min="0" max="1" saturate no-clamp step="0.01" placeholder="1.00" start-at="1" minlength="3.5"></number-input>
-          </template>
-        </div>
-      `
-    }
+      constructor() {
+        super();
+        this._validFormats = ['rgb', 'hex', 'hsl'];
+      }
 
-    static get properties() {
-      return {
+      static get properties() {
+        return {
+          /**
+           * Hex-color
+           */
+          hex: {
+            type: String,
+            notify: true,
+            observer: '_hexChanged'
+          },
+          /**
+           * Red
+           */
+          r: {
+            type: Number,
+            notify: true
+          },
+          /**
+           * Green
+           */
+          g: {
+            type: Number,
+            notify: true
+          },
+          /**
+           * Blue
+           */
+          b: {
+            type: Number,
+            notify: true
+          },
+          /**
+           * Hue
+           */
+          h: {
+            type: Number,
+            notify: true
+          },
+          /**
+           * Saturation (hsl)
+           */
+          s: {
+            type: Number,
+            notify: true
+          },
+          /**
+           * Lightness
+           */
+          l: {
+            type: Number,
+            notify: true
+          },
+          /**
+           * Alpha
+           */
+          alpha: {
+            type: Number,
+            notify: true,
+            value: 1,
+            observer: '_alphaChanged'
+          },
 
-        _hexPatternString: {
-          type: String,
-          computed: '_computeHexPatternString(_validateHex)'
-        },
+          /**
+           * if true, value has alpha
+           */
+          alphaMode: {
+            type: Boolean,
+            notify: true,
+            observer: '_alphaModeChanged'
+          },
+          /**
+           * Precision of hsl-values, if the format is 'hsl' (for saturation and lightness it is applied according to their percentage value)
+           */
+          hslPrecision: {
+            type: Number,
+            value: 0
+          },
+          /**
+           * format of the value (possible values: 'rgb', 'hex', 'hsl')
+           */
+          format: {
+            type: String,
+            notify: true,
+            value: 'hex',
+            observer: '_formatChanged'
+          },
+          /**
+           * hex-color
+           */
+          value: {
+            type: String,
+            notify: true,
+            observer: '_valueChanged'
+          },
 
-        _hslStep: {
-          type: Number,
-          computed: '_computeHslStep(hslPrecision)'
-        },
+          _validateHex: {
+            type: RegExp,
+            readOnly: true,
+            value: /^\s*(?:(#(?:[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3}))|rgba\(\s*(#(?:[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3}))\s*,\s*(-?\d*(?:\.(?:\d*)?)?)\s*\))\s*$/
+          },
 
-        _hslPercentStep: {
-          type: Number,
-          computed: '_computeHslPercentStep(hslPrecision)'
+          _validateRgb: {
+            type: RegExp,
+            readOnly: true,
+            value: /^\s*rgb(a)?\(\s*(-?\d+)\s*,\s*(-?\d+)\s*,\s*(-?\d+)(?:\s*,\s*(-?\d*(?:\.(?:\d*)?)?))?\s*\)\s*$/
+          },
+
+          _validateHsl: {
+            type: RegExp,
+            readOnly: true,
+            value: /^\s*hsl(a)?\(\s*(-?\d+(?:\.\d*)?)\s*,\s*(-?\d*(?:\.(?:\d*)?)?%?)\s*,\s*(-?\d*(?:\.(?:\d*)?)?%?)(?:\s*,\s*(-?\d*(?:\.(?:\d*)?)?))?\s*\)\s*$/
+          },
+
+          _validatePercent: {
+            type: RegExp,
+            readOnly: true,
+            value: /(-?\d*(?:\.(?:\d*)?)?)%/
+          }
+
         }
       }
-    }
 
-    _equals(a, b) {
-      return a === b;
-    }
+      static get observers() {
+        return [
+          '_rgbChanged(r, g, b)',
+          '_hslChanged(h, s, l)'
+        ];
+      }
 
-    _computeHexPatternString(_validateHex) {
-      return _validateHex.toString().slice(1,-1);
-    }
+      _alphaModeChanged(alphaMode) {
+        if (alphaMode !== true) {
+          this.alpha = 1;
+        }
+      }
 
-    _computeHslStep(hslPrecision) {
-      return Math.pow(10, -hslPrecision);
-    }
+      _formatChanged(format, oldFormat) {
+        if (format === undefined) {
+          return;
+        }
+        if (this._validFormats.indexOf(format) === -1) {
+          if (oldFormat && this._validFormats.indexOf(oldFormat) !== -1) {
+            this.format = oldFormat;
+            return;
+          }
+          this.format = 'hex';
+          return;
+        }
+        this._debouncedSetValue();
+      }
 
-    _computeHslPercentStep(hslPrecision) {
-      return Math.pow(10, -(hslPrecision + 2));
-    }
+      _valueChanged(value, oldValue) {
+        if (value === undefined) return;
 
+        let toSet = {},
+          match,
+          format;
+        // input-format detection
+        // hsl-format
+        if (match = value.match(this._validateHsl)) {
+          if (match[1] === undefined) { // no alpha
+            toSet.alpha = 1;
+            toSet.alphaMode = false;
+          } else { // with alpha
+            toSet.alpha = this._normalizedClamp(+match[5]);
+            toSet.alphaMode = true;
+          }
+          toSet.h = this._mathMod(+match[2], 360);
+          let matchPercent;
+          if (matchPercent = match[3].match(this._validatePercent)) { // s in percentage value
+            toSet.s = this._normalizedClamp(+matchPercent[1] * 0.01);
+          } else {
+            toSet.s = this._normalizedClamp(+match[3]);
+          }
+          if (matchPercent = match[4].match(this._validatePercent)) { // l in percentage value
+            toSet.l = this._normalizedClamp(+matchPercent[1] * 0.01);
+          } else {
+            toSet.l = this._normalizedClamp(+match[4]);
+          }
+          if (this.format !== 'hsl') {
+            format = 'hsl';
+          } else {
+            toSet.h = +toSet.h.toFixed(this.hslPrecision || 0);
+            toSet.s = +toSet.s.toFixed((this.hslPrecision || 0) + 2);
+            toSet.l = +toSet.l.toFixed((this.hslPrecision || 0) + 2);
+          }
+        // hex-format
+        } else if (match = value.match(this._validateHex)) {
+          if (match[1] !== undefined) { // no alpha
+            toSet.hex = match[1];
+            toSet.alpha = 1;
+            toSet.alphaMode = false;
+          } else { // with alpha
+            toSet.hex = match[2];
+            toSet.alpha = this._normalizedClamp(+match[3]);
+            toSet.alphaMode = true;
+          }
+          if (this.format !== 'hex') {
+            format = 'hex';
+          }
+        // rgb-format
+        } else if (match = value.match(this._validateRgb)) {
+          if (match[1] === undefined) { // no alpha
+            toSet.alpha = 1;
+            toSet.alphaMode = false;
+          } else { // with alpha
+            toSet.alpha = this._normalizedClamp(+match[5]);
+            toSet.alphaMode = true;
+          }
+          toSet.r = this._mathMod(+match[2], 256);
+          toSet.g = this._mathMod(+match[3], 256);
+          toSet.b = this._mathMod(+match[4], 256);
+          if (this.format !== 'rgb') {
+            format = 'rgb';
+          } else {
+            toSet.r = Math.round(toSet.r);
+            toSet.g = Math.round(toSet.g);
+            toSet.b = Math.round(toSet.b);
+          }
+        }
+        if (!match && oldValue !== undefined) {
+          this._valueChanged(oldValue);
+          return;
+        }
+        if (format && this.format !== format) {
+          toSet.format = format;
+        }
+        this.setProperties(toSet);
+      }
+
+      _debouncedSetValue() {
+        if (this._activeSetValueJob) {
+          window.cancelAnimationFrame(this._activeSetValueJob);
+        }
+        this._activeSetValueJob = window.requestAnimationFrame(this._setValue.bind(this))
+      }
+
+      _setValue() {
+        switch (this.format) {
+          case 'hsl':
+            if (!isNaN(this.h) && !isNaN(this.s) && !isNaN(this.l)) {
+              if (this.alphaMode === true) {
+                this.value = `hsla(${+this.h.toFixed(this.hslPrecision || 0)}, ${+(this.s*100).toFixed(this.hslPrecision || 0)}%, ${+(this.l*100).toFixed(this.hslPrecision || 0)}%, ${this.alpha === undefined ? 0 : this.alpha})`;
+              } else {
+                this.value = `hsl(${+this.h.toFixed(this.hslPrecision || 0)}, ${+(this.s*100).toFixed(this.hslPrecision || 0)}%, ${+(this.l*100).toFixed(this.hslPrecision || 0)}%)`;
+              }
+            }
+            break;
+          case 'rgb':
+            if (!isNaN(this.r) && !isNaN(this.g) && !isNaN(this.b)) {
+              if (this.alphaMode === true) {
+                this.value = `rgba(${Math.round(this.r)}, ${Math.round(this.g)}, ${Math.round(this.b)}, ${this.alpha === undefined ? 0 : this.alpha})`;
+              } else {
+                this.value = `rgb(${Math.round(this.r)}, ${Math.round(this.g)}, ${Math.round(this.b)})`;
+              }
+            }
+            break;
+          case 'hex':
+          default:
+            if (this.alpha === 1 && this.hex !== undefined) {
+              this.value = this.hex;
+            } else if (this.r !== undefined && this.g !== undefined && this.b !== undefined) {
+              this.value = `rgba(${Math.round(this.r)}, ${Math.round(this.g)}, ${Math.round(this.b)}, ${this.alpha === undefined ? 0 : this.alpha})`;
+            }
+        }
+      }
+
+      _alphaChanged(alpha, oldAlpha) {
+        if (isNaN(alpha)) {
+          this.alpha = 1;
+          return;
+        }
+        if (alpha > 1) {
+          if (oldAlpha !== undefined) {
+            this.alpha = oldAlpha;
+            return;
+          }
+          this.alpha = 1;
+          return;
+        }
+        if (alpha < 0) {
+          if (oldAlpha !== undefined) {
+            this.alpha = oldAlpha;
+            return;
+          }
+          this.alpha = 0;
+          return;
+        }
+        if (alpha !== 1) {
+          this.alphaMode = true;
+        }
+        this._debouncedSetValue();
+      }
+
+      _hexChanged(hex) {
+        if (hex === undefined) {
+          return;
+        }
+        let toSet = {};
+        const rgb = this.hexToRgb(hex);
+
+        if (rgb.r !== Math.round(this.r)) {
+          toSet.r = rgb.r;
+        }
+        if (rgb.g !== Math.round(this.g)) {
+          toSet.g = rgb.g;
+        }
+        if (rgb.b !== Math.round(this.b)) {
+          toSet.b = rgb.b;
+        }
+        this.setProperties(toSet);
+        this._debouncedSetValue();
+      }
+
+      _rgbChanged(r, g, b) {
+        if (isNaN(r) && isNaN(g) && isNaN(b)) {
+          return;
+        }
+        if (isNaN(this.r) || isNaN(this.g) || isNaN(this.b)) {
+          const rgb = this.randomRgb();
+          this.setProperties({
+            r: isNaN(this.r) ? rgb.r : this.r,
+            g: isNaN(this.g) ? rgb.g : this.g,
+            b: isNaN(this.b) ? rgb.b : this.b
+          });
+          return;
+        }
+
+        r = this._mathMod(this.format === 'hsl' ? r : Math.round(r), 256);
+        g = this._mathMod(this.format === 'hsl' ? g : Math.round(g), 256);
+        b = this._mathMod(this.format === 'hsl' ? b : Math.round(b), 256);
+
+        let toSet = {};
+        let hsl = this.rgbToHsl(r, g, b);
+
+        if (this.format === 'hsl') {
+          hsl.h = +hsl.h.toFixed(this.hslPrecision || 0);
+          hsl.s = +hsl.s.toFixed((this.hslPrecision || 0) + 2);
+          hsl.l = +hsl.l.toFixed((this.hslPrecision || 0) + 2);
+        }
+        if (hsl.h !== this.h) {
+          toSet.h = hsl.h;
+        }
+        if (hsl.s !== this.s) {
+          toSet.s = hsl.s;
+        }
+        if (hsl.l !== this.l) {
+          toSet.l = hsl.l;
+        }
+        if (r !== this.r) {
+          toSet.r = r;
+        }
+        if (g !== this.g) {
+          toSet.g = g;
+        }
+        if (b !== this.b) {
+          toSet.b = b;
+        }
+
+        const hex = this.rgbToHex(r, g, b);
+        if (hex !== this.hex) {
+          toSet.hex = hex;
+        }
+
+        this.setProperties(toSet);
+        this._debouncedSetValue();
+      }
+
+      _hslChanged(h, s, l) {
+        if (isNaN(h) && isNaN(s) && isNaN(l)) {
+          return;
+        }
+        if (isNaN(this.h) || isNaN(this.s) || isNaN(this.l)) {
+          const hsl = this.randomHsl();
+          this.setProperties({
+            h: isNaN(this.h) ? hsl.h : this.h,
+            s: isNaN(this.s) ? hsl.s : this.s,
+            l: isNaN(this.l) ? hsl.l : this.l
+          });
+          return;
+        }
+
+        h = this._mathMod(this.format !== 'hsl' ? h : +h.toFixed(this.hslPrecision || 0), 360);
+        s = this._normalizedClamp(this.format !== 'hsl' ? s : +s.toFixed((this.hslPrecision || 0) + 2));
+        l = this._normalizedClamp(this.format !== 'hsl' ? l : +l.toFixed((this.hslPrecision || 0) + 2));
+
+        let toSet = {};
+        const rgb = this.hslToRgb(h, s, l);
+
+        if (this.format !== 'hsl') {
+          rgb.r = Math.round(rgb.r);
+          rgb.g = Math.round(rgb.g);
+          rgb.b = Math.round(rgb.b);
+        }
+        if (rgb.r !== this.r) {
+          toSet.r = rgb.r;
+        }
+        if (rgb.g !== this.g) {
+          toSet.g = rgb.g;
+        }
+        if (rgb.b !== this.b) {
+          toSet.b = rgb.b;
+        }
+        if (h !== this.h) {
+          toSet.h = h;
+        }
+        if (s !== this.s) {
+          toSet.s = s;
+        }
+        if (l !== this.l) {
+          toSet.l = l;
+        }
+
+        this.setProperties(toSet);
+        this._debouncedSetValue();
+      }
+
+      /**
+       * generate random color
+       */
+      random() {
+        this.setProperties(this.randomRgb());
+      }
+
+      /**
+       * generate random rgb-color
+       * @return {object} rgb-value object
+       */
+      randomRgb() {
+        return {
+          r: Math.round(255 * Math.random()),
+          g: Math.round(255 * Math.random()),
+          b: Math.round(255 * Math.random())
+        };
+      }
+
+      /**
+       * generate random hsl-color
+       * @return {object} rgb-value object
+       */
+      randomHsl() {
+        return {
+          h: Math.round(359 * Math.random()),
+          s: Math.random(),
+          l: Math.random()
+        };
+      }
+
+      hexToRgb(hex) {
+        if (hex === undefined) {
+          return;
+        }
+        hex = hex.replace(/[#\s]/g, '');
+        if (hex.length === 3) {
+          hex = hex.replace(/(.)(.)(.)/, "$1$1$2$2$3$3");
+        }
+
+        return {
+          r: parseInt(hex.substr(0, 2), 16),
+          g: parseInt(hex.substr(2, 2), 16),
+          b: parseInt(hex.substr(4, 2), 16)
+        };
+      }
+
+      rgbToHex(r, g, b) {
+        if (isNaN(r) || isNaN(g) || isNaN(b)) {
+          return;
+        }
+        return '#' + this._componentToHex(Math.round(r)) + this._componentToHex(Math.round(g)) + this._componentToHex(Math.round(b));
+      }
+
+      _componentToHex(component) {
+        const _hex = component.toString(16);
+        if (_hex.length === 1) {
+          return `0${_hex}`;
+        } else {
+          return _hex.slice(0, 2);
+        }
+      }
+
+      hslToRgb(h, s, l) { // not rounded yet
+        if (isNaN(h) || isNaN(s) || isNaN(l)) {
+          return;
+        }
+        const t2 = ((l <= 0.5) ? l * (s + 1) : l + s - (l * s)) * 255,
+          t1 = l * 2 * 255 - t2;
+        return {
+          r: this.hueToComponent(t1, t2, h + 120),
+          g: this.hueToComponent(t1, t2, h),
+          b: this.hueToComponent(t1, t2, h - 120)
+        };
+      }
+
+      hueToComponent(t1, t2, h) {
+        if (h < 0) h += 360;
+        if (h >= 360) h -= 360;
+        if (h < 60) return (((t2 - t1) * h) / 60 + t1);
+        else if (h < 180) return t2;
+        else if (h < 240) return (((t2 - t1) * (240 - h)) / 60 + t1);
+        else return t1;
+      }
+
+      rgbToHsl(r, g, b) {
+        if (isNaN(r) || isNaN(g) || isNaN(b)) {
+          return;
+        }
+        const max = Math.max(r, g, b),
+          min = Math.min(r, g, b);
+
+        const l = (max + min) / (2 * 255);
+        const _c = max - min; // not-normalized chroma (for precision)
+
+        if (_c === 0) {
+          return [0, 0, l];
+        }
+
+        const s = _c / (255 - Math.abs(max + min - 255));
+        let h;
+        switch (max) {
+          case r:
+            h = ((g - b) * 60) / _c;
+            break;
+          case g:
+            h = (((b - r) * 60) / _c) + 120;
+            break;
+          case b:
+            h = (((r - g) * 60) / _c) + 240;
+            break;
+        }
+        return {
+          h: h,
+          s: s,
+          l: l
+        };
+      }
+
+      _mathMod(dividend, divisor) {
+        return ((dividend % divisor) + divisor) % divisor;
+      }
+
+      _normalizedClamp(n) {
+        return n > 1 ? 1 : n < 0 ? 0 : n;
+      }
+    }
   }
+
+  window.ColorMixin = ColorMixin;
 </script>
-
-<dom-module id="color-input">
-  <script>
-  /**
-  * `<color-input>` adds a color input to your page using Polymer.
-  *
-  *   ```html
-  *     <color-input value="{{color}}"></color-input>
-  *   ```
-  *
-  *
-  * The following custom properties and mixins are also available for styling:
-  *
-  * Custom property | Description | Default
-  * ----------------|-------------|----------
-  * Custom property | Description | Default
-  * ----------------|-------------|----------
-  * `--transparency-pattern` | background pattern for the transparency layer | { background-image: linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000), linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000); background-size: 16px 16px; background-position:0 0, 8px 8px; opacity: .1; }
-  * `--color-badge-border-radius` | border-radius of the badge | 0px
-  *
-  * @customElement
-  * @polymer
-  *
-  * @appliesMixin ColorInputPattern
-  *
-  * @demo demo/input.html
-  * @demo demo/form.html in a form
-  **/
-    class ColorInput extends ColorInputPattern(Polymer.Element) { // eslint-disable-line no-undef
-
-      static get is() {
-        return 'color-input';
-      }
-
-    }
-    window.customElements.define(ColorInput.is, ColorInput);
-  </script>
-</dom-module>
