@@ -112,7 +112,7 @@
           _validateHex: {
             type: RegExp,
             readOnly: true,
-            value: /^\s*(?:(#(?:[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3}))|rgba\(\s*(#(?:[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3}))\s*,\s*(-?\d*(?:\.(?:\d*)?)?)\s*\))\s*$/
+            value: /^\s*(?:(#[A-Fa-f0-9]{6})([A-Fa-f0-9]{2})?|(#[A-Fa-f0-9]{3})([A-Fa-f0-9])?)\s*$/
           },
 
           _validateRgb: {
@@ -161,7 +161,13 @@
           this.format = 'hex';
           return;
         }
-        this._debouncedSetValue();
+        switch (this.format) {
+          case 'hsl':
+            this._hslChanged(this.h, this.s, this.l);
+            break;
+          default:
+            this._rgbChanged(this.r, this.g, this.b);
+        }
       }
 
       _valueChanged(value, oldValue) {
@@ -201,14 +207,24 @@
           }
         // hex-format
         } else if (match = value.match(this._validateHex)) {
-          if (match[1] !== undefined) { // no alpha
+          if (match[1] !== undefined) { // six hex numbers
             toSet.hex = match[1];
-            toSet.alpha = 1;
-            toSet.alphaMode = false;
-          } else { // with alpha
-            toSet.hex = match[2];
-            toSet.alpha = this._normalizedClamp(+match[3]);
-            toSet.alphaMode = true;
+            if (match[2] !== undefined) { // alpha channel has two hex numbers
+              toSet.alpha = this._hexToAlpha(match[2], 2);
+              toSet.alphaMode = true;
+            } else { // no alpha channel
+              toSet.alpha = 1;
+              toSet.alphaMode = false;
+            }
+          } else if (match[3] !== undefined) { // three hex numbers
+            toSet.hex = match[3];
+            if (match[4] !== undefined) { // alpha channel has one hex number
+              toSet.alpha = this._hexToAlpha(match[4], 1);
+              toSet.alphaMode = true;
+            } else { // no alpha channel
+              toSet.alpha = 1;
+              toSet.alphaMode = false;
+            }
           }
           if (this.format !== 'hex') {
             format = 'hex';
@@ -255,9 +271,9 @@
           case 'hsl':
             if (!isNaN(this.h) && !isNaN(this.s) && !isNaN(this.l)) {
               if (this.alphaMode === true) {
-                this.value = `hsla(${+this.h.toFixed(this.hslPrecision || 0)}, ${+(this.s*100).toFixed(this.hslPrecision || 0)}%, ${+(this.l*100).toFixed(this.hslPrecision || 0)}%, ${this.alpha === undefined ? 0 : this.alpha})`;
+                this.value = `hsla(${this.h.toFixed(this.hslPrecision || 0)}, ${(this.s*100).toFixed(this.hslPrecision || 0)}%, ${(this.l*100).toFixed(this.hslPrecision || 0)}%, ${this.alpha === undefined ? 0 : this.alpha})`;
               } else {
-                this.value = `hsl(${+this.h.toFixed(this.hslPrecision || 0)}, ${+(this.s*100).toFixed(this.hslPrecision || 0)}%, ${+(this.l*100).toFixed(this.hslPrecision || 0)}%)`;
+                this.value = `hsl(${this.h.toFixed(this.hslPrecision || 0)}, ${(this.s*100).toFixed(this.hslPrecision || 0)}%, ${(this.l*100).toFixed(this.hslPrecision || 0)}%)`;
               }
             }
             break;
@@ -272,10 +288,12 @@
             break;
           case 'hex':
           default:
-            if (this.alpha === 1 && this.hex !== undefined) {
-              this.value = this.hex;
-            } else if (this.r !== undefined && this.g !== undefined && this.b !== undefined) {
-              this.value = `rgba(${Math.round(this.r)}, ${Math.round(this.g)}, ${Math.round(this.b)}, ${this.alpha === undefined ? 0 : this.alpha})`;
+            if (this.hex !== undefined) {
+              if (this.alphaMode === true) {
+                this.value = `${this.hex}${this._alphaToHex(this.alpha, this.hex.length === 4 ? 1 : 2)}`;
+              } else {
+                this.value = this.hex;
+              }
             }
         }
       }
@@ -323,6 +341,7 @@
         if (rgb.b !== Math.round(this.b)) {
           toSet.b = rgb.b;
         }
+        console.log(toSet);
         this.setProperties(toSet);
         this._debouncedSetValue();
       }
@@ -345,6 +364,15 @@
         g = this._mathMod(this.format === 'hsl' ? g : Math.round(g), 256);
         b = this._mathMod(this.format === 'hsl' ? b : Math.round(b), 256);
 
+        if (r !== this.r || g !== this.g || b !== this.b) {
+          this.setProperties({
+            r: r,
+            g: g,
+            b: b
+          });
+          return;
+        }
+
         let toSet = {};
         let hsl = this.rgbToHsl(r, g, b);
 
@@ -362,21 +390,13 @@
         if (hsl.l !== this.l) {
           toSet.l = hsl.l;
         }
-        if (r !== this.r) {
-          toSet.r = r;
-        }
-        if (g !== this.g) {
-          toSet.g = g;
-        }
-        if (b !== this.b) {
-          toSet.b = b;
-        }
 
         const hex = this.rgbToHex(r, g, b);
         if (hex !== this.hex) {
           toSet.hex = hex;
         }
 
+        console.log('_rgbChanged',toSet);
         this.setProperties(toSet);
         this._debouncedSetValue();
       }
@@ -397,8 +417,16 @@
 
         h = this._mathMod(this.format !== 'hsl' ? h : +h.toFixed(this.hslPrecision || 0), 360);
         s = this._normalizedClamp(this.format !== 'hsl' ? s : +s.toFixed((this.hslPrecision || 0) + 2));
-        l = this._normalizedClamp(this.format !== 'hsl' ? l : +l.toFixed((this.hslPrecision || 0) + 2));
+        l = this.this._normalizedClamp(this.format !== 'hsl' ? l : +l.toFixed((this.hslPrecision || 0) + 2));
 
+        if (h !== this.h || s !== this.s || l !== this.l) {
+          this.setProperties({
+            h: h,
+            s: s,
+            l: l
+          });
+          return;
+        }
         let toSet = {};
         const rgb = this.hslToRgb(h, s, l);
 
@@ -416,16 +444,8 @@
         if (rgb.b !== this.b) {
           toSet.b = rgb.b;
         }
-        if (h !== this.h) {
-          toSet.h = h;
-        }
-        if (s !== this.s) {
-          toSet.s = s;
-        }
-        if (l !== this.l) {
-          toSet.l = l;
-        }
 
+        console.log('_hslChanged',toSet);
         this.setProperties(toSet);
         this._debouncedSetValue();
       }
@@ -493,6 +513,19 @@
         }
       }
 
+      _alphaToHex(alpha, length) {
+        const base = Math.pow(16, length) - 1;
+        let hex = (Math.round(alpha * base)).toString(16);
+        while (length > hex.length)
+          hex = '0' + hex;
+        return hex;
+      }
+
+      _hexToAlpha(hex, length) {
+        const base = Math.pow(16, length) - 1;
+        return parseInt(hex, 16) / base;
+      }
+
       hslToRgb(h, s, l) { // not rounded yet
         if (isNaN(h) || isNaN(s) || isNaN(l)) {
           return;
@@ -500,9 +533,9 @@
         const t2 = ((l <= 0.5) ? l * (s + 1) : l + s - (l * s)) * 255,
           t1 = l * 2 * 255 - t2;
         return {
-          r: this.hueToComponent(t1, t2, h + 120),
-          g: this.hueToComponent(t1, t2, h),
-          b: this.hueToComponent(t1, t2, h - 120)
+          r: this._mathMod(this.hueToComponent(t1, t2, h + 120), 256),
+          g: this._mathMod(this.hueToComponent(t1, t2, h), 256),
+          b: this._mathMod(this.hueToComponent(t1, t2, h - 120), 256)
         };
       }
 
@@ -526,7 +559,11 @@
         const _c = max - min; // not-normalized chroma (for precision)
 
         if (_c === 0) {
-          return [0, 0, l];
+          return {
+            h: 0,
+            s: 0,
+            l: this._normalizedClamp(l)
+          };
         }
 
         const s = _c / (255 - Math.abs(max + min - 255));
@@ -543,9 +580,9 @@
             break;
         }
         return {
-          h: h,
-          s: s,
-          l: l
+          h: this._mathMod(h, 360),
+          s: this._normalizedClamp(s),
+          l: this._normalizedClamp(l)
         };
       }
 
