@@ -341,7 +341,6 @@
         if (rgb.b !== Math.round(this.b)) {
           toSet.b = rgb.b;
         }
-        console.log(toSet);
         this.setProperties(toSet);
         this._debouncedSetValue();
       }
@@ -396,7 +395,6 @@
           toSet.hex = hex;
         }
 
-        console.log('_rgbChanged',toSet);
         this.setProperties(toSet);
         this._debouncedSetValue();
       }
@@ -417,7 +415,7 @@
 
         h = this._mathMod(this.format !== 'hsl' ? h : +h.toFixed(this.hslPrecision || 0), 360);
         s = this._normalizedClamp(this.format !== 'hsl' ? s : +s.toFixed((this.hslPrecision || 0) + 2));
-        l = this.this._normalizedClamp(this.format !== 'hsl' ? l : +l.toFixed((this.hslPrecision || 0) + 2));
+        l = this._normalizedClamp(this.format !== 'hsl' ? l : +l.toFixed((this.hslPrecision || 0) + 2));
 
         if (h !== this.h || s !== this.s || l !== this.l) {
           this.setProperties({
@@ -445,7 +443,6 @@
           toSet.b = rgb.b;
         }
 
-        console.log('_hslChanged',toSet);
         this.setProperties(toSet);
         this._debouncedSetValue();
       }

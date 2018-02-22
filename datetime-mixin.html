@@ -850,7 +850,7 @@
         if (hours === undefined || minutes === undefined) {
           return;
         }
-        const offsetMinutes = -Math.sign(hours)*(Math.abs(hours) * 60 + minutes),
+        const offsetMinutes = -(hours < 0 ? -1 : 1)*(Math.abs(hours) * 60 + minutes),
           timezone = (hours >= 0 ? '+' : '') + this._pad(hours, 2) + ':' + this._pad(minutes, 2);
         if (offsetMinutes !== this._timezoneOffset) {
           this.__updatingTimezoneOffset = true;
@@ -878,7 +878,7 @@
             timezone: '+00:00'
           };
         }
-        const hours = -Math.sign(offsetMinutes)*Math.floor(Math.abs(offsetMinutes) / 60),
+        const hours = -(offsetMinutes < 0 ? -1 : 1)*Math.floor(Math.abs(offsetMinutes) / 60),
         minutes = Math.abs(offsetMinutes) % 60;
         return {
           _timezoneOffset: offsetMinutes,
@@ -902,7 +902,7 @@
           const hours = +match[1],
             minutes = +match[2];
           return {
-            _timezoneOffset: -Math.sign(hours)*(Math.abs(hours) * 60 + minutes),
+            _timezoneOffset: (hours > 0 ? -1 : 1)*(Math.abs(hours) * 60 + minutes),
             _timeZoneHours: hours,
             _timeZoneMinutes: minutes,
             timezone: timezone
