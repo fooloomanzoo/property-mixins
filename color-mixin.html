@@ -161,6 +161,9 @@
           this.format = 'hex';
           return;
         }
+        if (this.format !== 'hex') {
+          this.alpha = +this.alpha.toFixed(2);
+        }
         switch (this.format) {
           case 'hsl':
             this._hslChanged(this.h, this.s, this.l);
@@ -200,6 +203,7 @@
           }
           if (this.format !== 'hsl') {
             format = 'hsl';
+            toSet.alpha = +toSet.alpha.toFixed(2);
           } else {
             toSet.h = +toSet.h.toFixed(this.hslPrecision || 0);
             toSet.s = +toSet.s.toFixed((this.hslPrecision || 0) + 2);
@@ -243,6 +247,7 @@
           toSet.b = this._mathMod(+match[4], 256);
           if (this.format !== 'rgb') {
             format = 'rgb';
+            toSet.alpha = +toSet.alpha.toFixed(2);
           } else {
             toSet.r = Math.round(toSet.r);
             toSet.g = Math.round(toSet.g);
