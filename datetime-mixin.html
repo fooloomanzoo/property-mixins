@@ -137,6 +137,7 @@
            */
           hour12: {
             type: Boolean,
+            reflectToAttribute: true,
             value: false
           },
 
@@ -775,27 +776,16 @@
         }).pop();
 
         // am-string
-        timeString = date.toLocaleTimeString(locale, {
-          hour: 'numeric',
-          minute: 'numeric',
-          second: 'numeric',
-          hour12: true
-        });
-        const am = timeString.split(/\d/g).filter(s => {
-          return /[^\s:|/,;.]{1}/.test(s);
-        }).pop();
+        timeString = date.toLocaleTimeString(locale, { hour: 'numeric', minute: 'numeric', hour12: true });
+        const filterRegexp = new RegExp(`[\\d\\s${timeSeparator}]`, 'g');
+
+        const am = timeString.replace(filterRegexp, '') || 'AM';
 
         // pm-string
         date = new Date(1970, 10, 15, 18, 24, 25);
-        timeString = date.toLocaleTimeString(locale, {
-          hour: 'numeric',
-          minute: 'numeric',
-          second: 'numeric',
-          hour12: true
-        });
-        const pm = timeString.split(/\d/g).filter(s => {
-          return /[^\s:|/,;.]{1}/.test(s);
-        }).pop();
+        timeString = date.toLocaleTimeString(locale, { hour: 'numeric', minute: 'numeric', hour12: true });
+
+        const pm = timeString.replace(filterRegexp, '') || 'PM';
 
         // decimal separator
         let decimalSeparator = new Intl.NumberFormat(locale).format(1.2).split(/\d/g).filter(s => {
@@ -807,8 +797,8 @@
           _localDateSeparator: dateSeparator,
           _localTimeSeparator: timeSeparator,
           _localDecimalSeparator: decimalSeparator,
-          _am: am,
-          _pm: pm
+          _am: am === '.' ? 'AM' : am, // IE fix for languages that usually don't use am-pm suffixes
+          _pm: pm === '.' ? 'PM' : pm
         });
       }
 
