@@ -117,6 +117,7 @@
            */
           min: {
             type: String,
+            reflectToAttribute: true,
             notify: true,
             observer: '_minChanged'
           },
@@ -127,6 +128,7 @@
            */
           max: {
             type: String,
+            reflectToAttribute: true,
             notify: true,
             observer: '_maxChanged'
           },
@@ -253,7 +255,7 @@
           /**
            * order of date-parts
            */
-          _orderDate: {
+          _partsOrder: {
             type: Object,
             value: function() {
               return {
@@ -263,6 +265,16 @@
                 separatorMonthDay: 4,
                 day: 5
               };
+            }
+          },
+
+          /**
+           * date-parts that are hidden
+           */
+          _partsHidden: {
+            type: Object,
+            value: function() {
+              return {};
             }
           },
 
@@ -307,7 +319,8 @@
           '_datetimeChanged(datetime)',
           '_dateTimeChanged(date, time)',
           '_timeZoneHoursMinutesChanged(_timeZoneHours, _timeZoneMinutes)',
-          '_defaultChanged(default)'
+          '_defaultChanged(default)',
+          '_clampChanged(clamp)'
         ]
       }
 
@@ -876,6 +889,35 @@
           _timeZoneMinutes: minutes,
           timezone: (hours >= 0 ? '+' : '') + this._pad(hours, 2) + ':' + this._pad(minutes, 2)
         }
+      }
+
+      _clampChanged(clamp) {
+        let partsHidden = {
+          year: false,
+          month: false,
+          day: false,
+          hours: false,
+          minutes: false,
+          seconds: false,
+          milliseconds: false
+        };
+        switch (clamp) {
+          case 'year':
+            partsHidden.year = true; // falls through
+          case 'month':
+            partsHidden.month = true; // falls through
+          case 'day':
+            partsHidden.day = true; // falls through
+          case 'hours':
+            partsHidden.hours = true; // falls through
+          case 'minutes':
+            partsHidden.minutes = true; // falls through
+          case 'seconds':
+            partsHidden.seconds = true; // falls through
+          case 'milliseconds':
+            partsHidden.milliseconds = true; // falls through
+        }
+        this.setProperties({_partsHidden: partsHidden});
       }
 
       _computeTimezoneOffset(timezone) {
