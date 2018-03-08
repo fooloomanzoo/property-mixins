@@ -10,34 +10,12 @@
    * @param {Object} superClass class to extend
    * @return {Object} extended class
    */
-  const DatetimeMixin = (superClass) => { // eslint-disable-line no-unused-vars no-undef
+  const DatetimeMixin = superClass => { // eslint-disable-line no-unused-vars no-undef
 
     return class extends IntlFormatMixin(superClass) {
 
       static get properties() {
         return {
-          /**
-           * the selected local date and time (format: iso8601)
-           */
-          datetime: {
-            type: String,
-            notify: true
-          },
-          /**
-           * the selected local date (format: iso8601)
-           */
-          date: {
-            type: String,
-            notify: true
-          },
-
-          /**
-           * the selected local time (format: iso8601)
-           */
-          time: {
-            type: String,
-            notify: true
-          },
 
           /**
            * The year of the selected local date
@@ -73,6 +51,25 @@
           },
 
           /**
+           * hour in 12-hour-format
+           * @type {number}
+           */
+          hour12: {
+            type: Number,
+            notify: true,
+            observer: '_hour12Changed'
+          },
+
+          /**
+           * true, when A.M. (when `hour` < 12)
+           * @type {boolean}
+           */
+          isAm: {
+            type: Boolean,
+            observer: '_isAmChanged'
+          },
+
+          /**
            * The minute of the selected local time
            */
           minute: {
@@ -93,6 +90,29 @@
            */
           millisecond: {
             type: Number,
+            notify: true
+          },
+
+          /**
+           * the selected local date and time (format: iso8601)
+           */
+          datetime: {
+            type: String,
+            notify: true
+          },
+          /**
+           * the selected local date (format: iso8601)
+           */
+          date: {
+            type: String,
+            notify: true
+          },
+
+          /**
+           * the selected local time (format: iso8601)
+           */
+          time: {
+            type: String,
             notify: true
           },
 
@@ -146,25 +166,6 @@
           },
 
           /**
-           * true, when A.M. (when `hour` < 12)
-           * @type {boolean}
-           */
-          isAm: {
-            type: Boolean,
-            observer: '_isAmChanged'
-          },
-
-          /**
-           * hour in 12-hour-format
-           * @type {number}
-           */
-          hour12: {
-            type: Number,
-            notify: true,
-            observer: '_hour12Changed'
-          },
-
-          /**
            * Clamp datetime to a property
            * possible values:'month', 'day', 'hour', 'minute', 'second', 'millisecond'
            */
@@ -205,6 +206,39 @@
           },
 
           /**
+           * exclusive max day of month
+           * @type {number}
+           */
+          _maxDayOfMonth: {
+            type: Number,
+            computed: '_computeMaxDayOfMonth(year, month)'
+          },
+
+          /**
+           * Regular Expression for datetime-string
+           */
+          _regexpDatetime: {
+            type: RegExp,
+            value: /^(-?\d+-\d\d-\d\d)?(?:T?(?:(\d\d:\d\d(?::\d\d(?:\.\d\d\d)?)?)([+-]\d\d:\d\d|Z)?)?)$/
+          },
+
+          /**
+           * Regular Expression for datetime-string
+           */
+          _regexpTimezone: {
+            type: RegExp,
+            value: /^(?:([+-]\d\d):(\d\d)|Z)$/
+          },
+
+          /**
+           * lock to date and ignore time
+           */
+          _dateLocked: {
+            type: Boolean,
+            computed: '_ifClamped(clamp, "hour")'
+          },
+
+          /**
            * order of date-parts
            */
           dateOrder: {
@@ -230,39 +264,6 @@
             value: function() {
               return {};
             }
-          },
-
-          /**
-           * exclusive max day of month
-           * @type {number}
-           */
-          _maxDayOfMonth: {
-            type: Number,
-            computed: '_computeMaxDayOfMonth(year, month)'
-          },
-
-          /**
-           * Regular Expression for datetime-string
-           */
-          _regexpDatetime: {
-            type: RegExp,
-            value: /^(-?\d+-\d\d-\d\d)(?:T?(?:(\d\d:\d\d(?::\d\d(?:\.\d\d\d)?)?)([+-]\d\d:\d\d|Z)?)?)$/
-          },
-
-          /**
-           * Regular Expression for datetime-string
-           */
-          _regexpTimezone: {
-            type: RegExp,
-            value: /^(?:([+-]\d\d):(\d\d)|Z)$/
-          },
-
-          /**
-           * lock to date and ignore time
-           */
-          _dateLocked: {
-            type: Boolean,
-            computed: '_ifClamped(clamp, "hour")'
           }
         }
       }
@@ -402,7 +403,7 @@
           return;
         }
         if (match[3] === undefined) {
-          d = new Date(match[1] + 'T' + match[2] + 'Z');
+          d = new Date((match[1] || '1970-01-01') + 'T' + match[2] + 'Z');
           if (this._timezoneOffset === undefined) {
             this.__updatingTimezoneOffset = true;
             if (this.timezone) {
@@ -414,6 +415,9 @@
           }
           d.setMinutes(d.getMinutes() + this._timezoneOffset);
         } else {
+          if (match[1] === undefined) {
+            match[0] = '1970-01-01T' + match[2] + match[3];
+          }
           d = new Date(match[0]);
           if (match[3] !== this.timezone) {
             this.__updatingTimezoneOffset = true;
@@ -573,9 +577,12 @@
         const match = this._regexpDatetime.exec(datetime);
         if (match) {
           if (match[3] !== undefined) {
+            if (match[1] === undefined) {
+              match[0] = '1970-01-01T' + match[2] + match[3];
+            }
             d = new Date(match[0]);
           } else {
-            d = new Date(match[1] + 'T' + (match[2] || '00:00') + 'Z');
+            d = new Date((match[1] || '1970-01-01') + 'T' + (match[2] || '00:00') + 'Z');
             if (this._timezoneOffset === undefined) {
               this.__updatingTimezoneOffset = true;
               if (this.timezone) {
@@ -844,26 +851,19 @@
 
         // create datestring in locale format
         const dateKeys = ['year', 'month', 'day', 'hour'];
-        const dateParts = [1970, 1, 12, 3, 5];
-        const formatedDateParts = dateParts.map(this.numberFormat.format);
+        let d = new Date(Date.UTC(1970, 0, 22, 18, 44));
+        const formatedDateParts = [
+          d.toLocaleDateString(locale, { year: 'numeric', timeZone: 'UTC', hour12: false }).slice(0, 4),
+          d.toLocaleDateString(locale, { month: '2-digit', timeZone: 'UTC', hour12: false }).slice(0, 2),
+          d.toLocaleDateString(locale, { day: '2-digit', timeZone: 'UTC', hour12: false }).slice(0, 2),
+          d.toLocaleTimeString(locale, { hour: '2-digit', timeZone: 'UTC', hour12: false }).slice(0, 2)
+        ];
 
         // using UTC-timezone to avoid conflicts when comparing
-        let d = new Date(Date.UTC.apply(null, dateParts));
-        const localeDateString = d.toLocaleDateString(this._locale, {
-          year: 'numeric',
-          month: 'numeric',
-          day: 'numeric',
-          hour: 'numeric',
-          minute: 'numeric',
-          timeZone: 'UTC',
-          hour12: false
-        });
+        const localeDateString = d.toLocaleDateString(this._locale, { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', timeZone: 'UTC', hour12: false });
 
         let occurrence = [];
         for (let i = 0; i < dateKeys.length; i++) {
-          if (i === 1) { // month correction (starts with 0)
-            formatedDateParts[i] = this.numberFormat.format(dateParts[i] + 1);
-          }
           occurrence.push(localeDateString.indexOf(formatedDateParts[i]));
         }
 

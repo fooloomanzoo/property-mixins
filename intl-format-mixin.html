@@ -1,6 +1,6 @@
 <script>
   /**
-   * Mixin that provides intl-format and -parse functions for numbers and dates and computes some separation strings for usage.
+   * Mixin that provides intl-format-locale and computes some separation strings for usage.
    *
    * @mixinFunction
    * @polymer
@@ -8,7 +8,7 @@
    * @param {Object} superClass class to extend
    * @return {Object} extended class
    */
-  const IntlFormatMixin = (superClass) => { // eslint-disable-line no-unused-vars no-undef
+  const IntlFormatMixin = superClass => { // eslint-disable-line no-unused-vars no-undef
 
     return class extends superClass {
 
@@ -84,51 +84,13 @@
            */
           pmString: {
             type: String
-          },
-
-          /**
-           * intl-numberformat-object according to the given locale and options
-           */
-          numberFormat: {
-            type: Object
-          },
-
-          /**
-           * intl-datetimeformat-object according to the given locale and options
-           */
-          datetimeFormat: {
-            type: Object
-          },
-
-          /**
-           * number format options
-           */
-          numberOptions: {
-            type: Object,
-            value: function() {
-              return {
-                useGrouping: false
-              }
-            }
-          },
-
-          /**
-           * datetime format options
-           */
-          datetimeOptions: {
-            type: Object,
-            value: function() {
-              return {};
-            }
           }
         }
       }
 
       static get observers() {
         return [
-          '_localeChanged(locale, numberingSystem, calendar)',
-          '_numberOptionsChanged(numberOptions)',
-          '_datetimeOptionsChanged(datetimeOptions)'
+          '_localeChanged(locale, numberingSystem, calendar)'
         ]
       }
 
@@ -186,46 +148,42 @@
         } catch (e) {
           console.warn(e);
           // fallback to default
-          locale = this._locale = (((pos = locale.indexOf('-u-')) === -1) ? locale : locale.slice(0, pos)) + '-u-nu-latn-ca-iso8601';
+          locale = (((pos = locale.indexOf('-u-')) === -1) ? locale : locale.slice(0, pos)) + '-u-nu-latn-ca-iso8601';
         }
-
-        const numberFormat = new Intl.NumberFormat(locale, this.numberOptions || {});
-        const datetimeFormat = new Intl.DateTimeFormat(locale, this.datetimeOptions || {});
+        this._locale = locale;
 
         // decimal separator
         const numbers = [1, 2];
-        const formatedNumbers = numbers.map(numberFormat.format);
+        const formatedNumbers = numbers.map( p => {
+          return numberFormat(p)
+        });
         const decimalSeparator = formatedNumbers.reduce( (acc, currentValue) => {
           return acc.replace(currentValue, '');
         }, numberFormat.format(1.2));
 
         // date separator
+        let d = new Date(Date.UTC(1970, 0, 22, 11, 44, 55));
+
         // create datestring in locale format
-        const dateParts = [1970, 10];
-        const formatedDateParts = dateParts.map(numberFormat.format);
+        const formatedDateParts = [
+          d.toLocaleDateString(locale, { month: '2-digit', timeZone: 'UTC', hour12: false }).slice(0, 2),
+          d.toLocaleDateString(locale, { day: '2-digit', timeZone: 'UTC', hour12: false }).slice(0, 2)
+        ];
         // using UTC-timezone to avoid conflicts when comparing
         const dateSeparator = formatedDateParts.reduce( (acc, currentValue) => {
           return acc.replace(currentValue, '');
-        }, (new Date(Date.UTC.apply(null, dateParts))).toLocaleDateString(locale, {
-          year: 'numeric',
-          month: 'numeric',
-          timeZone: 'UTC',
-          hour12: false
-        }));
+        }, d.toLocaleDateString(locale, { month: '2-digit', day: '2-digit', timeZone: 'UTC', hour12: false })).slice(0, 1);
 
-        // date separator
+        // time separator
         // create datestring in locale format
-        let timeParts = [8, 10];
-        let formatedTimeParts = timeParts.map(numberFormat.format);
+        const formatedTimeParts = [
+          d.toLocaleTimeString(locale, { hour: '2-digit', timeZone: 'UTC', hour12: false }).slice(0, 2),
+          d.toLocaleTimeString(locale, { minutes: '2-digit', timeZone: 'UTC', hour12: false }).slice(0, 2)
+        ];
         // using UTC-timezone to avoid conflicts when comparing
         const timeSeparator = formatedTimeParts.reduce( (acc, currentValue) => {
           return acc.replace(currentValue, '');
-        }, (new Date(Date.UTC(1970,0,1,8,10))).toLocaleTimeString(locale, {
-          hour: 'numeric',
-          minute: 'numeric',
-          timeZone: 'UTC',
-          hour12: false
-        }));
+        }, d.toLocaleTimeString(locale, { hour: '2-digit', minutes: '2-digit', timeZone: 'UTC', hour12: false } )).slice(0, 1);
 
         // am-pm strings
         formatedTimeParts.push(timeSeparator);
@@ -233,23 +191,14 @@
         // am
         const amString = formatedTimeParts.reduce( (acc, currentValue) => {
           return acc.replace(currentValue, '');
-        }, (new Date(Date.UTC(1970,0,1,8,10))).toLocaleTimeString(locale, {
-          hour: 'numeric',
-          minute: 'numeric',
-          timeZone: 'UTC',
-          hour12: true
-        }));
+        }, d.toLocaleTimeString(locale, { hour: '2-digit', minutes: '2-digit', timeZone: 'UTC', hour12: true } ));
 
         // pm
-        formatedTimeParts[0] = numberFormat.format(16);
+        d.setUTCHours(16);
+        formatedTimeParts[0] = d.toLocaleTimeString(locale, { hour: '2-digit', timeZone: 'UTC', hour12: false }).slice(0, 2);
         const pmString = formatedTimeParts.reduce( (acc, currentValue) => {
           return acc.replace(currentValue, '');
-        }, (new Date(Date.UTC(1970,0,1,16,10))).toLocaleTimeString(locale, {
-          hour: 'numeric',
-          minute: 'numeric',
-          timeZone: 'UTC',
-          hour12: true
-        }));
+        }, d.toLocaleTimeString(locale, { hour: '2-digit', minutes: '2-digit', timeZone: 'UTC', hour12: true } ));
 
         this.setProperties({
           numberFormat: numberFormat,
@@ -257,25 +206,10 @@
           dateSeparator: dateSeparator,
           timeSeparator: timeSeparator,
           decimalSeparator: decimalSeparator,
-          amString: amString === '.' ? 'AM' : amString, // IE fix for languages that usually don't use am-pm suffixes
-          pmString: pmString === '.' ? 'PM' : pmString
+          amString: (!amString || amString === '.') ? 'AM' : amString, // IE fix for languages that usually don't use am-pm suffixes
+          pmString: (!pmString || pmString === '.') ? 'PM' : pmString
         });
       }
-
-      _numberOptionsChanged(numberOptions) {
-        if (this._locale === undefined || numberOptions === undefined) {
-          return;
-        }
-        this.set('numberFormat', new Intl.NumberFormat(this._locale, numberOptions))
-      }
-
-      _datetimeOptionsChanged(datetimeOptions) {
-        if (this._locale === undefined || datetimeOptions === undefined) {
-          return;
-        }
-        this.set('datetimeFormat', new Intl.DateTimeFormat(this._locale, datetimeOptions))
-      }
-
     }
   }
 
