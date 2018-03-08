@@ -1,0 +1,110 @@
+<script>
+  /**
+   * Mixin that provides intl-format-locale and computes some separation strings for usage.
+   *
+   * @appliesMixin IntlNumberFormatMixin
+   * @mixinFunction
+   * @polymer
+   *
+   * @param {Object} superClass class to extend
+   * @return {Object} extended class
+   */
+  const IntlDatetimeFormatMixin = superClass => { // eslint-disable-line no-unused-vars no-undef
+
+    return class extends IntlNumberFormatMixin(superClass) {
+
+      static get properties() {
+        return {
+
+          /**
+           * Separator for local date values (date-string is still in ISO-Format)
+           * @type {string}
+           */
+          dateSeparator: {
+            type: String,
+            value: '-'
+          },
+
+          /**
+           * Separator for local time values (time-string is still in ISO-Format)
+           * @type {string}
+           */
+          timeSeparator: {
+            type: String,
+            value: ':'
+          },
+
+          /**
+           * locale representation of 'AM'
+           */
+          amString: {
+            type: String
+          },
+
+          /**
+           * locale representation of 'PM'
+           */
+          pmString: {
+            type: String
+          }
+        }
+      }
+
+      _localeChanged(locale) {
+        if (!(locale && Intl.DateTimeFormat && Intl.DateTimeFormat.supportedLocalesOf(locale))) {
+          this.locale = window.navigator.language;
+          return;
+        }
+        super._localeChanged(locale);
+
+        // date separator
+        let d = new Date(Date.UTC(1970, 0, 22, 11, 44, 55));
+
+        // create datestring in locale format
+        const formatedDateParts = [
+          d.toLocaleDateString(locale, { month: '2-digit', timeZone: 'UTC', hour12: false }).slice(0, 2),
+          d.toLocaleDateString(locale, { year: '2-digit', timeZone: 'UTC', hour12: false }).slice(0, 2)
+        ];
+        // using UTC-timezone to avoid conflicts when comparing
+        const dateSeparator = formatedDateParts.reduce( (acc, currentValue) => {
+          return acc.replace(currentValue, '');
+        }, d.toLocaleDateString(locale, { month: '2-digit', year: '2-digit', timeZone: 'UTC', hour12: false })).slice(0, 1);
+
+        // time separator
+        // create datestring in locale format
+        const formatedTimeParts = [
+          d.toLocaleTimeString(locale, { hour: '2-digit', timeZone: 'UTC', hour12: false }).slice(0, 2),
+          d.toLocaleTimeString(locale, { minutes: '2-digit', timeZone: 'UTC', hour12: false }).slice(0, 2)
+        ];
+        // using UTC-timezone to avoid conflicts when comparing
+        const timeSeparator = formatedTimeParts.reduce( (acc, currentValue) => {
+          return acc.replace(currentValue, '');
+        }, d.toLocaleTimeString(locale, { hour: '2-digit', minutes: '2-digit', timeZone: 'UTC', hour12: false } )).slice(0, 1);
+
+        // am-pm strings
+        formatedTimeParts.push(timeSeparator);
+
+        // am
+        const amString = formatedTimeParts.reduce( (acc, currentValue) => {
+          return acc.replace(currentValue, '');
+        }, d.toLocaleTimeString(locale, { hour: '2-digit', minutes: '2-digit', timeZone: 'UTC', hour12: true } ));
+
+        // pm
+        d.setUTCHours(16);
+        formatedTimeParts[0] = d.toLocaleTimeString(locale, { hour: '2-digit', timeZone: 'UTC', hour12: false }).slice(0, 2);
+        const pmString = formatedTimeParts.reduce( (acc, currentValue) => {
+          return acc.replace(currentValue, '');
+        }, d.toLocaleTimeString(locale, { hour: '2-digit', minutes: '2-digit', timeZone: 'UTC', hour12: true } ));
+
+        this.setProperties({
+          dateSeparator: dateSeparator,
+          timeSeparator: timeSeparator,
+          amString: (!amString || amString === '.') ? 'AM' : amString, // IE fix for languages that usually don't use am-pm suffixes
+          pmString: (!pmString || pmString === '.') ? 'PM' : pmString
+        }, true);
+      }
+    }
+  }
+
+  window.IntlDatetimeFormatMixin = IntlDatetimeFormatMixin;
+</script>

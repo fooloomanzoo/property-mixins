@@ -139,7 +139,6 @@
            */
           min: {
             type: String,
-            reflectToAttribute: true,
             notify: true,
             observer: '_minChanged'
           },
@@ -150,7 +149,6 @@
            */
           max: {
             type: String,
-            reflectToAttribute: true,
             notify: true,
             observer: '_maxChanged'
           },
@@ -161,8 +159,7 @@
            */
           hour12Format: {
             type: Boolean,
-            reflectToAttribute: true,
-            value: false
+            reflectToAttribute: true
           },
 
           /**
@@ -841,26 +838,22 @@
         this.setProperties({partsHidden: partsHidden});
       }
 
-      _localeChanged() {
-        super._localeChanged(...arguments);
+      _localeChanged(locale) {
+        super._localeChanged(locale);
 
-        if (this._locale === undefined) {
-          return;
-        }
         // test locale dateformat, to define the order of the parts of the date
-
         // create datestring in locale format
         const dateKeys = ['year', 'month', 'day', 'hour'];
         let d = new Date(Date.UTC(1970, 0, 22, 18, 44));
         const formatedDateParts = [
-          d.toLocaleDateString(locale, { year: 'numeric', timeZone: 'UTC', hour12: false }).slice(0, 4),
+          d.toLocaleDateString(locale, { year: '2-digit', timeZone: 'UTC', hour12: false }).slice(0, 2),
           d.toLocaleDateString(locale, { month: '2-digit', timeZone: 'UTC', hour12: false }).slice(0, 2),
           d.toLocaleDateString(locale, { day: '2-digit', timeZone: 'UTC', hour12: false }).slice(0, 2),
           d.toLocaleTimeString(locale, { hour: '2-digit', timeZone: 'UTC', hour12: false }).slice(0, 2)
         ];
 
         // using UTC-timezone to avoid conflicts when comparing
-        const localeDateString = d.toLocaleDateString(this._locale, { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', timeZone: 'UTC', hour12: false });
+        const localeDateString = d.toLocaleDateString(this._locale, { year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', timeZone: 'UTC', hour12: false });
 
         let occurrence = [];
         for (let i = 0; i < dateKeys.length; i++) {
@@ -880,11 +873,12 @@
         for (let i = 0; i < dateKeys.length - 1; i++) { // hours is not needed, time is always ordered the same
           order[dateKeys[occurrence.indexOf(sortedOccurence[i])]] = i;
         }
+
         this.setProperties({
-          dateOrder: order
+          dateOrder: order,
+          hour12Format: Boolean(new Intl.DateTimeFormat(locale).resolvedOptions().hour12)
         });
       }
-
     }
   }
 

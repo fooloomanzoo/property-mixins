@@ -1,0 +1,81 @@
+<script>
+  /**
+   * Mixin that provides intl-format-locale for numbers and computes some separation strings for usage.
+   *
+   * @mixinFunction
+   * @polymer
+   *
+   * @param {Object} superClass class to extend
+   * @return {Object} extended class
+   */
+  const IntlNumberFormatMixin = superClass => { // eslint-disable-line no-unused-vars no-undef
+
+    return class extends superClass {
+
+      static get properties() {
+        return {
+          /**
+           * The current locale
+           */
+          locale: {
+            type: String,
+            value: window.navigator.language
+          },
+
+          /**
+           * locale separator for local decimal values
+           * @type {string}
+           */
+          decimalSeparator: {
+            type: String
+          },
+
+          /**
+           * locale separator for grouping decimal values
+           * @type {string}
+           */
+          groupingSeparator: {
+            type: String
+          }
+        }
+      }
+
+      static get observers() {
+        return [
+          '_localeChanged(locale)'
+        ]
+      }
+
+      _localeChanged(locale) {
+        if (!(locale && Intl.NumberFormat && Intl.NumberFormat.supportedLocalesOf(locale))) {
+          this.locale = window.navigator.language;
+          return;
+        }
+
+        // decimal separator
+        const numberString = (0.5).toLocaleString(locale, { minimumIntergerDigits: 1, minimumFractionsDigits: 1 });
+        const decimalSeparator = numberString[1];
+
+        // grouping separator
+        const nogroupingString = (1000000).toLocaleString(locale, { useGrouping: false });
+        const groupingString = (1000000).toLocaleString(locale, { useGrouping: true });
+
+        let groupingSeparator;
+        for (var i = 0; i < nogroupingString.length; i++) {
+          if (groupingString[i] !== nogroupingString[i]) {
+            groupingSeparator = groupingString[i];
+            break;
+          }
+        }
+
+        this.setProperties({
+          numberFormat: numberFormat,
+          decimalSeparator: decimalSeparator,
+          groupingSeparator: groupingSeparator
+        }, true);
+      }
+    }
+  }
+
+  window.IntlNumberFormatMixin = IntlNumberFormatMixin;
+</script>
