@@ -100,7 +100,7 @@
           return;
         }
         // test whether the locale contains a calendar or number system
-        let pos, next, hasNumbersystem;
+        let pos, next;
         // test for numbering system
         if (locale.indexOf('-u-') !== -1) {
           if ((pos = locale.indexOf('-nu-')) !== -1) {
@@ -138,19 +138,26 @@
           } else {
             locale += '-ca-' + calendar;
           }
+        } else if (!numberingSystem) {
+          this.numberingSystem = 'latn';
+          return;
+        } else if (!calendar) {
+          this.calendar = 'iso8601';
+          return;
         }
 
-        locale = (((pos = locale.indexOf('-u-')) === -1) ? locale : locale.slice(0, pos)) + '-u-nu-' + (numberingSystem || 'latn') + '-ca-' + (calendar || 'iso8601');
+        locale = (((pos = locale.indexOf('-u-')) === -1) ? locale : locale.slice(0, pos)) + '-u-nu-' + numberingSystem + '-ca-' + calendar;
 
         // test if locale is valid
-        try {
-          const test = new Intl.NumberFormat(locale);
-        } catch (e) {
-          console.warn(e);
+        if (!Intl.NumberFormat.supportedLocalesOf(locale)) {
           // fallback to default
           locale = (((pos = locale.indexOf('-u-')) === -1) ? locale : locale.slice(0, pos)) + '-u-nu-latn-ca-iso8601';
         }
-        this._locale = locale;
+
+        if (locale !== this.locale) {
+          this.locale = locale;
+          return;
+        }
 
         // decimal separator
         const numbers = [1, 2];
