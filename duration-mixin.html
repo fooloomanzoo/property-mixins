@@ -45,14 +45,6 @@
           },
 
           /**
-           * locale separator for grouping decimal values
-           */
-          onlyPositiveDuration: {
-            type: Boolean,
-            observer: '_valueChanged'
-          }
-
-          /**
            * RegExp of a valueString
            */
           _regExpValueString: {
@@ -88,7 +80,7 @@
         } else if (isNaN(start) && !isNaN(this.value)) {
           this.set('start', new Date(end - this.value));
           return;
-        } else if (this.onlyPositiveDuration && end < start) {
+        } else if (end < start) {
           this.setProperties({
             start: end,
             end: start
@@ -103,7 +95,7 @@
         if (value === undefined) {
           return;
         }
-        if (this.onlyPositiveDuration && value < 0) {
+        if (value < 0) {
           this.value = -value;
           return;
         }
@@ -125,7 +117,7 @@
         } else if (isNaN(start)) {
           this.set('start', new Date(end - value));
           return;
-        } else if (this.onlyPositiveDuration && end < start) {
+        } else if (end < start) {
           this.setProperties({
             start: end,
             end: start
@@ -140,8 +132,8 @@
         this.value = this._computeDurationValue(valueAsString);
       }
 
-      _computeDurationString(value) {
-        if (isNaN(value)) {
+      _computeDurationString(start, end) {
+        if (isNaN(start) && isNaN(end)) {
           return;
         }
         // one year = 365.25 days = 315576E5ms (Julian Calendar)

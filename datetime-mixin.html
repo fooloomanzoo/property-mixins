@@ -1,4 +1,4 @@
-<link rel="import" href="intl-format-mixin.html">
+<link rel="import" href="intl-datetime-format-mixin.html">
 <script>
   /**
    * Mixin that provides datetime-properties
@@ -12,7 +12,7 @@
    */
   const DatetimeMixin = superClass => { // eslint-disable-line no-unused-vars no-undef
 
-    return class extends IntlFormatMixin(superClass) {
+    return class extends IntlDatetimeFormatMixin(superClass) {
 
       static get properties() {
         return {
@@ -829,11 +829,11 @@
           case 'hour':
             partsHidden.hour = true; // falls through
           case 'minute':
-            partsHidden.monthinutes = true; // falls through
+            partsHidden.minute = true; // falls through
           case 'second':
             partsHidden.second = true; // falls through
           case 'millisecond':
-            partsHidden.monthillisecond = true; // falls through
+            partsHidden.millisecond = true; // falls through
         }
         this.setProperties({partsHidden: partsHidden});
       }
@@ -849,11 +849,11 @@
           d.toLocaleDateString(locale, { year: '2-digit', timeZone: 'UTC', hour12: false }).slice(0, 2),
           d.toLocaleDateString(locale, { month: '2-digit', timeZone: 'UTC', hour12: false }).slice(0, 2),
           d.toLocaleDateString(locale, { day: '2-digit', timeZone: 'UTC', hour12: false }).slice(0, 2),
-          d.toLocaleTimeString(locale, { hour: '2-digit', timeZone: 'UTC', hour12: false }).slice(0, 2)
+          d.toLocaleTimeString(locale, { hour: '2-digit', timeZone: 'UTC', hour12: false }).slice(0, 2),
         ];
 
         // using UTC-timezone to avoid conflicts when comparing
-        const localeDateString = d.toLocaleDateString(this._locale, { year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', timeZone: 'UTC', hour12: false });
+        const localeDateString = d.toLocaleString(locale, { year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', timeZone: 'UTC', hour12: false });
 
         let occurrence = [];
         for (let i = 0; i < dateKeys.length; i++) {
@@ -870,8 +870,9 @@
           timeFirst: occurrence[0] > occurrence[3],
           dateFirst: occurrence[0] < occurrence[3]
         };
+
         for (let i = 0; i < dateKeys.length - 1; i++) { // hours is not needed, time is always ordered the same
-          order[dateKeys[occurrence.indexOf(sortedOccurence[i])]] = i;
+          order[dateKeys[occurrence.indexOf(sortedOccurence[i])]] = i*2 + 1;
         }
 
         this.setProperties({
