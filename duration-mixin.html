@@ -57,7 +57,7 @@
            */
           _regExpValueString: {
             type: RegExp,
-            value: /(-)?(\d+y)?(\d+d)?(\d+h)?(\d+m)?(\d+s)?(\d+ms)?/g
+            value: /(-)?(\d+y)?(\d+w)?(\d+d)?(\d+h)?(\d+m)?(\d+s)?(\d+ms)?/g
           }
         }
       }
@@ -147,8 +147,10 @@
         // one year = 365.25 days = 315576E5ms (Julian Calendar)
         const ry = value % 315576E5,
           y = (value - ry) / 315576E5,
-          rd = ry % 864E5,
-          d = (ry - rd) / 864E5,
+          rw = ry % 6045E5,
+          w = (ry - rw) / 6045E5,
+          rd = rw % 864E5,
+          d = (rw - rd) / 864E5,
           rh = rd % 36E5,
           h = (rd - rh) / 36E5,
           rm = rh % 6E4,
@@ -158,6 +160,8 @@
         let ret = '';
         if (y)
           ret += y + 'y';
+        if (w)
+          ret += w + 'w';
         if (d)
           ret += d + 'd';
         if (h)
@@ -177,7 +181,7 @@
         }
         const match = this._regExpValueString.exec(valueString);
         if (match !== null) {
-          return (match[1] ? -1 : 1)*((+match[2] || 0)*315576E5 + (+match[3] || 0)*864E5 + (+match[4] || 0)*36E5 + (+match[5] || 0)*6E4 + (+match[6] || 0)*1E3 + (+match[7] || 0));
+          return (match[1] ? -1 : 1)*((+match[2] || 0)*315576E5 + (+match[3] || 0)*6045E5 + (+match[4] || 0)*864E5 + (+match[5] || 0)*36E5 + (+match[6] || 0)*6E4 + (+match[7] || 0)*1E3 + (+match[8] || 0));
         }
       }
     }
