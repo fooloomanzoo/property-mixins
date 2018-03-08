@@ -95,7 +95,7 @@
       }
 
       _localeChanged(locale, numberingSystem, calendar) {
-        if (!locale) {
+        if (!(locale && Intl.NumberFormat && Intl.NumberFormat.supportedLocalesOf(locale) && Intl.DateTimeFormat && Intl.DateTimeFormat.supportedLocalesOf(locale))) {
           this.locale = window.navigator.language;
           return;
         }
