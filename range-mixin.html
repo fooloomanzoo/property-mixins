@@ -25,15 +25,36 @@
           max: {
             type: Number
           },
+
           /**
            * step for changing the input (referencing to `min` or `0`)
            * @type {number}
            */
           step: {
             type: Number,
-            value: 1,
-            observer: '_stepChanged'
+            value: 1
           },
+
+          /**
+           * a step modifier. this is useful if you are having one step for multible elements that represent parts of numbers, like when you are having one input for the decimal part and one for the integer part.
+           * For example:
+           *   * if `step` is `0.002` and the `step-mod` is `1000`, `2` will be used
+           *   * if `step` is `10` and the `step-mod` is `0.02`, `0.2` will be used
+           */
+          stepMod: {
+            type: Number,
+            value: 1
+          },
+
+          /**
+           * the used step, product of stepMod and step
+           * @type {number}
+           */
+          _step: {
+            type: Number,
+            value: 1
+          },
+
           /**
            * value of the input
            * @type {number}
@@ -65,18 +86,14 @@
           noClamp: {
             type: Boolean,
             observer: '_updateValue'
-          },
-
-          _isInteger: {
-            type: Boolean,
-            computed: '_computeIsInteger(step)'
           }
         }
       }
 
       static get observers() {
         return [
-          '_minMaxChanged(min, max)'
+          '_minMaxChanged(min, max)',
+          '_stepChanged(step, stepMod)'
         ]
       }
 
@@ -140,7 +157,7 @@
         } else if (this.noClamp) {
           return value;
         }
-        return this._checkStep(value, this.step);
+        return this._checkStep(value, this._step);
       }
 
       _updateValue() {
@@ -154,27 +171,15 @@
           return value;
         }
         if (this.default !== undefined) {
-          if (this._isInteger) {
-            return Math.round((value - this.default) / step) * step + this.default;
-          }
           return this._safeAdd(this._safeMult(Math.round((value - this.default) / step), step), this.default);
         }
         if (this.min !== undefined) {
-          if (this._isInteger) {
-            return Math.round((value - this.min) / step) * step + this.min;
-          }
           return this._safeAdd(this._safeMult(Math.round((value - this.min) / step), step), this.min);
         }
         if (this.max !== undefined) {
-          if (this._isInteger) {
-            return Math.round(-(this.max - value) / step) * step + this.max;
-          }
           return this._safeAdd(this._safeMult(-Math.round((this.max - value) / step), step), this.max);
         }
-        if (this._isInteger) {
-          return Math.round(value / step) * step
-        }
-        return this._safeAdd(this._safeMult(Math.round(value / step), step), 0);
+        return this._safeMult(Math.round(value / step), step);
       }
 
       /**
@@ -189,8 +194,11 @@
 
         const aDecimal = a.slice(a.indexOf('.')).length - 1;
         const bDecimal = b.slice(b.indexOf('.')).length - 1;
-
         const decimal = aDecimal + bDecimal;
+
+        if (decimal === 0) {
+          return a * b;
+        }
         const sign = (a[0] === '-' ? b[0] !== '-' : b[0] === '-') ? '-' : '';
 
         a = a.replace(/\D/g, '');
@@ -219,8 +227,11 @@
 
         const aDecimal = a.slice(a.indexOf('.')).length - 1;
         const bDecimal = b.slice(b.indexOf('.')).length - 1;
-
         const decimal = Math.max(aDecimal, bDecimal);
+
+        if (decimal === 0) {
+          return +a + (+b);
+        }
 
         let whole = Math.round( Math.pow(10, decimal) * Number(a) +
                                 Math.pow(10, decimal) * Number(b) );
@@ -230,11 +241,10 @@
         for (let i = whole.length; i < decimal; i++) {
           whole = '0' + whole;
         }
-
         return Number(sign + whole.slice(0, whole.length - decimal) + '.' + whole.slice(whole.length - decimal));
       }
 
-      _stepChanged(step) {
+      _stepChanged(step, stepMod) {
         if (!step) {
           this.step = 1;
           return;
@@ -242,14 +252,13 @@
           this.step = Math.abs(step);
           return;
         }
+        this._step = this._safeMult(step, stepMod || 1);
         this._updateValue();
       }
 
-      _computeIsInteger(step) {
-        return step === Math.round(step);
-      }
     }
   }
+
 
   window.RangeMixin = RangeMixin;
 </script>

@@ -257,10 +257,7 @@
            * date-parts that are hidden
            */
           partsHidden: {
-            type: Object,
-            value: function() {
-              return {};
-            }
+            type: Object
           }
         }
       }
@@ -810,7 +807,7 @@
       }
 
       _clampChanged(clamp) {
-        let partsHidden = {
+        let partsHidden = this.partsHidden || {
           year: false,
           month: false,
           day: false,
@@ -821,7 +818,6 @@
         };
         switch (clamp) {
           case 'year':
-            partsHidden.year = true; // falls through
           case 'month':
             partsHidden.month = true; // falls through
           case 'day':
@@ -835,7 +831,7 @@
           case 'millisecond':
             partsHidden.millisecond = true; // falls through
         }
-        this.setProperties({partsHidden: partsHidden});
+        this.set('partsHidden', partsHidden);
       }
 
       _localeChanged(locale) {

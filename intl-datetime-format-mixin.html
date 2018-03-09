@@ -100,7 +100,6 @@
           return acc.replace(currentValue, '');
         }, d.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', timeZone: 'UTC', hour12: true } ));
 
-        console.log(dateSeparator, timeSeparator, amString, pmString);
         this.setProperties({
           dateSeparator: dateSeparator,
           timeSeparator: timeSeparator,
