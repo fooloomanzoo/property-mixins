@@ -128,8 +128,7 @@
            */
           formatNumber: {
             type: Function,
-            computed: '_computeFormatNumber(locale, _numberOptions, unit)',
-            observer: '_updateView'
+            computed: '_computeFormatNumber(locale, _numberOptions, unit)'
           },
 
           /**
@@ -137,8 +136,7 @@
            */
           parseNumber: {
             type: Function,
-            computed: '_computeParseNumber(decimalSeparator, numberStyle)',
-            observer: '_updateView'
+            computed: '_computeParseNumber(decimalSeparator, numberStyle, useGrouping)'
           },
 
           /**
@@ -225,7 +223,7 @@
           options.currencyDisplay = currencyDisplay;
         }
         if (maximumFractionDigits !== undefined) {
-          options.maximumFractionDigits = maximumSignificantDigits < minimumSignificantDigits ? minimumSignificantDigits : maximumSignificantDigits;
+          options.maximumFractionDigits = maximumFractionDigits< minimumFractionDigits ? minimumFractionDigits : maximumFractionDigits;
         }
         if (minimumSignificantDigits !== undefined) {
           options.minimumSignificantDigits = minimumSignificantDigits;
@@ -255,14 +253,26 @@
         }
       }
 
-      _computeParseNumber(decimalSeparator, numberStyle) {
+      _computeParseNumber(decimalSeparator, numberStyle, useGrouping) {
         if (numberStyle === 'percent') {
-          return (input) => {
-            return this._safeMult(parseFloat(input.replace(decimalSeparator, '.').replace(this._regExpNotInNumber, '')), 0.01);
+          if (useGrouping) {
+            return (input) => {
+              return parseFloat(input.replace(this.groupingSeparator, '').replace(decimalSeparator, '.')) * 0.01;
+            }
+          } else {
+            return (input) => {
+              return parseFloat(input.replace(decimalSeparator, '.')) * 0.01;
+            }
           }
         }
-        return (input) => {
-          return parseFloat(input.replace(decimalSeparator, '.').replace(this._regExpNotInNumber, ''));
+        if (useGrouping) {
+          return (input) => {
+            return parseFloat(input.replace(this.groupingSeparator, '').replace(decimalSeparator, '.').replace(this._regExpNotInNumber, ''));
+          }
+        } else {
+          return (input) => {
+            return parseFloat(input.replace(decimalSeparator, '.').replace(this._regExpNotInNumber, ''));
+          }
         }
       }
     }

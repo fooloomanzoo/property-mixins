@@ -65,6 +65,12 @@
         }
       }
 
+      static get observers() {
+        return [
+          '_localeChanged(locale)'
+        ]
+      }
+      
       _localeChanged(locale) {
         if (!(locale && Intl.DateTimeFormat && Intl.DateTimeFormat.supportedLocalesOf(locale))) {
           this.locale = window.navigator.language;
