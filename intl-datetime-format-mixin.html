@@ -1,9 +1,7 @@
-<link rel="import" href="intl-number-format-mixin.html">
 <script>
   /**
-   * Mixin that provides intl-format-locale and computes some separation strings for usage.
+   * Mixin that provides intl-format-locale for datetime and computes some separation strings for usage.
    *
-   * @appliesMixin IntlNumberFormatMixin
    * @mixinFunction
    * @polymer
    *
@@ -12,10 +10,26 @@
    */
   const IntlDatetimeFormatMixin = superClass => { // eslint-disable-line no-unused-vars no-undef
 
-    return class extends IntlNumberFormatMixin(superClass) {
+    return class extends superClass {
 
       static get properties() {
         return {
+          /**
+           * The current locale
+           */
+          locale: {
+            type: String,
+            value: window.navigator.language
+          },
+
+          /**
+           * locale separator for local decimal values
+           * @type {string}
+           */
+          decimalSeparator: {
+            type: String,
+            readOnly: true
+          },
 
           /**
            * Separator for local date values (date-string is still in ISO-Format)
@@ -56,7 +70,36 @@
           this.locale = window.navigator.language;
           return;
         }
-        super._localeChanged(locale);
+
+        // only `gregory`-calendar-system is possible to use
+        const resolvedOptions = new Intl.DateTimeFormat(locale).resolvedOptions();
+        if (resolvedOptions.calendar !== 'gregory' && resolvedOptions.calendar !== 'iso8601') {
+          // test if calendar system is part of the locale
+          if (locale.indexOf('-u-') !== -1) {
+            let pos;
+            if ((pos = locale.indexOf('-ca-')) !== -1) {
+              const end = locale.indexOf('-', pos + 4);
+              if (end !== -1) {
+                // `latn` is at in beetween
+                this.locale = locale.slice(0, pos + 4) + 'gregory' + locale.slice(end);
+              } else {
+                // `latn` is at end position
+                this.locale = locale.slice(0, pos + 4) + 'gregory';
+              }
+            } else {
+              // calendar-system is not part of locale
+              this.locale = locale + '-ca-gregory';
+            }
+          } else {
+            // locale has no modifier
+            this.locale = locale + '-u-ca-gregory';
+          }
+          return;
+        }
+
+        // decimal separator
+        const numberString = (0.5).toLocaleString(locale, { minimumIntergerDigits: 1, maximumIntergerDigits: 1, minimumFractionsDigits: 1, maximumFractionsDigits: 1 });
+        const decimalSeparator = numberString[1];
 
         // date separator
         let d = new Date(Date.UTC(1970, 0, 22, 11, 44, 55));
@@ -101,6 +144,7 @@
         }, d.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', timeZone: 'UTC', hour12: true } ));
 
         this.setProperties({
+          decimalSeparator: decimalSeparator,
           dateSeparator: dateSeparator,
           timeSeparator: timeSeparator,
           amString: (!amString || amString === '.') ? 'AM' : amString, // IE fix for languages that usually don't use am-pm suffixes
