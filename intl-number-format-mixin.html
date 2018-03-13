@@ -271,10 +271,11 @@
       }
 
       _computeParseNumber(decimalSeparator, numberStyle, useGrouping) {
+        const regExpGrouping = new RegExp('[' + (this.groupingSeparator || '') + ']', 'g');
         if (numberStyle === 'percent') {
           if (useGrouping) {
             return (input) => {
-              return parseFloat(input.replace(this.groupingSeparator, '').replace(decimalSeparator, '.')) * 0.01;
+              return parseFloat(input.replace(regExpGrouping, '').replace(decimalSeparator, '.')) * 0.01;
             }
           } else {
             return (input) => {
@@ -284,7 +285,7 @@
         }
         if (useGrouping) {
           return (input) => {
-            return parseFloat(input.replace(this.groupingSeparator, '').replace(decimalSeparator, '.').replace(this._regExpNotInNumber, ''));
+            return parseFloat(input.replace(regExpGrouping, '').replace(decimalSeparator, '.').replace(this._regExpNotInNumber, ''));
           }
         } else {
           return (input) => {
