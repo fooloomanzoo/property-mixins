@@ -1136,9 +1136,10 @@
             }
           },
           "metadata": {
-            "polymer": {}
-          },
-          "defaultValue": "\"-\""
+            "polymer": {
+              "readOnly": true
+            }
+          }
         },
         {
           "name": "timeSeparator",
@@ -1156,9 +1157,10 @@
             }
           },
           "metadata": {
-            "polymer": {}
-          },
-          "defaultValue": "\":\""
+            "polymer": {
+              "readOnly": true
+            }
+          }
         },
         {
           "name": "amString",
@@ -1171,12 +1173,14 @@
               "column": 10
             },
             "end": {
-              "line": 56,
+              "line": 57,
               "column": 11
             }
           },
           "metadata": {
-            "polymer": {}
+            "polymer": {
+              "readOnly": true
+            }
           }
         },
         {
@@ -1186,16 +1190,18 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 61,
+              "line": 62,
               "column": 10
             },
             "end": {
-              "line": 63,
+              "line": 65,
               "column": 11
             }
           },
           "metadata": {
-            "polymer": {}
+            "polymer": {
+              "readOnly": true
+            }
           }
         }
       ],
@@ -1206,11 +1212,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 73,
+              "line": 75,
               "column": 6
             },
             "end": {
-              "line": 211,
+              "line": 213,
               "column": 7
             }
           },
@@ -1231,7 +1237,7 @@
           "column": 2
         },
         "end": {
-          "line": 213,
+          "line": 215,
           "column": 3
         }
       },
@@ -1311,7 +1317,7 @@
               "column": 10
             },
             "end": {
-              "line": 56,
+              "line": 57,
               "column": 11
             }
           },
@@ -1323,11 +1329,11 @@
           "description": "locale representation of 'PM'",
           "sourceRange": {
             "start": {
-              "line": 61,
+              "line": 62,
               "column": 10
             },
             "end": {
-              "line": 63,
+              "line": 65,
               "column": 11
             }
           },
@@ -1408,9 +1414,10 @@
             }
           },
           "metadata": {
-            "polymer": {}
+            "polymer": {
+              "readOnly": true
+            }
           },
-          "defaultValue": "\"-\"",
           "inheritedFrom": "IntlDatetimeFormatMixin"
         },
         {
@@ -1430,9 +1437,10 @@
             }
           },
           "metadata": {
-            "polymer": {}
+            "polymer": {
+              "readOnly": true
+            }
           },
-          "defaultValue": "\":\"",
           "inheritedFrom": "IntlDatetimeFormatMixin"
         },
         {
@@ -1447,12 +1455,14 @@
               "column": 10
             },
             "end": {
-              "line": 56,
+              "line": 57,
               "column": 11
             }
           },
           "metadata": {
-            "polymer": {}
+            "polymer": {
+              "readOnly": true
+            }
           },
           "inheritedFrom": "IntlDatetimeFormatMixin"
         },
@@ -1464,16 +1474,18 @@
           "sourceRange": {
             "file": "intl-datetime-format-mixin.html",
             "start": {
-              "line": 61,
+              "line": 62,
               "column": 10
             },
             "end": {
-              "line": 63,
+              "line": 65,
               "column": 11
             }
           },
           "metadata": {
-            "polymer": {}
+            "polymer": {
+              "readOnly": true
+            }
           },
           "inheritedFrom": "IntlDatetimeFormatMixin"
         },
@@ -2810,7 +2822,7 @@
               "column": 10
             },
             "end": {
-              "line": 56,
+              "line": 57,
               "column": 11
             }
           },
@@ -2824,11 +2836,11 @@
           "sourceRange": {
             "file": "intl-datetime-format-mixin.html",
             "start": {
-              "line": 61,
+              "line": 62,
               "column": 10
             },
             "end": {
-              "line": 63,
+              "line": 65,
               "column": 11
             }
           },
@@ -3522,12 +3534,14 @@
               "column": 10
             },
             "end": {
-              "line": 29,
+              "line": 30,
               "column": 11
             }
           },
           "metadata": {
-            "polymer": {}
+            "polymer": {
+              "readOnly": true
+            }
           }
         },
         {
@@ -3537,16 +3551,18 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 34,
+              "line": 35,
               "column": 10
             },
             "end": {
-              "line": 36,
+              "line": 38,
               "column": 11
             }
           },
           "metadata": {
-            "polymer": {}
+            "polymer": {
+              "readOnly": true
+            }
           }
         },
         {
@@ -3556,11 +3572,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 41,
+              "line": 43,
               "column": 10
             },
             "end": {
-              "line": 43,
+              "line": 45,
               "column": 11
             }
           },
@@ -3575,11 +3591,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 48,
+              "line": 50,
               "column": 10
             },
             "end": {
-              "line": 50,
+              "line": 52,
               "column": 11
             }
           },
@@ -3594,11 +3610,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 55,
+              "line": 57,
               "column": 10
             },
             "end": {
-              "line": 57,
+              "line": 59,
               "column": 11
             }
           },
@@ -3613,11 +3629,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 62,
+              "line": 64,
               "column": 10
             },
             "end": {
-              "line": 64,
+              "line": 66,
               "column": 11
             }
           },
@@ -3632,11 +3648,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 69,
+              "line": 71,
               "column": 10
             },
             "end": {
-              "line": 71,
+              "line": 73,
               "column": 11
             }
           },
@@ -3651,11 +3667,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 76,
+              "line": 78,
               "column": 10
             },
             "end": {
-              "line": 78,
+              "line": 80,
               "column": 11
             }
           },
@@ -3670,11 +3686,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 83,
+              "line": 85,
               "column": 10
             },
             "end": {
-              "line": 86,
+              "line": 88,
               "column": 11
             }
           },
@@ -3690,11 +3706,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 91,
+              "line": 93,
               "column": 10
             },
             "end": {
-              "line": 93,
+              "line": 95,
               "column": 11
             }
           },
@@ -3709,11 +3725,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 99,
+              "line": 101,
               "column": 10
             },
             "end": {
-              "line": 102,
+              "line": 104,
               "column": 11
             }
           },
@@ -3729,11 +3745,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 107,
+              "line": 109,
               "column": 10
             },
             "end": {
-              "line": 109,
+              "line": 111,
               "column": 11
             }
           },
@@ -3748,11 +3764,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 114,
+              "line": 116,
               "column": 10
             },
             "end": {
-              "line": 116,
+              "line": 118,
               "column": 11
             }
           },
@@ -3767,11 +3783,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 121,
+              "line": 123,
               "column": 10
             },
             "end": {
-              "line": 123,
+              "line": 125,
               "column": 11
             }
           },
@@ -3786,11 +3802,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 128,
+              "line": 130,
               "column": 10
             },
             "end": {
-              "line": 131,
+              "line": 133,
               "column": 11
             }
           },
@@ -3807,11 +3823,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 136,
+              "line": 138,
               "column": 10
             },
             "end": {
-              "line": 139,
+              "line": 141,
               "column": 11
             }
           },
@@ -3828,11 +3844,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 144,
+              "line": 146,
               "column": 10
             },
             "end": {
-              "line": 147,
+              "line": 149,
               "column": 11
             }
           },
@@ -3849,11 +3865,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 152,
+              "line": 154,
               "column": 10
             },
             "end": {
-              "line": 156,
+              "line": 158,
               "column": 11
             }
           },
@@ -3872,11 +3888,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 166,
+              "line": 168,
               "column": 6
             },
             "end": {
-              "line": 224,
+              "line": 226,
               "column": 7
             }
           },
@@ -3893,11 +3909,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 226,
+              "line": 228,
               "column": 6
             },
             "end": {
-              "line": 249,
+              "line": 251,
               "column": 7
             }
           },
@@ -3938,11 +3954,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 251,
+              "line": 253,
               "column": 6
             },
             "end": {
-              "line": 268,
+              "line": 270,
               "column": 7
             }
           },
@@ -3965,11 +3981,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 270,
+              "line": 272,
               "column": 6
             },
             "end": {
-              "line": 291,
+              "line": 293,
               "column": 7
             }
           },
@@ -3996,7 +4012,7 @@
           "column": 2
         },
         "end": {
-          "line": 293,
+          "line": 295,
           "column": 3
         }
       },
@@ -4028,7 +4044,7 @@
               "column": 10
             },
             "end": {
-              "line": 29,
+              "line": 30,
               "column": 11
             }
           },
@@ -4040,11 +4056,11 @@
           "description": "locale separator for grouping decimal values",
           "sourceRange": {
             "start": {
-              "line": 34,
+              "line": 35,
               "column": 10
             },
             "end": {
-              "line": 36,
+              "line": 38,
               "column": 11
             }
           },
@@ -4056,11 +4072,11 @@
           "description": "The minimum number of fraction digits to use. Possible values are from 0 to 20; the default for plain number and percent formatting is 0; the default for currency formatting is the number of minor unit digits provided by the ISO 4217 currency code list (2 if the list doesn't provide that information).",
           "sourceRange": {
             "start": {
-              "line": 41,
+              "line": 43,
               "column": 10
             },
             "end": {
-              "line": 43,
+              "line": 45,
               "column": 11
             }
           },
@@ -4072,11 +4088,11 @@
           "description": "The maximum number of fraction digits to use. Possible values are from 0 to 20; the default for plain number formatting is the larger of minimumFractionDigits and 3; the default for currency formatting is the larger of minimumFractionDigits and the number of minor unit digits provided by the ISO 4217 currency code list (2 if the list doesn't provide that information); the default for percent formatting is the larger of minimumFractionDigits and 0.",
           "sourceRange": {
             "start": {
-              "line": 48,
+              "line": 50,
               "column": 10
             },
             "end": {
-              "line": 50,
+              "line": 52,
               "column": 11
             }
           },
@@ -4088,11 +4104,11 @@
           "description": "The minimum number of integer digits to use. Possible values are from 1 to 21; the default is 1.",
           "sourceRange": {
             "start": {
-              "line": 55,
+              "line": 57,
               "column": 10
             },
             "end": {
-              "line": 57,
+              "line": 59,
               "column": 11
             }
           },
@@ -4104,11 +4120,11 @@
           "description": "The minimum number of significant digits to use. Possible values are from 1 to 21; the default is 1.",
           "sourceRange": {
             "start": {
-              "line": 62,
+              "line": 64,
               "column": 10
             },
             "end": {
-              "line": 64,
+              "line": 66,
               "column": 11
             }
           },
@@ -4120,11 +4136,11 @@
           "description": "The maximum number of significant digits to use. Possible values are from 1 to 21; the default is minimumSignificantDigits.",
           "sourceRange": {
             "start": {
-              "line": 69,
+              "line": 71,
               "column": 10
             },
             "end": {
-              "line": 71,
+              "line": 73,
               "column": 11
             }
           },
@@ -4136,11 +4152,11 @@
           "description": "unit of the output (only used when `number-style=\"decimal\"`)",
           "sourceRange": {
             "start": {
-              "line": 76,
+              "line": 78,
               "column": 10
             },
             "end": {
-              "line": 78,
+              "line": 80,
               "column": 11
             }
           },
@@ -4152,11 +4168,11 @@
           "description": "the separator to separate value and unit",
           "sourceRange": {
             "start": {
-              "line": 83,
+              "line": 85,
               "column": 10
             },
             "end": {
-              "line": 86,
+              "line": 88,
               "column": 11
             }
           },
@@ -4168,11 +4184,11 @@
           "description": "always put the sign at the beginning",
           "sourceRange": {
             "start": {
-              "line": 91,
+              "line": 93,
               "column": 10
             },
             "end": {
-              "line": 93,
+              "line": 95,
               "column": 11
             }
           },
@@ -4184,11 +4200,11 @@
           "description": "The formatting style to use. Possible values are \"decimal\" for plain number formatting, \"currency\" for currency formatting, and \"percent\" for percent formatting; the default is \"decimal\".\nnotice: min, max and step are not in percent (so e.g. if step is 0.01, it means that the step is 1%)",
           "sourceRange": {
             "start": {
-              "line": 99,
+              "line": 101,
               "column": 10
             },
             "end": {
-              "line": 102,
+              "line": 104,
               "column": 11
             }
           },
@@ -4200,11 +4216,11 @@
           "description": "if true the number will be grouped according to the locale.",
           "sourceRange": {
             "start": {
-              "line": 107,
+              "line": 109,
               "column": 10
             },
             "end": {
-              "line": 109,
+              "line": 111,
               "column": 11
             }
           },
@@ -4216,11 +4232,11 @@
           "description": "The currency to use in currency formatting. Possible values are the ISO 4217 currency codes, such as \"USD\" for the US dollar, \"EUR\" for the euro, or \"CNY\" for the Chinese RMB — see http://www.currency-iso.org/en/home/tables/table-a1.html. There is no default value; if the style is \"currency\", the currency property must be provided.",
           "sourceRange": {
             "start": {
-              "line": 114,
+              "line": 116,
               "column": 10
             },
             "end": {
-              "line": 116,
+              "line": 118,
               "column": 11
             }
           },
@@ -4232,11 +4248,11 @@
           "description": "How to display the currency in currency formatting. Possible values are \"symbol\" to use a localized currency symbol such as €, \"code\" to use the ISO currency code, \"name\" to use a localized currency name such as \"dollar\"; the default is \"symbol\".",
           "sourceRange": {
             "start": {
-              "line": 121,
+              "line": 123,
               "column": 10
             },
             "end": {
-              "line": 123,
+              "line": 125,
               "column": 11
             }
           },
@@ -4248,11 +4264,11 @@
           "description": "number format function",
           "sourceRange": {
             "start": {
-              "line": 136,
+              "line": 138,
               "column": 10
             },
             "end": {
-              "line": 139,
+              "line": 141,
               "column": 11
             }
           },
@@ -4264,11 +4280,11 @@
           "description": "function to parse the input",
           "sourceRange": {
             "start": {
-              "line": 144,
+              "line": 146,
               "column": 10
             },
             "end": {
-              "line": 147,
+              "line": 149,
               "column": 11
             }
           },
