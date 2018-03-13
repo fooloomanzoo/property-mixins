@@ -37,7 +37,7 @@
            */
           dateSeparator: {
             type: String,
-            value: '-'
+            readOnly: true
           },
 
           /**
@@ -46,21 +46,23 @@
            */
           timeSeparator: {
             type: String,
-            value: ':'
+            readOnly: true
           },
 
           /**
            * locale representation of 'AM'
            */
           amString: {
-            type: String
+            type: String,
+            readOnly: true
           },
 
           /**
            * locale representation of 'PM'
            */
           pmString: {
-            type: String
+            type: String,
+            readOnly: true
           }
         }
       }

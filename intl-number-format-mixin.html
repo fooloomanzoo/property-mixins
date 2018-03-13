@@ -26,14 +26,16 @@
            * locale separator for local decimal values
            */
           decimalSeparator: {
-            type: String
+            type: String,
+            readOnly: true
           },
 
           /**
            * locale separator for grouping decimal values
            */
           groupingSeparator: {
-            type: String
+            type: String,
+            readOnly: true
           },
 
           /**
@@ -260,7 +262,7 @@
         const format = new Intl.NumberFormat(locale, numberOptions).format;
         if (unit) {
           return (n) => {
-            return ((this.alwaysSign && n > 0) ? '+' : '') + format(n) + this.unitSeperator + unit;
+            return ((this.alwaysSign && n > 0) ? '+' : '') + format(n) + this.unitSeparator + unit;
           }
         }
         return (n) => {
