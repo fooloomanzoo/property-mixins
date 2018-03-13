@@ -1,3 +1,5 @@
+<link rel="import" href="range-mixin.html">
+
 <script>
   /**
    * Mixin that provides intl-format-locale for numbers and computes some separation strings for usage (only `latn`-numeral-system is possible).
@@ -275,11 +277,11 @@
         if (numberStyle === 'percent') {
           if (useGrouping) {
             return (input) => {
-              return parseFloat(input.replace(regExpGrouping, '').replace(decimalSeparator, '.')) * 0.01;
+              return window._numberUtilities._safeMult(input.replace(regExpGrouping, '').replace(decimalSeparator, '.'), 0.01);
             }
           } else {
             return (input) => {
-              return parseFloat(input.replace(decimalSeparator, '.')) * 0.01;
+              return window._numberUtilities._safeMult(parseFloat(input.replace(decimalSeparator, '.')), 0.01);
             }
           }
         }

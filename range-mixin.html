@@ -1,5 +1,64 @@
 <script>
   /**
+   * Utilities for number operations
+   */
+  window._numberUtilities = window._numberUtilities || {};
+  /**
+   * emulating handwritten multiplication to keep precision
+   * @param  {[number]} a [factor]
+   * @param  {[number]} b [factor]
+   * @return {[type]}   [product]
+   */
+  window._numberUtilities._safeMult = function(a, b) {
+    a = '' + (a || 0);
+    b = '' + (b || 0);
+
+    const decimal = a.slice(a.indexOf('.')).length + b.slice(b.indexOf('.')).length - 2;
+
+    if (decimal === 0) {
+      return a * b;
+    }
+    const sign = (a[0] === '-' ? b[0] !== '-' : b[0] === '-') ? '-' : '';
+
+    a = +a.replace(/\D/g, '');
+    b = b.replace(/\D/g, '');
+
+    let whole = 0;
+    for (let i = 0; i < b.length; i++) {
+      whole += Math.pow(10, b.length - 1 - i) * a * (+b[i]);
+    }
+    whole = '' + whole;
+    for (let i = whole.length; i < decimal; i++) {
+      whole = '0' + whole;
+    }
+    return +(sign + whole.slice(0, whole.length - decimal) + '.' + whole.slice(whole.length - decimal));
+  }
+  /**
+   * emulating handwritten addition to keep precision
+   * @param  {[number]} a [summand]
+   * @param  {[number]} b [summand]
+   * @return {[type]}   [sum]
+   */
+  window._numberUtilities._safeAdd = function(a, b) {
+    const _a = '' + (a || 0),
+      _b = '' + (b || 0),
+      decimal = Math.max(_a.slice(_a.indexOf('.')).length, _b.slice(_b.indexOf('.')).length) - 1;
+
+    if (decimal === 0) {
+      return a + b;
+    }
+
+    let whole = Math.round(Math.pow(10, decimal) * a + Math.pow(10, decimal) * b);
+
+    const sign = whole < 0 ? '-' : '';
+    whole = '' + Math.abs(whole);
+    for (let i = whole.length; i < decimal; i++) {
+      whole = '0' + whole;
+    }
+    return +(sign + whole.slice(0, whole.length - decimal) + '.' + whole.slice(whole.length - decimal));
+  }
+
+  /**
    * mixin to provide a range behavior for a given value
    *
    * @mixinFunction
@@ -183,65 +242,17 @@
       }
 
       /**
-       * emulating handwritten multiplication
-       * @param  {[number]} a [factor]
-       * @param  {[number]} b [factor]
-       * @return {[type]}   [product]
+       * emulating handwritten multiplication to keep precision
        */
       _safeMult(a, b) {
-        a = '' + (a || 0);
-        b = '' + (b || 0);
-
-        const aDecimal = a.slice(a.indexOf('.')).length - 1;
-        const bDecimal = b.slice(b.indexOf('.')).length - 1;
-        const decimal = aDecimal + bDecimal;
-
-        if (decimal === 0) {
-          return a * b;
-        }
-        const sign = (a[0] === '-' ? b[0] !== '-' : b[0] === '-') ? '-' : '';
-
-        a = a.replace(/\D/g, '');
-        b = b.replace(/\D/g, '');
-
-        let whole = 0;
-        for (let i = 0; i < b.length; i++) {
-          whole += Math.pow(10, b.length - 1 - i) * Number(a) * Number(b[i]);
-        }
-        whole = '' + whole;
-        for (let i = whole.length; i < decimal; i++) {
-          whole = '0' + whole;
-        }
-        return Number(sign + whole.slice(0, whole.length - decimal) + '.' + whole.slice(whole.length - decimal));
+        return window._numberUtilities._safeMult(a, b);
       }
 
       /**
-       * emulating handwritten addition
-       * @param  {[number]} a [summand]
-       * @param  {[number]} b [summand]
-       * @return {[type]}   [sum]
+       * emulating handwritten addition to keep precision
        */
       _safeAdd(a, b) {
-        a = '' + (a || 0);
-        b = '' + (b || 0);
-
-        const aDecimal = a.slice(a.indexOf('.')).length - 1;
-        const bDecimal = b.slice(b.indexOf('.')).length - 1;
-        const decimal = Math.max(aDecimal, bDecimal);
-
-        if (decimal === 0) {
-          return +a + (+b);
-        }
-
-        let whole = Math.round(Math.pow(10, decimal) * Number(a) +
-          Math.pow(10, decimal) * Number(b));
-
-        const sign = whole < 0 ? '-' : '';
-        whole = '' + Math.abs(whole);
-        for (let i = whole.length; i < decimal; i++) {
-          whole = '0' + whole;
-        }
-        return Number(sign + whole.slice(0, whole.length - decimal) + '.' + whole.slice(whole.length - decimal));
+        return window._numberUtilities._safeAdd(a, b);
       }
 
       _stepChanged(step, stepMod) {
