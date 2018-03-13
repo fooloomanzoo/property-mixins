@@ -3,7 +3,7 @@
   "version": "2.3.3",
   "description": "mixin for custom elements to extends property mixins for data formats",
   "scripts": {
-    "prepublish": "npm run build && git add . && git commit -m \"publish new version\" && git push && npm version patch",
+    "prepublish": "npm run build && git add . && git commit -m \"publish new version\" && npm version patch && git push",
     "build": "git pull && bower update -f && polymer analyze > analysis.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
