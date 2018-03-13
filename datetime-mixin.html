@@ -3,7 +3,7 @@
   /**
    * Mixin that provides datetime-properties
    *
-   * @appliesMixin IntlFormatMixin
+   * @appliesMixin IntlDatetimeFormatMixin
    * @mixinFunction
    * @polymer
    *
@@ -12,7 +12,7 @@
    */
   const DatetimeMixin = superClass => { // eslint-disable-line no-unused-vars no-undef
 
-    return class extends IntlDatetimeFormatMixin(superClass) {
+    return class extends IntlDatetimeFormatMixin(superClass) { // eslint-disable-line no-undef
 
       static get properties() {
         return {
@@ -474,7 +474,7 @@
             second = d.getSeconds(),
             millisecond = d.getMilliseconds();
 
-          if (year !== this.year || month !== this.month || day !== this.day || hour !== this.hour || minute !== this.minute  || second !== this.second || millisecond !== this.millisecond) {
+          if (year !== this.year || month !== this.month || day !== this.day || hour !== this.hour || minute !== this.minute || second !== this.second || millisecond !== this.millisecond) {
             this.setProperties({
               year: year,
               month: month,
@@ -736,7 +736,7 @@
         if (hour === undefined || minute === undefined) {
           return;
         }
-        const offsetMinutes = -(hour < 0 ? -1 : 1)*(Math.abs(hour) * 60 + minute),
+        const offsetMinutes = -(hour < 0 ? -1 : 1) * (Math.abs(hour) * 60 + minute),
           timezone = (hour >= 0 ? '+' : '') + this._pad(hour, 2) + ':' + this._pad(minute, 2);
         if (offsetMinutes !== this._timezoneOffset) {
           this.__updatingTimezoneOffset = true;
@@ -764,8 +764,8 @@
             timezone: '+00:00'
           };
         }
-        const hour = -(offsetMinutes < 0 ? -1 : 1)*Math.floor(Math.abs(offsetMinutes) / 60),
-        minute = Math.abs(offsetMinutes) % 60;
+        const hour = -(offsetMinutes < 0 ? -1 : 1) * Math.floor(Math.abs(offsetMinutes) / 60),
+          minute = Math.abs(offsetMinutes) % 60;
         return {
           _timezoneOffset: offsetMinutes,
           _timeZoneHours: hour,
@@ -788,7 +788,7 @@
           const hour = +match[1],
             minute = +match[2];
           return {
-            _timezoneOffset: (hour > 0 ? -1 : 1)*(Math.abs(hour) * 60 + minute),
+            _timezoneOffset: (hour > 0 ? -1 : 1) * (Math.abs(hour) * 60 + minute),
             _timeZoneHours: hour,
             _timeZoneMinutes: minute,
             timezone: timezone
@@ -842,21 +842,47 @@
         const dateKeys = ['year', 'month', 'day', 'hour'];
         let d = new Date(Date.UTC(1970, 0, 22, 18, 44));
         const formatedDateParts = [
-          d.toLocaleDateString(locale, { year: '2-digit', timeZone: 'UTC', hour12: false }).slice(0, 2),
-          d.toLocaleDateString(locale, { month: '2-digit', timeZone: 'UTC', hour12: false }).slice(0, 2),
-          d.toLocaleDateString(locale, { day: '2-digit', timeZone: 'UTC', hour12: false }).slice(0, 2),
-          d.toLocaleTimeString(locale, { hour: '2-digit', timeZone: 'UTC', hour12: false }).slice(0, 2),
+          d.toLocaleDateString(locale, {
+            year: '2-digit',
+            timeZone: 'UTC',
+            hour12: false
+          }).slice(0, 2),
+          d.toLocaleDateString(locale, {
+            month: '2-digit',
+            timeZone: 'UTC',
+            hour12: false
+          }).slice(0, 2),
+          d.toLocaleDateString(locale, {
+            day: '2-digit',
+            timeZone: 'UTC',
+            hour12: false
+          }).slice(0, 2),
+          d.toLocaleTimeString(locale, {
+            hour: '2-digit',
+            timeZone: 'UTC',
+            hour12: false
+          }).slice(0, 2),
         ];
 
         // using UTC-timezone to avoid conflicts when comparing
-        const localeDateString = d.toLocaleString(locale, { year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', timeZone: 'UTC', hour12: false });
+        const localeDateString = d.toLocaleString(locale, {
+          year: '2-digit',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          timeZone: 'UTC',
+          hour12: false
+        });
 
         let occurrence = [];
         for (let i = 0; i < dateKeys.length; i++) {
           occurrence.push(localeDateString.indexOf(formatedDateParts[i]));
         }
 
-        const sortedOccurence = (occurrence.slice()).sort( (a,b) => { return a > b });
+        const sortedOccurence = (occurrence.slice()).sort((a, b) => {
+          return a > b
+        });
 
         // setting datetime order
         const order = {
@@ -868,7 +894,7 @@
         };
 
         for (let i = 0; i < dateKeys.length - 1; i++) { // hours is not needed, time is always ordered the same
-          order[dateKeys[occurrence.indexOf(sortedOccurence[i])]] = i*2 + 1;
+          order[dateKeys[occurrence.indexOf(sortedOccurence[i])]] = i * 2 + 1;
         }
 
         this.setProperties({

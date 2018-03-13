@@ -39,9 +39,9 @@
           /**
            * value of the time period in milliseconds
            */
-          value: {
+          valueAsNumber: {
             type: Number,
-            observer: '_valueChanged'
+            observer: '_valueAsNumberChanged'
           },
 
           /**
@@ -91,7 +91,7 @@
         this.value = +end - start;
       }
 
-      _valueChanged(value) {
+      _valueAsNumberChanged(value) {
         if (value === undefined) {
           return;
         }
@@ -100,7 +100,8 @@
           return;
         }
 
-        let start = this.start, end = this.end;
+        let start = this.start,
+          end = this.end;
 
         if (typeof start === 'string') {
           start = new Date(start);
@@ -132,8 +133,8 @@
         this.value = this._computeDurationValue(valueAsString);
       }
 
-      _computeDurationString(start, end) {
-        if (isNaN(start) && isNaN(end)) {
+      _computeDurationString(value) {
+        if (isNaN(value)) {
           return;
         }
         // one year = 365.25 days = 315576E5ms (Julian Calendar)
@@ -173,11 +174,11 @@
         }
         const match = this._regExpValueString.exec(valueString);
         if (match !== null) {
-          return (match[1] ? -1 : 1)*((+match[2] || 0)*315576E5 + (+match[3] || 0)*6045E5 + (+match[4] || 0)*864E5 + (+match[5] || 0)*36E5 + (+match[6] || 0)*6E4 + (+match[7] || 0)*1E3 + (+match[8] || 0));
+          return (match[1] ? -1 : 1) * ((+match[2] || 0) * 315576E5 + (+match[3] || 0) * 6045E5 + (+match[4] || 0) * 864E5 + (+match[5] || 0) * 36E5 + (+match[6] || 0) * 6E4 + (+match[7] || 0) * 1E3 + (+match[8] || 0));
         }
       }
     }
   }
 
-  window.IntlNumberFormatMixin = IntlNumberFormatMixin;
+  window.DurationMixin = DurationMixin;
 </script>

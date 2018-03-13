@@ -72,10 +72,18 @@
           },
 
           /**
-           * unit of the output
+           * unit of the output (only used when `number-style="decimal"`)
            */
           unit: {
             type: String
+          },
+
+          /**
+           * the separator to separate value and unit
+           */
+          unitSeparator: {
+            type: String,
+            value: '\u202F'
           },
 
           /**
@@ -188,15 +196,22 @@
         }
 
         // decimal separator
-        const numberString = (0.5).toLocaleString(locale, { minimumIntergerDigits: 1, minimumFractionsDigits: 1 });
+        const numberString = (0.5).toLocaleString(locale, {
+          minimumIntergerDigits: 1,
+          minimumFractionsDigits: 1
+        });
         const decimalSeparator = numberString[1];
 
         // grouping separator
-        const nogroupingString = (1000000).toLocaleString(locale, { useGrouping: false });
-        const groupingString = (1000000).toLocaleString(locale, { useGrouping: true });
+        const nogroupingString = (1000000).toLocaleString(locale, {
+          useGrouping: false
+        });
+        const groupingString = (1000000).toLocaleString(locale, {
+          useGrouping: true
+        });
 
         let groupingSeparator;
-        for (var i = 0; i < nogroupingString.length; i++) {
+        for (let i = 0; i < nogroupingString.length; i++) {
           if (groupingString[i] !== nogroupingString[i]) {
             groupingSeparator = groupingString[i];
             break;
@@ -223,7 +238,7 @@
           options.currencyDisplay = currencyDisplay;
         }
         if (maximumFractionDigits !== undefined) {
-          options.maximumFractionDigits = maximumFractionDigits< minimumFractionDigits ? minimumFractionDigits : maximumFractionDigits;
+          options.maximumFractionDigits = maximumFractionDigits < minimumFractionDigits ? minimumFractionDigits : maximumFractionDigits;
         }
         if (minimumSignificantDigits !== undefined) {
           options.minimumSignificantDigits = minimumSignificantDigits;
@@ -245,7 +260,7 @@
         const format = new Intl.NumberFormat(locale, numberOptions).format;
         if (unit) {
           return (n) => {
-            return ((this.alwaysSign && n > 0) ? '+' : '') + format(n) + '\u202F' + unit;
+            return ((this.alwaysSign && n > 0) ? '+' : '') + format(n) + this.unitSeperator + unit;
           }
         }
         return (n) => {

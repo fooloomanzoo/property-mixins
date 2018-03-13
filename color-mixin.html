@@ -1,6 +1,6 @@
 <script>
   /**
-   * Mixin that provides web-color-properties. Its value converts automatically beetween different formats (hex, rgb and hsl) and provides an alpha-value.
+   * Mixin that provides web-color-properties. Its `color-string` converts automatically beetween different formats (hex, rgb and hsl) and provides an alpha-colorString.
    *
    * @mixinFunction
    * @polymer
@@ -77,7 +77,7 @@
           },
 
           /**
-           * if true, value has alpha
+           * if true, colorString has alpha
            */
           alphaMode: {
             type: Boolean,
@@ -85,14 +85,14 @@
             observer: '_alphaModeChanged'
           },
           /**
-           * Precision of hsl-values, if the format is 'hsl' (for saturation and lightness it is applied according to their percentage value)
+           * Precision of hsl-colorStrings, if the format is 'hsl' (for saturation and lightness it is applied according to their percentage colorString)
            */
           hslPrecision: {
             type: Number,
             value: 0
           },
           /**
-           * format of the value (possible values: 'rgb', 'hex', 'hsl')
+           * format of the colorString (possible colorStrings: 'rgb', 'hex', 'hsl')
            */
           format: {
             type: String,
@@ -103,10 +103,10 @@
           /**
            * hex-color
            */
-          value: {
+          colorString: {
             type: String,
             notify: true,
-            observer: '_valueChanged'
+            observer: '_colorStringChanged'
           },
 
           _validateHex: {
@@ -173,15 +173,15 @@
         }
       }
 
-      _valueChanged(value, oldValue) {
-        if (value === undefined) return;
+      _colorStringChanged(colorString, oldValue) {
+        if (colorString === undefined) return;
 
         let toSet = {},
           match,
           format;
         // input-format detection
         // hsl-format
-        if (match = value.match(this._validateHsl)) {
+        if (match = colorString.match(this._validateHsl)) {
           if (match[1] === undefined) { // no alpha
             toSet.alpha = 1;
             toSet.alphaMode = false;
@@ -191,12 +191,12 @@
           }
           toSet.h = this._mathMod(+match[2], 360);
           let matchPercent;
-          if (matchPercent = match[3].match(this._validatePercent)) { // s in percentage value
+          if (matchPercent = match[3].match(this._validatePercent)) { // s in percentage colorString
             toSet.s = this._normalizedClamp(+matchPercent[1] * 0.01);
           } else {
             toSet.s = this._normalizedClamp(+match[3]);
           }
-          if (matchPercent = match[4].match(this._validatePercent)) { // l in percentage value
+          if (matchPercent = match[4].match(this._validatePercent)) { // l in percentage colorString
             toSet.l = this._normalizedClamp(+matchPercent[1] * 0.01);
           } else {
             toSet.l = this._normalizedClamp(+match[4]);
@@ -210,7 +210,7 @@
             toSet.l = +toSet.l.toFixed((this.hslPrecision || 0) + 2);
           }
         // hex-format
-        } else if (match = value.match(this._validateHex)) {
+        } else if (match = colorString.match(this._validateHex)) {
           if (match[1] !== undefined) { // six hex numbers
             toSet.hex = match[1];
             if (match[2] !== undefined) { // alpha channel has two hex numbers
@@ -234,7 +234,7 @@
             format = 'hex';
           }
         // rgb-format
-        } else if (match = value.match(this._validateRgb)) {
+        } else if (match = colorString.match(this._validateRgb)) {
           if (match[1] === undefined) { // no alpha
             toSet.alpha = 1;
             toSet.alphaMode = false;
@@ -255,7 +255,7 @@
           }
         }
         if (!match && oldValue !== undefined) {
-          this._valueChanged(oldValue);
+          this._colorStringChanged(oldValue);
           return;
         }
         if (format && this.format !== format) {
@@ -276,18 +276,18 @@
           case 'hsl':
             if (!isNaN(this.h) && !isNaN(this.s) && !isNaN(this.l)) {
               if (this.alphaMode === true) {
-                this.value = `hsla(${this.h.toFixed(this.hslPrecision || 0)}, ${(this.s*100).toFixed(this.hslPrecision || 0)}%, ${(this.l*100).toFixed(this.hslPrecision || 0)}%, ${this.alpha === undefined ? 0 : this.alpha})`;
+                this.colorString = `hsla(${this.h.toFixed(this.hslPrecision || 0)}, ${(this.s*100).toFixed(this.hslPrecision || 0)}%, ${(this.l*100).toFixed(this.hslPrecision || 0)}%, ${this.alpha === undefined ? 0 : this.alpha})`;
               } else {
-                this.value = `hsl(${this.h.toFixed(this.hslPrecision || 0)}, ${(this.s*100).toFixed(this.hslPrecision || 0)}%, ${(this.l*100).toFixed(this.hslPrecision || 0)}%)`;
+                this.colorString = `hsl(${this.h.toFixed(this.hslPrecision || 0)}, ${(this.s*100).toFixed(this.hslPrecision || 0)}%, ${(this.l*100).toFixed(this.hslPrecision || 0)}%)`;
               }
             }
             break;
           case 'rgb':
             if (!isNaN(this.r) && !isNaN(this.g) && !isNaN(this.b)) {
               if (this.alphaMode === true) {
-                this.value = `rgba(${Math.round(this.r)}, ${Math.round(this.g)}, ${Math.round(this.b)}, ${this.alpha === undefined ? 0 : this.alpha})`;
+                this.colorString = `rgba(${Math.round(this.r)}, ${Math.round(this.g)}, ${Math.round(this.b)}, ${this.alpha === undefined ? 0 : this.alpha})`;
               } else {
-                this.value = `rgb(${Math.round(this.r)}, ${Math.round(this.g)}, ${Math.round(this.b)})`;
+                this.colorString = `rgb(${Math.round(this.r)}, ${Math.round(this.g)}, ${Math.round(this.b)})`;
               }
             }
             break;
@@ -295,9 +295,9 @@
           default:
             if (this.hex !== undefined) {
               if (this.alphaMode === true) {
-                this.value = `${this.hex}${this._alphaToHex(this.alpha, this.hex.length === 4 ? 1 : 2)}`;
+                this.colorString = `${this.hex}${this._alphaToHex(this.alpha, this.hex.length === 4 ? 1 : 2)}`;
               } else {
-                this.value = this.hex;
+                this.colorString = this.hex;
               }
             }
         }
@@ -461,7 +461,7 @@
 
       /**
        * generate random rgb-color
-       * @return {object} rgb-value object
+       * @return {object} rgb-color object
        */
       randomRgb() {
         return {
@@ -473,7 +473,7 @@
 
       /**
        * generate random hsl-color
-       * @return {object} rgb-value object
+       * @return {object} rgb-color object
        */
       randomHsl() {
         return {

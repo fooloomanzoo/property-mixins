@@ -233,8 +233,8 @@
           return +a + (+b);
         }
 
-        let whole = Math.round( Math.pow(10, decimal) * Number(a) +
-                                Math.pow(10, decimal) * Number(b) );
+        let whole = Math.round(Math.pow(10, decimal) * Number(a) +
+          Math.pow(10, decimal) * Number(b));
 
         const sign = whole < 0 ? '-' : '';
         whole = '' + Math.abs(whole);
@@ -245,20 +245,16 @@
       }
 
       _stepChanged(step, stepMod) {
-        if (!step) {
-          this.step = 1;
-          return;
-        } else if (step !== Math.abs(step)) {
+        step = step || 0;
+        if (step !== Math.abs(step)) {
           this.step = Math.abs(step);
           return;
         }
         this._step = this._safeMult(step, stepMod || 1);
         this._updateValue();
       }
-
     }
   }
-
 
   window.RangeMixin = RangeMixin;
 </script>
