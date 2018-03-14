@@ -1,5 +1,5 @@
 {
-  "name": "property-mixins",
+  "name": "@fooloomanzoo/property-mixins",
   "version": "2.3.7",
   "description": "mixin for custom elements to extends property mixins for data formats",
   "scripts": {
