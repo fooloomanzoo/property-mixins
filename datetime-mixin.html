@@ -170,6 +170,10 @@
             type: String
           },
 
+          step: {
+            type: Number
+          },
+
           /**
            * The local timezone offset in '±hh:mm' format
            */
@@ -224,7 +228,7 @@
            */
           _regexpTimezone: {
             type: RegExp,
-            value: /^(?:([+-]\d\d):(\d\d)|Z)$/
+            value: /(?:([+-]\d\d):(\d\d)|Z)$/
           },
 
           /**
@@ -269,7 +273,8 @@
           '_dateTimeChanged(date, time)',
           '_timeZoneHoursMinutesChanged(_timeZoneHours, _timeZoneMinutes)',
           '_defaultChanged(default)',
-          '_clampChanged(clamp)'
+          '_clampChanged(clamp)',
+          '_stepChanged(step)'
         ]
       }
 
@@ -299,9 +304,7 @@
         }
         let d;
         if (year === undefined && month === undefined && day === undefined && hour === undefined && minute === undefined && second === undefined && millisecond === undefined) {
-          if (this.default !== undefined) {
-            this._setDate(new Date(this.default));
-          } else {
+          if (this.value !== undefined) {
             this._resetDate();
           }
           return;
@@ -364,9 +367,7 @@
           return;
         }
         if ((date === undefined && time === undefined) || this.timezone === undefined) {
-          if (this.default !== undefined) {
-            this._setDate(new Date(this.default));
-          } else {
+          if (this.value !== undefined) {
             this._resetDate();
           }
           return;
@@ -376,9 +377,7 @@
 
       _datetimeChanged(datetime) {
         if (datetime === undefined) {
-          if (this.default !== undefined) {
-            this._setDate(new Date(this.default));
-          } else {
+          if (this.value !== undefined) {
             this._resetDate();
           }
           return;
@@ -426,11 +425,7 @@
 
       _valueChanged(value) {
         if (isNaN(value)) {
-          if (this.default !== undefined) {
-            this._setDate(new Date(this.default));
-          } else {
-            this._resetDate();
-          }
+          this._resetDate();
           return;
         }
 
@@ -509,6 +504,13 @@
         if (e && e.stopPropagation) {
           e.stopPropagation();
         }
+        if (this.default !== undefined) {
+          const d = this._fromDatetime(this.default, true);
+          if (!isNaN(d)) {
+            this._setDate(d);
+            return;
+          }
+        }
         this.setProperties({
           value: undefined,
           datetime: undefined,
@@ -518,6 +520,8 @@
           month: undefined,
           day: undefined,
           hour: undefined,
+          hour12: undefined,
+          isAm: undefined,
           minute: undefined,
           second: undefined,
           millisecond: undefined,
@@ -555,9 +559,17 @@
         return sign + str;
       }
 
-      _fromDatetime(datetime) {
+      _fromDatetime(datetime, resetTimeZone) {
         if (datetime === undefined) {
           return;
+        }
+        if (resetTimeZone) {
+          this.setProperties({
+            timezone: undefined,
+            _timezoneOffset: undefined,
+            _timeZoneHours: undefined,
+            _timeZoneMinutes: undefined
+          })
         }
         if (typeof datetime === 'object' && datetime.getDate) {
           // 'datetime' is a Date Object
@@ -657,22 +669,16 @@
       }
 
       _hourChanged(hour) {
-        if (hour === undefined) {
-          this.setProperties({
-            isAm: undefined,
-            hour12: undefined
-          })
-        }
+        if (hour === undefined) return;
+
         this.isAm = hour < 12;
         this.hour12 = (hour === 0) ? 12 : (hour > 12 ? hour - 12 : hour);
       }
 
       _hour12Changed(hour12) {
-        if (hour12 === undefined) {
-          this.hour = undefined;
-        } else {
-          this.hour = (hour12 === 12) ? (this.isAm ? 0 : 12) : (this.isAm ? hour12 : hour12 + 12);
-        }
+        if (hour12 === undefined) return;
+
+        this.hour = (hour12 === 12) ? (this.isAm ? 0 : 12) : (this.isAm ? hour12 : hour12 + 12);
       }
 
       _isAmChanged(isAm) {
@@ -700,7 +706,9 @@
 
       _timezoneChanged(timezone, oldValue) {
         if (timezone === undefined) {
-          this._resetDate();
+          if (this.value !== undefined) {
+            this._resetDate();
+          }
           return;
         } else if (!(this._regexpTimezone.exec(timezone))) {
           if (this._regexpTimezone.exec(oldValue)) {
@@ -832,6 +840,34 @@
             partsHidden.millisecond = true; // falls through
         }
         this.set('partsHidden', partsHidden);
+      }
+
+      _stepChanged(step) {
+        let partsHidden = this.partsHidden || {
+          year: false,
+          month: false,
+          day: false,
+          hour: false,
+          minute: false,
+          second: false,
+          millisecond: false
+        };
+        switch (step) {
+          case 'year':
+          case 'month':
+            partsHidden.month = true; // falls through
+          case 'day':
+            partsHidden.day = true; // falls through
+          case 'hour':
+            partsHidden.hour = true; // falls through
+          case 'minute':
+            partsHidden.minute = true; // falls through
+          case 'second':
+            partsHidden.second = true; // falls through
+          case 'millisecond':
+            partsHidden.millisecond = true; // falls through
+        }
+        // this.set('partsHidden', partsHidden);
       }
 
       _localeChanged(locale) {
