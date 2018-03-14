@@ -170,10 +170,6 @@
             type: String
           },
 
-          step: {
-            type: Number
-          },
-
           /**
            * The local timezone offset in '±hh:mm' format
            */
@@ -249,19 +245,10 @@
                 year: 0,
                 month: 1,
                 day: 2,
-                hour: 3,
-                minute: 4,
-                second: 5,
-                millisecond: 6
+                timeFirst: false,
+                dateFirst: true
               };
             }
-          },
-
-          /**
-           * date-parts that are hidden
-           */
-          partsHidden: {
-            type: Object
           }
         }
       }
@@ -273,8 +260,7 @@
           '_dateTimeChanged(date, time)',
           '_timeZoneHoursMinutesChanged(_timeZoneHours, _timeZoneMinutes)',
           '_defaultChanged(default)',
-          '_clampChanged(clamp)',
-          '_stepChanged(step)'
+          '_clampChanged(clamp)'
         ]
       }
 
@@ -282,12 +268,8 @@
         if (!def) {
           return;
         }
-        const d = this._fromDatetime(def);
-        if (isNaN(d)) {
-          return;
-        }
         if (this.value === undefined) {
-          this._setDate(d);
+          this._resetDate();
         }
       }
 
@@ -814,60 +796,10 @@
         return 31;
       }
 
-      _clampChanged(clamp) {
-        let partsHidden = this.partsHidden || {
-          year: false,
-          month: false,
-          day: false,
-          hour: false,
-          minute: false,
-          second: false,
-          millisecond: false
-        };
-        switch (clamp) {
-          case 'year':
-          case 'month':
-            partsHidden.month = true; // falls through
-          case 'day':
-            partsHidden.day = true; // falls through
-          case 'hour':
-            partsHidden.hour = true; // falls through
-          case 'minute':
-            partsHidden.minute = true; // falls through
-          case 'second':
-            partsHidden.second = true; // falls through
-          case 'millisecond':
-            partsHidden.millisecond = true; // falls through
+      _clampChanged() {
+        if (this.value !== undefined) {
+          this._setDate(new Date(this.value));
         }
-        this.set('partsHidden', partsHidden);
-      }
-
-      _stepChanged(step) {
-        let partsHidden = this.partsHidden || {
-          year: false,
-          month: false,
-          day: false,
-          hour: false,
-          minute: false,
-          second: false,
-          millisecond: false
-        };
-        switch (step) {
-          case 'year':
-          case 'month':
-            partsHidden.month = true; // falls through
-          case 'day':
-            partsHidden.day = true; // falls through
-          case 'hour':
-            partsHidden.hour = true; // falls through
-          case 'minute':
-            partsHidden.minute = true; // falls through
-          case 'second':
-            partsHidden.second = true; // falls through
-          case 'millisecond':
-            partsHidden.millisecond = true; // falls through
-        }
-        // this.set('partsHidden', partsHidden);
       }
 
       _localeChanged(locale) {
