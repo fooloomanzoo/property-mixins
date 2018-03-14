@@ -159,6 +159,7 @@
            */
           hour12Format: {
             type: Boolean,
+            value: false,
             reflectToAttribute: true
           },
 
@@ -296,7 +297,7 @@
             this.setProperties(this._computeTimezone(new Date().getTimezoneOffset()));
             this.__updatingTimezoneOffset = false;
           }
-          d = new Date(this.value !== undefined ? this.value : this.datetime || ((this.date || this._toDate(new Date())) + 'T' + (this.time || this._toTime(new Date()).slice(0, 5)) + this.timezone));
+          d = new Date(this.value !== undefined ? this.value : this.datetime || ((this.date || this._toDate(new Date())) + 'T' + (this.time || '00:00') + this.timezone));
           if (isNaN(d)) {
             d = new Date();
           }
@@ -650,27 +651,36 @@
         return this._pad(d.getHours(), 2) + ':' + this._pad(d.getMinutes(), 2) + ':' + this._pad(d.getSeconds(), 2) + '.' + this._pad(d.getMilliseconds(), 3);
       }
 
+      /**
+       * `hour` is the hour in hour24-format, that starts is minimal 0 and maximal 23, midnight is at 0 and high-noon is 12
+       */
       _hourChanged(hour) {
         if (hour === undefined) return;
+        hour = ((hour % 24) + 24) % 24; // mathematical modulo of 24
 
-        this.isAm = hour < 12;
-        this.hour12 = (hour === 0) ? 12 : (hour > 12 ? hour - 12 : hour);
+        this.setProperties({
+          isAm: hour < 12,
+          hour12: (hour === 0) ? 12 : (hour > 12 ? hour - 12 : hour)
+        })
       }
 
+      /**
+       * `hour12` is the hour in hour12-format, that starts is minimal 1 and maximal 12, midnight is at 12am and noon is 12pm
+       */
       _hour12Changed(hour12) {
         if (hour12 === undefined) return;
-
-        this.hour = (hour12 === 12) ? (this.isAm ? 0 : 12) : (this.isAm ? hour12 : hour12 + 12);
+        hour12 = (((hour12 - 1) % 12) + 12) % 12 + 1; // mathematical modulo of 12
+        const hour = (hour12 === 12) ? (this.isAm ? 0 : 12) : (this.isAm ? hour12 : hour12 + 12);
+        
+        if (hour != ((this.hour % 24) + 24) % 24) { // testing to enable hour overflow
+          this.hour = hour;
+        }
       }
 
       _isAmChanged(isAm) {
         if (isAm === undefined) return;
 
-        if (this.hour >= 12 && isAm === true) {
-          this.hour -= 12;
-        } else if (this.hour <= 12 && isAm === false) {
-          this.hour += 12;
-        }
+        this._hour12Changed(this.hour12);
       }
 
       /**
