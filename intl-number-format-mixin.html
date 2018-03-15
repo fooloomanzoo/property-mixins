@@ -21,6 +21,7 @@
            */
           locale: {
             type: String,
+            notify: true,
             value: window.navigator.language
           },
 
@@ -29,6 +30,7 @@
            */
           decimalSeparator: {
             type: String,
+            notify: true,
             readOnly: true
           },
 
@@ -37,6 +39,7 @@
            */
           groupingSeparator: {
             type: String,
+            notify: true,
             readOnly: true
           },
 
@@ -103,7 +106,8 @@
            */
           numberStyle: {
             type: String,
-            value: 'decimal'
+            value: 'decimal',
+            notify: true
           },
 
           /**
@@ -140,7 +144,8 @@
            */
           formatNumber: {
             type: Function,
-            computed: '_computeFormatNumber(locale, _numberOptions, unit)'
+            computed: '_computeFormatNumber(locale, _numberOptions, unit)',
+            notify: true
           },
 
           /**
@@ -148,7 +153,8 @@
            */
           parseNumber: {
             type: Function,
-            computed: '_computeParseNumber(decimalSeparator, numberStyle, useGrouping)'
+            computed: '_computeParseNumber(decimalSeparator, numberStyle, useGrouping)',
+            notify: true
           },
 
           /**

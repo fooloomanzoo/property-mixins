@@ -66,6 +66,7 @@
            */
           isAm: {
             type: Boolean,
+            notify: true,
             observer: '_isAmChanged'
           },
 
@@ -129,8 +130,7 @@
            * The default value of the input
            */
           default: {
-            type: String,
-            notify: true
+            type: String
           },
 
           /**
@@ -160,7 +160,8 @@
           hour12Format: {
             type: Boolean,
             value: false,
-            reflectToAttribute: true
+            reflectToAttribute: true,
+            notify: true
           },
 
           /**
@@ -168,7 +169,8 @@
            * possible values:'month', 'day', 'hour', 'minute', 'second', 'millisecond'
            */
           clamp: {
-            type: String
+            type: String,
+            notify: true
           },
 
           /**
@@ -241,6 +243,7 @@
            */
           dateOrder: {
             type: Object,
+            notify: true,
             value: function() {
               return {
                 year: 0,
@@ -671,7 +674,7 @@
         if (hour12 === undefined) return;
         hour12 = (((hour12 - 1) % 12) + 12) % 12 + 1; // mathematical modulo of 12
         const hour = (hour12 === 12) ? (this.isAm ? 0 : 12) : (this.isAm ? hour12 : hour12 + 12);
-        
+
         if (hour != ((this.hour % 24) + 24) % 24) { // testing to enable hour overflow
           this.hour = hour;
         }
