@@ -101,6 +101,7 @@
             type: String,
             notify: true
           },
+          
           /**
            * the selected local date (format: iso8601)
            */
@@ -127,15 +128,14 @@
           },
 
           /**
-           * The default value of the input
+           * The default value of the input, could be a number, a date-object or an iso-string in time, date or datetime-notation
            */
           default: {
             type: String
           },
 
           /**
-           * The minimal local date,
-           * could be a number, a date-object or an iso-string
+           * The minimal local date, could be a number, a date-object or an iso-string in time, date or datetime-notation
            */
           min: {
             type: String,
@@ -144,8 +144,7 @@
           },
 
           /**
-           * The maximal local date,
-           * could be a number, a date-object or an iso-string
+           * The maximal local date, could be a number, a date-object or an iso-string in time, date or datetime-notation
            */
           max: {
             type: String,
@@ -243,16 +242,16 @@
            */
           dateOrder: {
             type: Object,
-            notify: true,
             value: function() {
               return {
-                year: 0,
-                month: 1,
-                day: 2,
+                year: 1,
+                month: 3,
+                day: 5,
                 timeFirst: false,
                 dateFirst: true
               };
-            }
+            },
+            notify: true
           }
         }
       }
@@ -424,6 +423,7 @@
        */
       _setDate(d) {
         if (!isNaN(d)) {
+
           d = this._checkThreshold(d);
 
           const localTimezoneOffset = d.getTimezoneOffset();
@@ -561,9 +561,9 @@
           // 'datetime' is a Date Object
           return datetime;
         }
-        if (typeof datetime === 'number' && !isNaN(datetime)) {
+        if (!isNaN(+datetime)) {
           // 'datetime' is a number
-          return new Date(datetime);
+          return new Date(+datetime);
         }
         let d;
         const match = this._regexpDatetime.exec(datetime);
@@ -820,30 +820,32 @@
 
         // test locale dateformat, to define the order of the parts of the date
         // create datestring in locale format
-        const dateKeys = ['year', 'month', 'day', 'hour'];
-        let d = new Date(Date.UTC(1970, 0, 22, 18, 44));
-        const formatedDateParts = [
-          d.toLocaleDateString(locale, {
+        let d = new Date(Date.UTC(1970, 10, 22, 18, 44));
+
+        // filter the number in the current locale representation and unicode-left- or right-control-marks
+        // (only internet explorer: https://www.csgpro.com/blog/2016/08/a-bad-date-with-internet-explorer-11-trouble-with-new-unicode-characters-in-javascript-date-strings)
+        const formatedDateParts = {
+          year: d.toLocaleDateString(locale, {
             year: '2-digit',
             timeZone: 'UTC',
             hour12: false
-          }).slice(0, 2),
-          d.toLocaleDateString(locale, {
+          }).replace(/[\u200E\u200F]/g, '').slice(0, 2),
+          month: d.toLocaleDateString(locale, {
             month: '2-digit',
             timeZone: 'UTC',
             hour12: false
-          }).slice(0, 2),
-          d.toLocaleDateString(locale, {
+          }).replace(/[\u200E\u200F]/g, '').slice(0, 2),
+          day: d.toLocaleDateString(locale, {
             day: '2-digit',
             timeZone: 'UTC',
             hour12: false
-          }).slice(0, 2),
-          d.toLocaleTimeString(locale, {
+          }).replace(/[\u200E\u200F]/g, '').slice(0, 2),
+          hour: d.toLocaleTimeString(locale, {
             hour: '2-digit',
             timeZone: 'UTC',
             hour12: false
-          }).slice(0, 2),
-        ];
+          }).replace(/[\u200E\u200F]/g, '').slice(0, 2),
+        };
 
         // using UTC-timezone to avoid conflicts when comparing
         const localeDateString = d.toLocaleString(locale, {
@@ -854,28 +856,54 @@
           minute: '2-digit',
           timeZone: 'UTC',
           hour12: false
-        });
+        }).replace(/[\u200E\u200F]/g, '');
 
-        let occurrence = [];
-        for (let i = 0; i < dateKeys.length; i++) {
-          occurrence.push(localeDateString.indexOf(formatedDateParts[i]));
-        }
-
-        const sortedOccurence = (occurrence.slice()).sort((a, b) => {
-          return a > b
-        });
+        let occurrence = {
+          year: localeDateString.indexOf(formatedDateParts.year),
+          month: localeDateString.indexOf(formatedDateParts.month),
+          day: localeDateString.indexOf(formatedDateParts.day),
+          hour: localeDateString.indexOf(formatedDateParts.hour)
+        };
 
         // setting datetime order
         const order = {
           year: null,
           month: null,
           day: null,
-          timeFirst: occurrence[0] > occurrence[3],
-          dateFirst: occurrence[0] < occurrence[3]
+          timeFirst: occurrence.year > occurrence.hour,
+          dateFirst: occurrence.year < occurrence.hour
         };
 
-        for (let i = 0; i < dateKeys.length - 1; i++) { // hours is not needed, time is always ordered the same
-          order[dateKeys[occurrence.indexOf(sortedOccurence[i])]] = i * 2 + 1;
+        if (occurrence.year < occurrence.month) {
+          if (occurrence.year < occurrence.day) {
+            order.year = 1;
+            if (occurrence.month < occurrence.day) {
+              order.month = 3;
+              order.day = 5;
+            } else {
+              order.day = 3;
+              order.month = 5;
+            }
+          } else {
+            order.day = 1;
+            order.year = 3;
+            order.month = 5;
+          }
+        } else {
+          if (occurrence.month < occurrence.day) {
+            order.month = 1;
+            if (occurrence.year < occurrence.day) {
+              order.year = 3;
+              order.day = 5;
+            } else {
+              order.day = 3;
+              order.year = 5;
+            }
+          } else {
+            order.day = 1;
+            order.month = 3;
+            order.year = 5;
+          }
         }
 
         this.setProperties({

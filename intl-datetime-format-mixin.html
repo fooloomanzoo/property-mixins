@@ -129,85 +129,71 @@
             day: '2-digit',
             timeZone: 'UTC',
             hour12: false
-          }).slice(0, 2),
+          }).replace(/[\u200E\u200F]/g, '').slice(0, 2),
           d.toLocaleDateString(locale, {
             month: '2-digit',
             timeZone: 'UTC',
             hour12: false
-          }).slice(0, 2),
+          }).replace(/[\u200E\u200F]/g, '').slice(0, 2),
           d.toLocaleDateString(locale, {
             year: '2-digit',
             timeZone: 'UTC',
             hour12: false
-          }).slice(0, 2)
+          }).replace(/[\u200E\u200F]/g, '').slice(0, 2)
         ];
 
         // using UTC-timezone to avoid conflicts when comparing
         const dateSeparator = formatedDateParts.reduce((acc, currentValue) => {
-          return acc.replace(currentValue, '');
+          // filter the number in the current locale representation and unicode-left- or right-control-marks
+          // (only internet explorer: https://www.csgpro.com/blog/2016/08/a-bad-date-with-internet-explorer-11-trouble-with-new-unicode-characters-in-javascript-date-strings)
+          return acc.replace(currentValue, '').replace(/[\u200E\u200F]/g, '');
         }, d.toLocaleDateString(locale, {
           day: '2-digit',
           month: '2-digit',
           year: '2-digit',
           timeZone: 'UTC',
           hour12: false
-        })).slice(0, 1);
+        }))[0];
 
         // time separator
         // create datestring in locale format
-        const formatedTimeParts = [
-          d.toLocaleTimeString(locale, {
+        let formatedTimeString = d.toLocaleTimeString(locale, {
             hour: '2-digit',
             minute: '2-digit',
             timeZone: 'UTC',
             hour12: false
-          }).slice(0, 2),
-          d.toLocaleTimeString(locale, {
-            minute: '2-digit',
-            second: '2-digit',
-            timeZone: 'UTC',
-            hour12: false
-          }).slice(0, 2)
-        ];
+          }).replace(/[\u200E\u200F]/g, '');
 
         // using UTC-timezone to avoid conflicts when comparing
-        const timeSeparator = formatedTimeParts.reduce((acc, currentValue) => {
-          return acc.replace(currentValue, '');
-        }, d.toLocaleTimeString(locale, {
-          hour: '2-digit',
-          minute: '2-digit',
-          timeZone: 'UTC',
-          hour12: false
-        })).slice(0, 1);
+        const timeSeparator = formatedTimeString.replace(/[\u200E\u200F]/g, '')[2];
 
         // am-pm strings
+        let formatedTimeParts = formatedTimeString.split(timeSeparator);
         formatedTimeParts.push(timeSeparator);
 
         // am
         const amString = formatedTimeParts.reduce((acc, currentValue) => {
-          return acc.replace(currentValue, '');
+          return acc.replace(currentValue, '').replace(/[\u200E\u200F\s]/g, '');
         }, d.toLocaleTimeString(locale, {
           hour: '2-digit',
           minute: '2-digit',
           timeZone: 'UTC',
-          hour12: true
+          hour12: true,
+          hourCycle: 'h12'
         }));
 
+        formatedTimeParts.push(amString);
+
         // pm
-        d.setUTCHours(16);
-        formatedTimeParts[0] = d.toLocaleTimeString(locale, {
-          hour: '2-digit',
-          minute: '2-digit',
-          timeZone: 'UTC',
-          hour12: true
-        }).slice(0, 2);
+        d.setUTCHours(23);
         const pmString = formatedTimeParts.reduce((acc, currentValue) => {
-          return acc.replace(currentValue, '');
+          return acc.replace(currentValue, '').replace(/[\u200E\u200F\s]/g, '');
         }, d.toLocaleTimeString(locale, {
           hour: '2-digit',
           minute: '2-digit',
           timeZone: 'UTC',
-          hour12: true
+          hour12: true,
+          hourCycle: 'h12'
         }));
 
         this.setProperties({
