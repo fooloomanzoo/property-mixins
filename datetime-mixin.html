@@ -101,7 +101,7 @@
             type: String,
             notify: true
           },
-          
+
           /**
            * the selected local date (format: iso8601)
            */
@@ -657,9 +657,13 @@
       /**
        * `hour` is the hour in hour24-format, that starts is minimal 0 and maximal 23, midnight is at 0 and high-noon is 12
        */
-      _hourChanged(hour) {
+      _hourChanged(hour, oldHour) {
         if (hour === undefined) return;
-        hour = ((hour % 24) + 24) % 24; // mathematical modulo of 24
+        const newHour = ((hour % 24) + 24) % 24; // mathematical modulo of 24
+
+        if (newHour === oldHour) {
+          return;
+        }
 
         this.setProperties({
           isAm: hour < 12,
@@ -670,18 +674,19 @@
       /**
        * `hour12` is the hour in hour12-format, that starts is minimal 1 and maximal 12, midnight is at 12am and noon is 12pm
        */
-      _hour12Changed(hour12) {
-        if (hour12 === undefined) return;
+      _hour12Changed(hour12, old) {
+        if (hour12 === undefined || hour12 === old) return;
+        
         hour12 = (((hour12 - 1) % 12) + 12) % 12 + 1; // mathematical modulo of 12
         const hour = (hour12 === 12) ? (this.isAm ? 0 : 12) : (this.isAm ? hour12 : hour12 + 12);
 
-        if (hour != ((this.hour % 24) + 24) % 24) { // testing to enable hour overflow
+        if (hour !== ((this.hour % 24) + 24) % 24) { // testing to enable hour overflow
           this.hour = hour;
         }
       }
 
-      _isAmChanged(isAm) {
-        if (isAm === undefined) return;
+      _isAmChanged(isAm, old) {
+        if (isAm === undefined || isAm === old) return;
 
         this._hour12Changed(this.hour12);
       }
