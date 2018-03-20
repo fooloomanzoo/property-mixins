@@ -46,8 +46,7 @@
            */
           hour: {
             type: Number,
-            notify: true,
-            observer: '_hourChanged'
+            notify: true
           },
 
           /**
@@ -453,9 +452,13 @@
             hour = d.getHours(),
             minute = d.getMinutes(),
             second = d.getSeconds(),
-            millisecond = d.getMilliseconds();
+            millisecond = d.getMilliseconds(),
+            hour12 = (hour === 0) ? 12 : (hour > 12 ? hour - 12 : hour),
+            isAm = hour < 12,
+            date = this._toDate(d),
+            time = this._dateLocked ? '00:00' : this._toTime(d),
+            datetime = date + 'T' + time + this.timezone;
 
-          if (year !== this.year || month !== this.month || day !== this.day || hour !== this.hour || minute !== this.minute || second !== this.second || millisecond !== this.millisecond) {
             this.setProperties({
               year: year,
               month: month,
@@ -463,22 +466,13 @@
               hour: hour,
               minute: minute,
               second: second,
-              millisecond: millisecond
-            });
-            return;
-          }
-
-          const date = this._toDate(d),
-            time = this._dateLocked ? '00:00' : this._toTime(d),
-            datetime = date + 'T' + time + this.timezone;
-
-          if (this.datetime !== datetime || this.time !== time || this.date !== date) {
-            this.setProperties({
+              millisecond: millisecond,
+              isAm: isAm,
+              hour12: hour12,
               datetime: datetime,
               date: date,
               time: time
             });
-          }
         } else if (!isNaN(d = new Date(this.default))) {
           this._setDate(d);
         } else if (!isNaN(this.value)) {
@@ -655,34 +649,12 @@
       }
 
       /**
-       * `hour` is the hour in hour24-format, that starts is minimal 0 and maximal 23, midnight is at 0 and high-noon is 12
-       */
-      _hourChanged(hour, oldHour) {
-        if (hour === undefined) return;
-        const newHour = ((hour % 24) + 24) % 24; // mathematical modulo of 24
-
-        if (newHour === oldHour) {
-          return;
-        }
-
-        this.setProperties({
-          isAm: hour < 12,
-          hour12: (hour === 0) ? 12 : (hour > 12 ? hour - 12 : hour)
-        })
-      }
-
-      /**
        * `hour12` is the hour in hour12-format, that starts is minimal 1 and maximal 12, midnight is at 12am and noon is 12pm
        */
       _hour12Changed(hour12, old) {
         if (hour12 === undefined || hour12 === old) return;
-        
-        hour12 = (((hour12 - 1) % 12) + 12) % 12 + 1; // mathematical modulo of 12
-        const hour = (hour12 === 12) ? (this.isAm ? 0 : 12) : (this.isAm ? hour12 : hour12 + 12);
 
-        if (hour !== ((this.hour % 24) + 24) % 24) { // testing to enable hour overflow
-          this.hour = hour;
-        }
+        this.hour = (hour12 === 12) ? (this.isAm ? 0 : 12) : (this.isAm ? hour12 : hour12 + 12);
       }
 
       _isAmChanged(isAm, old) {
