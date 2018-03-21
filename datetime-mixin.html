@@ -262,7 +262,7 @@
           '_dateTimeChanged(date, time)',
           '_timeZoneHoursMinutesChanged(_timeZoneHours, _timeZoneMinutes)',
           '_defaultChanged(default)',
-          '_clampChanged(clamp)'
+          '_computePartsHidden(clamp)'
         ]
       }
 
@@ -298,7 +298,7 @@
             this.setProperties(this._computeTimezone(new Date().getTimezoneOffset()));
             this.__updatingTimezoneOffset = false;
           }
-          d = new Date(this.value !== undefined ? this.value : this.datetime || ((this.date || this._toDate(new Date())) + 'T' + (this.time || '00:00') + this.timezone));
+          d = new Date(this.value !== undefined ? this.value : this.datetime || ((this.date || '1970-01-01') + 'T' + (this.time || '00:00') + this.timezone));
           if (isNaN(d)) {
             d = new Date();
           }
@@ -786,9 +786,38 @@
         return 31;
       }
 
-      _clampChanged() {
-        if (this.value !== undefined) {
-          this._setDate(new Date(this.value));
+      _computePartsHidden(clamp) {
+        switch (clamp) {
+          case 'year':
+            this.set('partsHidden.year', true); // falls through
+          case 'month':
+            this.set('partsHidden.month', true); // falls through
+          case 'day':
+            this.set('partsHidden.day', true); // falls through
+          case 'hour':
+            this.set('partsHidden.hour', true); // falls through
+          case 'minute':
+            this.set('partsHidden.minute', true); // falls through
+          case 'second':
+            this.set('partsHidden.second', true); // falls through
+          case 'millisecond':
+            this.set('partsHidden.millisecond', true); // falls through
+            break;
+          default:
+            if (this.partsHidden.year === undefined)
+              this.set('partsHidden.year', false);
+            if (this.partsHidden.month === undefined)
+              this.set('partsHidden.month', false);
+            if (this.partsHidden.day === undefined)
+              this.set('partsHidden.day', false);
+            if (this.partsHidden.hour === undefined)
+              this.set('partsHidden.hour', false);
+            if (this.partsHidden.minute === undefined)
+              this.set('partsHidden.minute', false);
+            if (this.partsHidden.second === undefined)
+              this.set('partsHidden.second', false);
+            if (this.partsHidden.millisecond === undefined)
+              this.set('partsHidden.millisecond', false);
         }
       }
 
