@@ -261,8 +261,7 @@
           '_datetimeChanged(datetime)',
           '_dateTimeChanged(date, time)',
           '_timeZoneHoursMinutesChanged(_timeZoneHours, _timeZoneMinutes)',
-          '_defaultChanged(default)',
-          '_computePartsHidden(clamp)'
+          '_defaultChanged(default)'
         ]
       }
 
@@ -665,15 +664,12 @@
 
       /**
        * clamp to date component
-       * @param  {string} clamp 'clamp'-property
-       * @param  {string} comp the property to compare to
-       * @return {boolean}     true when should be hidden
        */
-      _ifClamped(clamp, comp) {
+      _ifClamped(clamp, comp, hidden) {
         const features = ['month', 'day', 'hour', 'minute', 'second', 'millisecond'];
         const pos = features.indexOf(clamp);
         const index = features.indexOf(comp);
-        return pos !== -1 && index !== -1 && pos <= index;
+        return hidden || (pos !== -1 && index !== -1 && pos <= index);
       }
 
       _timezoneChanged(timezone, oldValue) {
@@ -784,41 +780,6 @@
           return d.getDate();
         }
         return 31;
-      }
-
-      _computePartsHidden(clamp) {
-        switch (clamp) {
-          case 'year':
-            this.set('partsHidden.year', true); // falls through
-          case 'month':
-            this.set('partsHidden.month', true); // falls through
-          case 'day':
-            this.set('partsHidden.day', true); // falls through
-          case 'hour':
-            this.set('partsHidden.hour', true); // falls through
-          case 'minute':
-            this.set('partsHidden.minute', true); // falls through
-          case 'second':
-            this.set('partsHidden.second', true); // falls through
-          case 'millisecond':
-            this.set('partsHidden.millisecond', true); // falls through
-            break;
-          default:
-            if (this.partsHidden.year === undefined)
-              this.set('partsHidden.year', false);
-            if (this.partsHidden.month === undefined)
-              this.set('partsHidden.month', false);
-            if (this.partsHidden.day === undefined)
-              this.set('partsHidden.day', false);
-            if (this.partsHidden.hour === undefined)
-              this.set('partsHidden.hour', false);
-            if (this.partsHidden.minute === undefined)
-              this.set('partsHidden.minute', false);
-            if (this.partsHidden.second === undefined)
-              this.set('partsHidden.second', false);
-            if (this.partsHidden.millisecond === undefined)
-              this.set('partsHidden.millisecond', false);
-        }
       }
 
       _localeChanged(locale) {
