@@ -18,7 +18,7 @@
         return {
 
           /**
-           * The year of the selected local date
+           * The year of the selected date
            */
           year: {
             type: Number,
@@ -26,7 +26,7 @@
           },
 
           /**
-           * The month of the selected local date (starts with 1)
+           * The month of the selected date (starts with 1)
            */
           month: {
             type: Number,
@@ -34,7 +34,7 @@
           },
 
           /**
-           * The day of the selected local date
+           * The day of the selected date
            */
           day: {
             type: Number,
@@ -42,7 +42,7 @@
           },
 
           /**
-           * The hour of the selected local time
+           * The hour of the selected time
            */
           hour: {
             type: Number,
@@ -70,7 +70,7 @@
           },
 
           /**
-           * The minute of the selected local time
+           * The minute of the selected time
            */
           minute: {
             type: Number,
@@ -78,7 +78,7 @@
           },
 
           /**
-           * The second of the selected local time
+           * The second of the selected time
            */
           second: {
             type: Number,
@@ -86,7 +86,7 @@
           },
 
           /**
-           * The millisecond of the selected local time
+           * The millisecond of the selected time
            */
           millisecond: {
             type: Number,
@@ -94,7 +94,7 @@
           },
 
           /**
-           * the selected local date and time (format: iso8601)
+           * the selected date and time (format: iso8601)
            */
           datetime: {
             type: String,
@@ -102,7 +102,7 @@
           },
 
           /**
-           * the selected local date (format: iso8601)
+           * the selected date (format: iso8601)
            */
           date: {
             type: String,
@@ -110,7 +110,7 @@
           },
 
           /**
-           * the selected local time (format: iso8601)
+           * the selected time (format: iso8601)
            */
           time: {
             type: String,
@@ -118,9 +118,18 @@
           },
 
           /**
-           * The value of the selected local date
+           * The date-object of the selected date
            */
-          value: {
+          valueAsDate: {
+            type: Date,
+            notify: true,
+            observer: '_valueChanged'
+          },
+
+          /**
+           * The value of the selected date
+           */
+          valueAsNumber: {
             type: Number,
             notify: true,
             observer: '_valueChanged'
@@ -134,7 +143,7 @@
           },
 
           /**
-           * The minimal local date, could be a number, a date-object or an iso-string in time, date or datetime-notation
+           * The minimal date, could be a number, a date-object or an iso-string in time, date or datetime-notation
            */
           min: {
             type: String,
@@ -143,7 +152,7 @@
           },
 
           /**
-           * The maximal local date, could be a number, a date-object or an iso-string in time, date or datetime-notation
+           * The maximal date, could be a number, a date-object or an iso-string in time, date or datetime-notation
            */
           max: {
             type: String,
@@ -172,7 +181,7 @@
           },
 
           /**
-           * The local timezone offset in '±hh:mm' format
+           * The timezone offset in '±hh:mm' format
            */
           timezone: {
             type: String,
@@ -269,7 +278,7 @@
         if (!def) {
           return;
         }
-        if (this.value === undefined) {
+        if (this.valueAsDate === undefined) {
           this._resetDate();
         }
       }
@@ -286,18 +295,18 @@
           return;
         }
         let d;
-        if (year === undefined && month === undefined && day === undefined && hour === undefined && minute === undefined && second === undefined && millisecond === undefined) {
-          if (this.value !== undefined) {
+        if (isNaN(year) && isNaN(month) && isNaN(day) && isNaN(hour) && isNaN(minute) && isNaN(second) && isNaN(millisecond)) {
+          if (this.valueAsDate !== undefined) {
             this._resetDate();
           }
           return;
-        } else if (year === undefined || month === undefined || day === undefined || hour === undefined || minute === undefined || second === undefined || millisecond === undefined) {
+        } else if (isNaN(year) || isNaN(month) || isNaN(day) || isNaN(hour) || isNaN(minute) || isNaN(second) || isNaN(millisecond)) {
           if (this.timezone === undefined) {
             this.__updatingTimezoneOffset = true;
             this.setProperties(this._computeTimezone(new Date().getTimezoneOffset()));
             this.__updatingTimezoneOffset = false;
           }
-          d = new Date(this.value !== undefined ? this.value : this.datetime || ((this.date || this._toDate(new Date())) + 'T' + (this.time || '00:00') + this.timezone));
+          d = new Date(this.valueAsDate !== undefined ? this.valueAsDate : this.datetime || ((this.date || this._toDate(new Date())) + 'T' + (this.time || '00:00') + this.timezone));
           if (isNaN(d)) {
             d = new Date();
           }
@@ -350,7 +359,7 @@
           return;
         }
         if (date === undefined && time === undefined) {
-          if (this.value !== undefined) {
+          if (this.valueAsDate !== undefined) {
             this._resetDate();
           }
           return;
@@ -360,7 +369,7 @@
 
       _datetimeChanged(datetime) {
         if (datetime === undefined) {
-          if (this.value !== undefined) {
+          if (this.valueAsDate !== undefined) {
             this._resetDate();
           }
           return;
@@ -449,8 +458,11 @@
 
           const value = +d;
 
-          if (this.value !== value) {
-            this.value = value;
+          if (this.valueAsDate !== d || this.valueAsNumber !== value) {
+            this.setProperties({
+              valueAsDate: d,
+              valueAsNumber: value
+            })
             return;
           }
 
@@ -486,8 +498,8 @@
             });
         } else if (!isNaN(d = new Date(this.default))) {
           this._setDate(d);
-        } else if (!isNaN(this.value)) {
-          this._valueChanged(this.value);
+        } else if (!isNaN(this.valueAsDate)) {
+          this._valueAsNumberChanged(this.valueAsDate);
         }
       }
 
@@ -509,7 +521,8 @@
           }
         }
         this.setProperties({
-          value: undefined,
+          valueAsDate: undefined,
+          valueAsNumber: undefined,
           datetime: undefined,
           date: undefined,
           time: undefined,
@@ -616,8 +629,8 @@
           return;
         }
         this._min = d;
-        if (!isNaN(this.value)) {
-          this.value = +this._checkThreshold(new Date(this.value));
+        if (!isNaN(this.valueAsDate)) {
+          this.valueAsDate = +this._checkThreshold(new Date(this.valueAsDate));
         }
       }
 
@@ -635,8 +648,8 @@
           return;
         }
         this._max = d;
-        if (!isNaN(this.value)) {
-          this.value = +this._checkThreshold(new Date(this.value));
+        if (!isNaN(this.valueAsDate)) {
+          this.valueAsDate = +this._checkThreshold(new Date(this.valueAsDate));
         }
       }
 
@@ -692,7 +705,7 @@
 
       _timezoneChanged(timezone, oldValue) {
         if (timezone === undefined) {
-          if (this.value !== undefined) {
+          if (this.valueAsDate !== undefined) {
             this._resetDate();
           }
           return;
@@ -701,7 +714,7 @@
             this.setProperties(this._computeTimezoneOffset(oldValue));
             return;
           }
-          this.setProperties(this._computeTimezone((this.value === undefined ? new Date() : new Date(this.value)).getTimezoneOffset()));
+          this.setProperties(this._computeTimezone((this.valueAsDate === undefined ? new Date() : new Date(this.valueAsDate)).getTimezoneOffset()));
           return;
         }
 

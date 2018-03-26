@@ -118,10 +118,10 @@
            * value of the input
            * @type {number}
            */
-          value: {
+          valueAsNumber: {
             type: Number,
             notify: true,
-            observer: '_valueChanged'
+            observer: '_valueAsNumberChanged'
           },
           /**
            * default-value of the input
@@ -158,8 +158,8 @@
 
       connectedCallback() {
         super.connectedCallback();
-        if (this.value === undefined && !isNaN(this.default)) {
-          this.value = this.default;
+        if (this.valueAsNumber === undefined && !isNaN(this.default)) {
+          this.valueAsNumber = this.default;
         }
       }
 
@@ -174,13 +174,13 @@
         }
       }
 
-      _valueChanged(value, oldValue) {
+      _valueAsNumberChanged(value, oldValue) {
         if (value === undefined) return;
 
         value = this._checkValue(value, oldValue);
 
-        if (value !== this.value) {
-          this.value = value;
+        if (value !== this.valueAsNumber) {
+          this.valueAsNumber = value;
           return;
         }
       }
@@ -220,8 +220,8 @@
       }
 
       _updateValue() {
-        if (this.value !== undefined) {
-          this._valueChanged(this.value, this.value);
+        if (this.valueAsNumber !== undefined) {
+          this._valueAsNumberChanged(this.valueAsNumber, this.valueAsNumber);
         }
       }
 
