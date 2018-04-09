@@ -270,11 +270,11 @@
         const format = new Intl.NumberFormat(locale, numberOptions).format;
         if (unit) {
           return (n) => {
-            return ((this.alwaysSign && n > 0) ? '+' : '') + format(n) + this.unitSeparator + unit;
+            return ((this.alwaysSign && n >= 0) ? '+' : '') + format(n) + this.unitSeparator + unit;
           }
         }
         return (n) => {
-          return ((this.alwaysSign && n > 0) ? '+' : '') + format(n);
+          return ((this.alwaysSign && n >= 0) ? '+' : '') + format(n);
         }
       }
 
