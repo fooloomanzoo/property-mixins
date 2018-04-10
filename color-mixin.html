@@ -11,7 +11,7 @@
 
       constructor() {
         super();
-        this._validFormats = ['rgb', 'hex', 'hsl'];
+        this._validFormats = ['rgb', 'hex', 'hsl', 'text'];
       }
 
       static get properties() {
@@ -92,12 +92,12 @@
             value: 0
           },
           /**
-           * format of the colorString (possible colorStrings: 'rgb', 'hex', 'hsl')
+           * format of the colorString (possible colorStrings: 'rgb', 'hex', 'hsl', 'text')
            */
           format: {
             type: String,
             notify: true,
-            value: 'hex',
+            value: 'text',
             observer: '_formatChanged'
           },
           /**
@@ -143,6 +143,36 @@
         ];
       }
 
+      connectedCallback() {
+        super.connectedCallback();
+        this._createTestCanvas();
+      }
+
+      _createTestCanvas() {
+        const testcanvas = document.createElement('canvas');
+        testcanvas.width = 1;
+        testcanvas.height = 1;
+        testcanvas.style.visibility = 'hidden';
+        testcanvas.style.pointerEvents = 'none';
+        testcanvas.style.position = 'fixed';
+        this.appendChild(testcanvas);
+        this._testCanvasContext = testcanvas.getContext("2d");
+      }
+
+      _testColor(value) {
+        this._testCanvasContext.clearRect(0, 0, 1, 1);
+        this._testCanvasContext.fillStyle = value || 'rgba(0,0,0,0)';
+        this._testCanvasContext.fillRect(0, 0, 1, 1);
+        const imgData = this._testCanvasContext.getImageData(0,0,1,1);
+        return {
+          r: imgData.data[0],
+          g: imgData.data[1],
+          b: imgData.data[2],
+          alpha: this._normalizedClamp(imgData.data[3] / 255),
+          alphaMode: imgData.data[3] !== 255
+        }
+      }
+
       _alphaModeChanged(alphaMode) {
         if (alphaMode !== true) {
           this.alpha = 1;
@@ -158,19 +188,13 @@
             this.format = oldFormat;
             return;
           }
-          this.format = 'hex';
+          this.format = 'rgb';
           return;
         }
-        if (this.format !== 'hex') {
-          this.alpha = +this.alpha.toFixed(2);
+        if (oldFormat === 'hex') {
+          this.alpha = +this.alpha.toFixed(2)
         }
-        switch (this.format) {
-          case 'hsl':
-            this._hslChanged(this.h, this.s, this.l);
-            break;
-          default:
-            this._rgbChanged(this.r, this.g, this.b);
-        }
+        this._debouncedSetValue();
       }
 
       _colorStringChanged(colorString, oldValue) {
@@ -180,8 +204,12 @@
           match,
           format;
         // input-format detection
+        if (this.format === 'text') {
+          this.setProperties(this._testColor(colorString));
+          return;
+        }
         // hsl-format
-        if (match = colorString.match(this._validateHsl)) {
+        else if (match = colorString.match(this._validateHsl)) {
           if (match[1] === undefined) { // no alpha
             toSet.alpha = 1;
             toSet.alphaMode = false;
@@ -253,10 +281,10 @@
             toSet.g = Math.round(toSet.g);
             toSet.b = Math.round(toSet.b);
           }
-        }
-        if (!match && oldValue !== undefined) {
-          this._colorStringChanged(oldValue);
-          return;
+        } else {
+          // last try
+          toSet = this._testColor(colorString);
+          format = 'text';
         }
         if (format && this.format !== format) {
           toSet.format = format;
@@ -266,9 +294,10 @@
 
       _debouncedSetValue() {
         if (this._activeSetValueJob) {
-          window.cancelAnimationFrame(this._activeSetValueJob);
+          clearTimeout(this._activeSetValueJob);
+          this._activeSetValueJob = null;
         }
-        this._activeSetValueJob = window.requestAnimationFrame(this._setValue.bind(this))
+        this._activeSetValueJob = setTimeout(this._setValue.bind(this, false), 0)
       }
 
       _setValue() {
@@ -282,22 +311,27 @@
               }
             }
             break;
-          case 'rgb':
-            if (!isNaN(this.r) && !isNaN(this.g) && !isNaN(this.b)) {
-              if (this.alphaMode === true) {
-                this.colorString = `rgba(${Math.round(this.r)}, ${Math.round(this.g)}, ${Math.round(this.b)}, ${this.alpha === undefined ? 0 : this.alpha})`;
-              } else {
-                this.colorString = `rgb(${Math.round(this.r)}, ${Math.round(this.g)}, ${Math.round(this.b)})`;
-              }
-            }
-            break;
           case 'hex':
-          default:
             if (this.hex !== undefined) {
               if (this.alphaMode === true) {
                 this.colorString = `${this.hex}${this._alphaToHex(this.alpha, this.hex.length === 4 ? 1 : 2)}`;
               } else {
                 this.colorString = this.hex;
+              }
+            }
+            break;
+          case 'text':
+            const rgba = this._testColor(this.colorString);
+            if (rgba.r === this.r && rgba.b === this.b && rgba.g === this.g) {
+              break;
+            }
+          case 'rgb':
+          default:
+            if (!isNaN(this.r) && !isNaN(this.g) && !isNaN(this.b)) {
+              if (this.alphaMode === true) {
+                this.colorString = `rgba(${Math.round(this.r)}, ${Math.round(this.g)}, ${Math.round(this.b)}, ${this.alpha === undefined ? 0 : this.alpha})`;
+              } else {
+                this.colorString = `rgb(${Math.round(this.r)}, ${Math.round(this.g)}, ${Math.round(this.b)})`;
               }
             }
         }
@@ -352,6 +386,7 @@
 
       _rgbChanged(r, g, b) {
         if (isNaN(r) && isNaN(g) && isNaN(b)) {
+          this._resetColor();
           return;
         }
         if (isNaN(this.r) || isNaN(this.g) || isNaN(this.b)) {
@@ -406,6 +441,7 @@
 
       _hslChanged(h, s, l) {
         if (isNaN(h) && isNaN(s) && isNaN(l)) {
+          this._resetColor();
           return;
         }
         if (isNaN(this.h) || isNaN(this.s) || isNaN(this.l)) {
@@ -586,6 +622,20 @@
           s: this._normalizedClamp(s),
           l: this._normalizedClamp(l)
         };
+      }
+
+      _resetColor() {
+        this.setProperties({
+          colorString: undefined,
+          r: undefined,
+          g: undefined,
+          b: undefined,
+          h: undefined,
+          s: undefined,
+          l: undefined,
+          hex: undefined,
+          alpha: undefined
+        })
       }
 
       _mathMod(dividend, divisor) {
