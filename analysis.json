@@ -1506,7 +1506,7 @@
         {
           "name": "year",
           "type": "number",
-          "description": "The year of the selected local date",
+          "description": "The year of the selected date",
           "privacy": "public",
           "sourceRange": {
             "start": {
@@ -1527,7 +1527,7 @@
         {
           "name": "month",
           "type": "number",
-          "description": "The month of the selected local date (starts with 1)",
+          "description": "The month of the selected date (starts with 1)",
           "privacy": "public",
           "sourceRange": {
             "start": {
@@ -1548,7 +1548,7 @@
         {
           "name": "day",
           "type": "number",
-          "description": "The day of the selected local date",
+          "description": "The day of the selected date",
           "privacy": "public",
           "sourceRange": {
             "start": {
@@ -1569,7 +1569,7 @@
         {
           "name": "hour",
           "type": "number",
-          "description": "The hour of the selected local time",
+          "description": "The hour of the selected time",
           "privacy": "public",
           "sourceRange": {
             "start": {
@@ -1634,7 +1634,7 @@
         {
           "name": "minute",
           "type": "number",
-          "description": "The minute of the selected local time",
+          "description": "The minute of the selected time",
           "privacy": "public",
           "sourceRange": {
             "start": {
@@ -1655,7 +1655,7 @@
         {
           "name": "second",
           "type": "number",
-          "description": "The second of the selected local time",
+          "description": "The second of the selected time",
           "privacy": "public",
           "sourceRange": {
             "start": {
@@ -1676,7 +1676,7 @@
         {
           "name": "millisecond",
           "type": "number",
-          "description": "The millisecond of the selected local time",
+          "description": "The millisecond of the selected time",
           "privacy": "public",
           "sourceRange": {
             "start": {
@@ -1697,7 +1697,7 @@
         {
           "name": "datetime",
           "type": "string",
-          "description": "the selected local date and time (format: iso8601)",
+          "description": "the selected date and time (format: iso8601)",
           "privacy": "public",
           "sourceRange": {
             "start": {
@@ -1718,7 +1718,7 @@
         {
           "name": "date",
           "type": "string",
-          "description": "the selected local date (format: iso8601)",
+          "description": "the selected date (format: iso8601)",
           "privacy": "public",
           "sourceRange": {
             "start": {
@@ -1739,7 +1739,7 @@
         {
           "name": "time",
           "type": "string",
-          "description": "the selected local time (format: iso8601)",
+          "description": "the selected time (format: iso8601)",
           "privacy": "public",
           "sourceRange": {
             "start": {
@@ -1758,9 +1758,9 @@
           }
         },
         {
-          "name": "value",
-          "type": "number",
-          "description": "The value of the selected local date",
+          "name": "valueAsDate",
+          "type": "Date",
+          "description": "The date-object of the selected date",
           "privacy": "public",
           "sourceRange": {
             "start": {
@@ -1775,14 +1775,14 @@
           "metadata": {
             "polymer": {
               "notify": true,
-              "observer": "\"_valueChanged\""
+              "observer": "\"_valueAsDateChanged\""
             }
           }
         },
         {
-          "name": "default",
-          "type": "string",
-          "description": "The default value of the input, could be a number, a date-object or an iso-string in time, date or datetime-notation",
+          "name": "valueAsNumber",
+          "type": "number",
+          "description": "The value of the selected date",
           "privacy": "public",
           "sourceRange": {
             "start": {
@@ -1790,7 +1790,29 @@
               "column": 10
             },
             "end": {
-              "line": 133,
+              "line": 135,
+              "column": 11
+            }
+          },
+          "metadata": {
+            "polymer": {
+              "notify": true,
+              "observer": "\"_valueAsNumberChanged\""
+            }
+          }
+        },
+        {
+          "name": "default",
+          "type": "Object",
+          "description": "The default value of the input, could be a number, a date-object or an iso-string in time, date or datetime-notation",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 140,
+              "column": 10
+            },
+            "end": {
+              "line": 142,
               "column": 11
             }
           },
@@ -1800,16 +1822,16 @@
         },
         {
           "name": "min",
-          "type": "string",
-          "description": "The minimal local date, could be a number, a date-object or an iso-string in time, date or datetime-notation",
+          "type": "Object",
+          "description": "The minimal date, could be a number, a date-object or an iso-string in time, date or datetime-notation",
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 138,
+              "line": 147,
               "column": 10
             },
             "end": {
-              "line": 142,
+              "line": 151,
               "column": 11
             }
           },
@@ -1822,16 +1844,16 @@
         },
         {
           "name": "max",
-          "type": "string",
-          "description": "The maximal local date, could be a number, a date-object or an iso-string in time, date or datetime-notation",
+          "type": "Object",
+          "description": "The maximal date, could be a number, a date-object or an iso-string in time, date or datetime-notation",
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 147,
+              "line": 156,
               "column": 10
             },
             "end": {
-              "line": 151,
+              "line": 160,
               "column": 11
             }
           },
@@ -1849,11 +1871,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 157,
+              "line": 166,
               "column": 10
             },
             "end": {
-              "line": 162,
+              "line": 170,
               "column": 11
             }
           },
@@ -1861,8 +1883,7 @@
             "polymer": {
               "notify": true
             }
-          },
-          "defaultValue": "false"
+          }
         },
         {
           "name": "clamp",
@@ -1871,11 +1892,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 168,
+              "line": 176,
               "column": 10
             },
             "end": {
-              "line": 171,
+              "line": 179,
               "column": 11
             }
           },
@@ -1888,15 +1909,15 @@
         {
           "name": "timezone",
           "type": "string",
-          "description": "The local timezone offset in '±hh:mm' format",
+          "description": "The timezone offset in '±hh:mm' format",
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 176,
+              "line": 184,
               "column": 10
             },
             "end": {
-              "line": 180,
+              "line": 188,
               "column": 11
             }
           },
@@ -1914,16 +1935,17 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 185,
+              "line": 193,
               "column": 10
             },
             "end": {
-              "line": 188,
+              "line": 197,
               "column": 11
             }
           },
           "metadata": {
             "polymer": {
+              "notify": true,
               "observer": "\"_timezoneOffsetChanged\""
             }
           }
@@ -1935,11 +1957,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 190,
+              "line": 199,
               "column": 10
             },
             "end": {
-              "line": 192,
+              "line": 201,
               "column": 11
             }
           },
@@ -1954,11 +1976,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 194,
+              "line": 203,
               "column": 10
             },
             "end": {
-              "line": 196,
+              "line": 205,
               "column": 11
             }
           },
@@ -1973,11 +1995,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 201,
+              "line": 210,
               "column": 10
             },
             "end": {
-              "line": 203,
+              "line": 212,
               "column": 11
             }
           },
@@ -1992,11 +2014,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 209,
+              "line": 218,
               "column": 10
             },
             "end": {
-              "line": 212,
+              "line": 221,
               "column": 11
             }
           },
@@ -2013,11 +2035,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 217,
+              "line": 226,
               "column": 10
             },
             "end": {
-              "line": 220,
+              "line": 229,
               "column": 11
             }
           },
@@ -2033,11 +2055,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 225,
+              "line": 234,
               "column": 10
             },
             "end": {
-              "line": 228,
+              "line": 237,
               "column": 11
             }
           },
@@ -2053,11 +2075,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 233,
+              "line": 242,
               "column": 10
             },
             "end": {
-              "line": 236,
+              "line": 245,
               "column": 11
             }
           },
@@ -2068,17 +2090,37 @@
           }
         },
         {
+          "name": "_timeOnly",
+          "type": "boolean",
+          "description": "perspective starts at 0 (1970-01-01)",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 250,
+              "column": 10
+            },
+            "end": {
+              "line": 253,
+              "column": 11
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          },
+          "defaultValue": "false"
+        },
+        {
           "name": "dateOrder",
           "type": "Object",
           "description": "order of date-parts",
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 241,
+              "line": 258,
               "column": 10
             },
             "end": {
-              "line": 253,
+              "line": 270,
               "column": 11
             }
           },
@@ -2096,11 +2138,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 804,
+              "line": 875,
               "column": 6
             },
             "end": {
-              "line": 899,
+              "line": 970,
               "column": 7
             }
           },
@@ -2117,11 +2159,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 267,
+              "line": 284,
               "column": 6
             },
             "end": {
-              "line": 274,
+              "line": 292,
               "column": 7
             }
           },
@@ -2138,11 +2180,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 279,
+              "line": 297,
               "column": 6
             },
             "end": {
-              "line": 281,
+              "line": 313,
               "column": 7
             }
           },
@@ -2155,11 +2197,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 283,
+              "line": 315,
               "column": 6
             },
             "end": {
-              "line": 345,
+              "line": 386,
               "column": 7
             }
           },
@@ -2194,11 +2236,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 347,
+              "line": 388,
               "column": 6
             },
             "end": {
-              "line": 358,
+              "line": 406,
               "column": 7
             }
           },
@@ -2218,11 +2260,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 360,
+              "line": 408,
               "column": 6
             },
             "end": {
-              "line": 407,
+              "line": 449,
               "column": 7
             }
           },
@@ -2234,16 +2276,16 @@
           ]
         },
         {
-          "name": "_valueChanged",
+          "name": "_valueAsNumberChanged",
           "description": "",
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 409,
+              "line": 451,
               "column": 6
             },
             "end": {
-              "line": 429,
+              "line": 461,
               "column": 7
             }
           },
@@ -2255,25 +2297,44 @@
           ]
         },
         {
-          "name": "_setDate",
-          "description": "[_setDate sets date to all necessary properties]",
+          "name": "_valueAsDateChanged",
+          "description": "",
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 435,
+              "line": 463,
               "column": 6
             },
             "end": {
-              "line": 491,
+              "line": 475,
               "column": 7
             }
           },
           "metadata": {},
           "params": [
             {
-              "name": "d",
-              "type": "[Date]",
-              "description": "[the date to set]"
+              "name": "d"
+            }
+          ]
+        },
+        {
+          "name": "_setDate",
+          "description": "sets date to all necessary properties",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 480,
+              "column": 6
+            },
+            "end": {
+              "line": 532,
+              "column": 7
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "d"
             }
           ]
         },
@@ -2283,11 +2344,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 493,
+              "line": 534,
               "column": 6
             },
             "end": {
-              "line": 529,
+              "line": 567,
               "column": 7
             }
           },
@@ -2299,16 +2360,241 @@
           ]
         },
         {
+          "name": "_fromDatetime",
+          "description": "",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 569,
+              "column": 6
+            },
+            "end": {
+              "line": 598,
+              "column": 7
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "datetime"
+            }
+          ]
+        },
+        {
+          "name": "_minChanged",
+          "description": "",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 600,
+              "column": 6
+            },
+            "end": {
+              "line": 617,
+              "column": 7
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "min"
+            }
+          ]
+        },
+        {
+          "name": "_maxChanged",
+          "description": "",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 619,
+              "column": 6
+            },
+            "end": {
+              "line": 636,
+              "column": 7
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "max"
+            }
+          ]
+        },
+        {
+          "name": "_checkThreshold",
+          "description": "",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 638,
+              "column": 6
+            },
+            "end": {
+              "line": 646,
+              "column": 7
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "d"
+            }
+          ]
+        },
+        {
+          "name": "_toDate",
+          "description": "",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 648,
+              "column": 6
+            },
+            "end": {
+              "line": 654,
+              "column": 7
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "d"
+            }
+          ]
+        },
+        {
+          "name": "_toUTCDate",
+          "description": "",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 656,
+              "column": 6
+            },
+            "end": {
+              "line": 662,
+              "column": 7
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "d"
+            }
+          ]
+        },
+        {
+          "name": "__toDate",
+          "description": "",
+          "privacy": "private",
+          "sourceRange": {
+            "start": {
+              "line": 664,
+              "column": 6
+            },
+            "end": {
+              "line": 666,
+              "column": 7
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "year"
+            },
+            {
+              "name": "month"
+            },
+            {
+              "name": "day"
+            }
+          ]
+        },
+        {
+          "name": "_toTime",
+          "description": "",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 668,
+              "column": 6
+            },
+            "end": {
+              "line": 673,
+              "column": 7
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "d"
+            }
+          ]
+        },
+        {
+          "name": "_toUTCTime",
+          "description": "",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 675,
+              "column": 6
+            },
+            "end": {
+              "line": 680,
+              "column": 7
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "d"
+            }
+          ]
+        },
+        {
+          "name": "__toTime",
+          "description": "",
+          "privacy": "private",
+          "sourceRange": {
+            "start": {
+              "line": 682,
+              "column": 6
+            },
+            "end": {
+              "line": 684,
+              "column": 7
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "hour"
+            },
+            {
+              "name": "minute"
+            },
+            {
+              "name": "second"
+            },
+            {
+              "name": "millisecond"
+            }
+          ]
+        },
+        {
           "name": "_clamp",
           "description": "",
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 531,
+              "line": 686,
               "column": 6
             },
             "end": {
-              "line": 548,
+              "line": 703,
               "column": 7
             }
           },
@@ -2328,11 +2614,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 550,
+              "line": 705,
               "column": 6
             },
             "end": {
-              "line": 556,
+              "line": 711,
               "column": 7
             }
           },
@@ -2347,142 +2633,16 @@
           ]
         },
         {
-          "name": "_fromDatetime",
-          "description": "",
-          "privacy": "protected",
-          "sourceRange": {
-            "start": {
-              "line": 558,
-              "column": 6
-            },
-            "end": {
-              "line": 602,
-              "column": 7
-            }
-          },
-          "metadata": {},
-          "params": [
-            {
-              "name": "datetime"
-            }
-          ]
-        },
-        {
-          "name": "_minChanged",
-          "description": "",
-          "privacy": "protected",
-          "sourceRange": {
-            "start": {
-              "line": 604,
-              "column": 6
-            },
-            "end": {
-              "line": 621,
-              "column": 7
-            }
-          },
-          "metadata": {},
-          "params": [
-            {
-              "name": "min"
-            }
-          ]
-        },
-        {
-          "name": "_maxChanged",
-          "description": "",
-          "privacy": "protected",
-          "sourceRange": {
-            "start": {
-              "line": 623,
-              "column": 6
-            },
-            "end": {
-              "line": 640,
-              "column": 7
-            }
-          },
-          "metadata": {},
-          "params": [
-            {
-              "name": "max"
-            }
-          ]
-        },
-        {
-          "name": "_checkThreshold",
-          "description": "",
-          "privacy": "protected",
-          "sourceRange": {
-            "start": {
-              "line": 642,
-              "column": 6
-            },
-            "end": {
-              "line": 650,
-              "column": 7
-            }
-          },
-          "metadata": {},
-          "params": [
-            {
-              "name": "d"
-            }
-          ]
-        },
-        {
-          "name": "_toDate",
-          "description": "",
-          "privacy": "protected",
-          "sourceRange": {
-            "start": {
-              "line": 652,
-              "column": 6
-            },
-            "end": {
-              "line": 658,
-              "column": 7
-            }
-          },
-          "metadata": {},
-          "params": [
-            {
-              "name": "d"
-            }
-          ]
-        },
-        {
-          "name": "_toTime",
-          "description": "",
-          "privacy": "protected",
-          "sourceRange": {
-            "start": {
-              "line": 660,
-              "column": 6
-            },
-            "end": {
-              "line": 665,
-              "column": 7
-            }
-          },
-          "metadata": {},
-          "params": [
-            {
-              "name": "d"
-            }
-          ]
-        },
-        {
           "name": "_hour12Changed",
           "description": "`hour12` is the hour in hour12-format, that starts is minimal 1 and maximal 12, midnight is at 12am and noon is 12pm",
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 670,
+              "line": 716,
               "column": 6
             },
             "end": {
-              "line": 674,
+              "line": 720,
               "column": 7
             }
           },
@@ -2502,11 +2662,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 676,
+              "line": 722,
               "column": 6
             },
             "end": {
-              "line": 680,
+              "line": 726,
               "column": 7
             }
           },
@@ -2526,11 +2686,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 685,
+              "line": 731,
               "column": 6
             },
             "end": {
-              "line": 690,
+              "line": 736,
               "column": 7
             }
           },
@@ -2548,16 +2708,58 @@
           ]
         },
         {
+          "name": "_checkDefaultTimezone",
+          "description": "",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 738,
+              "column": 6
+            },
+            "end": {
+              "line": 751,
+              "column": 7
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "d"
+            }
+          ]
+        },
+        {
+          "name": "_correctTimezoneShift",
+          "description": "",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 753,
+              "column": 6
+            },
+            "end": {
+              "line": 763,
+              "column": 7
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "d"
+            }
+          ]
+        },
+        {
           "name": "_timezoneChanged",
           "description": "",
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 692,
+              "line": 765,
               "column": 6
             },
             "end": {
-              "line": 717,
+              "line": 791,
               "column": 7
             }
           },
@@ -2577,11 +2779,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 719,
+              "line": 793,
               "column": 6
             },
             "end": {
-              "line": 727,
+              "line": 802,
               "column": 7
             }
           },
@@ -2598,11 +2800,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 729,
+              "line": 804,
               "column": 6
             },
             "end": {
-              "line": 749,
+              "line": 820,
               "column": 7
             }
           },
@@ -2622,11 +2824,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 751,
+              "line": 822,
               "column": 6
             },
             "end": {
-              "line": 770,
+              "line": 841,
               "column": 7
             }
           },
@@ -2643,11 +2845,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 772,
+              "line": 843,
               "column": 6
             },
             "end": {
-              "line": 792,
+              "line": 863,
               "column": 7
             }
           },
@@ -2664,11 +2866,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 794,
+              "line": 865,
               "column": 6
             },
             "end": {
-              "line": 802,
+              "line": 873,
               "column": 7
             }
           },
@@ -2692,7 +2894,7 @@
           "column": 2
         },
         "end": {
-          "line": 901,
+          "line": 972,
           "column": 3
         }
       },
@@ -2809,7 +3011,7 @@
         },
         {
           "name": "year",
-          "description": "The year of the selected local date",
+          "description": "The year of the selected date",
           "sourceRange": {
             "start": {
               "line": 22,
@@ -2825,7 +3027,7 @@
         },
         {
           "name": "month",
-          "description": "The month of the selected local date (starts with 1)",
+          "description": "The month of the selected date (starts with 1)",
           "sourceRange": {
             "start": {
               "line": 30,
@@ -2841,7 +3043,7 @@
         },
         {
           "name": "day",
-          "description": "The day of the selected local date",
+          "description": "The day of the selected date",
           "sourceRange": {
             "start": {
               "line": 38,
@@ -2857,7 +3059,7 @@
         },
         {
           "name": "hour",
-          "description": "The hour of the selected local time",
+          "description": "The hour of the selected time",
           "sourceRange": {
             "start": {
               "line": 46,
@@ -2905,7 +3107,7 @@
         },
         {
           "name": "minute",
-          "description": "The minute of the selected local time",
+          "description": "The minute of the selected time",
           "sourceRange": {
             "start": {
               "line": 74,
@@ -2921,7 +3123,7 @@
         },
         {
           "name": "second",
-          "description": "The second of the selected local time",
+          "description": "The second of the selected time",
           "sourceRange": {
             "start": {
               "line": 82,
@@ -2937,7 +3139,7 @@
         },
         {
           "name": "millisecond",
-          "description": "The millisecond of the selected local time",
+          "description": "The millisecond of the selected time",
           "sourceRange": {
             "start": {
               "line": 90,
@@ -2953,7 +3155,7 @@
         },
         {
           "name": "datetime",
-          "description": "the selected local date and time (format: iso8601)",
+          "description": "the selected date and time (format: iso8601)",
           "sourceRange": {
             "start": {
               "line": 98,
@@ -2969,7 +3171,7 @@
         },
         {
           "name": "date",
-          "description": "the selected local date (format: iso8601)",
+          "description": "the selected date (format: iso8601)",
           "sourceRange": {
             "start": {
               "line": 106,
@@ -2985,7 +3187,7 @@
         },
         {
           "name": "time",
-          "description": "the selected local time (format: iso8601)",
+          "description": "the selected time (format: iso8601)",
           "sourceRange": {
             "start": {
               "line": 114,
@@ -3000,8 +3202,8 @@
           "type": "string"
         },
         {
-          "name": "value",
-          "description": "The value of the selected local date",
+          "name": "value-as-date",
+          "description": "The date-object of the selected date",
           "sourceRange": {
             "start": {
               "line": 122,
@@ -3013,6 +3215,22 @@
             }
           },
           "metadata": {},
+          "type": "Date"
+        },
+        {
+          "name": "value-as-number",
+          "description": "The value of the selected date",
+          "sourceRange": {
+            "start": {
+              "line": 131,
+              "column": 10
+            },
+            "end": {
+              "line": 135,
+              "column": 11
+            }
+          },
+          "metadata": {},
           "type": "number"
         },
         {
@@ -3020,23 +3238,7 @@
           "description": "The default value of the input, could be a number, a date-object or an iso-string in time, date or datetime-notation",
           "sourceRange": {
             "start": {
-              "line": 131,
-              "column": 10
-            },
-            "end": {
-              "line": 133,
-              "column": 11
-            }
-          },
-          "metadata": {},
-          "type": "string"
-        },
-        {
-          "name": "min",
-          "description": "The minimal local date, could be a number, a date-object or an iso-string in time, date or datetime-notation",
-          "sourceRange": {
-            "start": {
-              "line": 138,
+              "line": 140,
               "column": 10
             },
             "end": {
@@ -3045,11 +3247,11 @@
             }
           },
           "metadata": {},
-          "type": "string"
+          "type": "Object"
         },
         {
-          "name": "max",
-          "description": "The maximal local date, could be a number, a date-object or an iso-string in time, date or datetime-notation",
+          "name": "min",
+          "description": "The minimal date, could be a number, a date-object or an iso-string in time, date or datetime-notation",
           "sourceRange": {
             "start": {
               "line": 147,
@@ -3061,18 +3263,34 @@
             }
           },
           "metadata": {},
-          "type": "string"
+          "type": "Object"
+        },
+        {
+          "name": "max",
+          "description": "The maximal date, could be a number, a date-object or an iso-string in time, date or datetime-notation",
+          "sourceRange": {
+            "start": {
+              "line": 156,
+              "column": 10
+            },
+            "end": {
+              "line": 160,
+              "column": 11
+            }
+          },
+          "metadata": {},
+          "type": "Object"
         },
         {
           "name": "hour12-format",
           "description": "when true, 12-hour time format, else 24-hour",
           "sourceRange": {
             "start": {
-              "line": 157,
+              "line": 166,
               "column": 10
             },
             "end": {
-              "line": 162,
+              "line": 170,
               "column": 11
             }
           },
@@ -3084,11 +3302,11 @@
           "description": "Clamp datetime to a property\npossible values:'month', 'day', 'hour', 'minute', 'second', 'millisecond'",
           "sourceRange": {
             "start": {
-              "line": 168,
+              "line": 176,
               "column": 10
             },
             "end": {
-              "line": 171,
+              "line": 179,
               "column": 11
             }
           },
@@ -3097,14 +3315,14 @@
         },
         {
           "name": "timezone",
-          "description": "The local timezone offset in '±hh:mm' format",
+          "description": "The timezone offset in '±hh:mm' format",
           "sourceRange": {
             "start": {
-              "line": 176,
+              "line": 184,
               "column": 10
             },
             "end": {
-              "line": 180,
+              "line": 188,
               "column": 11
             }
           },
@@ -3116,11 +3334,11 @@
           "description": "order of date-parts",
           "sourceRange": {
             "start": {
-              "line": 241,
+              "line": 258,
               "column": 10
             },
             "end": {
-              "line": 253,
+              "line": 270,
               "column": 11
             }
           },
@@ -3546,7 +3764,7 @@
           "defaultValue": "1"
         },
         {
-          "name": "value",
+          "name": "valueAsNumber",
           "type": "number",
           "description": "value of the input",
           "privacy": "public",
@@ -3563,7 +3781,7 @@
           "metadata": {
             "polymer": {
               "notify": true,
-              "observer": "\"_valueChanged\""
+              "observer": "\"_valueAsNumberChanged\""
             }
           }
         },
@@ -3672,7 +3890,7 @@
           ]
         },
         {
-          "name": "_valueChanged",
+          "name": "_valueAsNumberChanged",
           "description": "",
           "privacy": "protected",
           "sourceRange": {
@@ -3914,7 +4132,7 @@
           "type": "number"
         },
         {
-          "name": "value",
+          "name": "value-as-number",
           "description": "value of the input",
           "sourceRange": {
             "start": {
