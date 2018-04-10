@@ -198,7 +198,10 @@
       }
 
       _colorStringChanged(colorString, oldValue) {
-        if (colorString === undefined) return;
+        if (colorString === undefined) {
+          this._resetColor();
+          return;
+        }
 
         let toSet = {},
           match,
@@ -366,6 +369,7 @@
 
       _hexChanged(hex) {
         if (hex === undefined) {
+          this._resetColor();
           return;
         }
         let toSet = {};
