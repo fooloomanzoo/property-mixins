@@ -191,7 +191,7 @@
           this.format = 'rgb';
           return;
         }
-        if (oldFormat === 'hex') {
+        if (oldFormat === 'hex' || oldFormat === 'text') {
           this.alpha = +this.alpha.toFixed(2)
         }
         this._debouncedSetValue();
@@ -240,6 +240,26 @@
             toSet.s = +toSet.s.toFixed((this.hslPrecision || 0) + 2);
             toSet.l = +toSet.l.toFixed((this.hslPrecision || 0) + 2);
           }
+        // rgb-format
+        } else if (match = colorString.match(this._validateRgb)) {
+          if (match[1] === undefined) { // no alpha
+            toSet.alpha = 1;
+            toSet.alphaMode = false;
+          } else { // with alpha
+            toSet.alpha = this._normalizedClamp(+match[5]);
+            toSet.alphaMode = true;
+          }
+          toSet.r = this._mathMod(+match[2], 256);
+          toSet.g = this._mathMod(+match[3], 256);
+          toSet.b = this._mathMod(+match[4], 256);
+          if (this.format !== 'rgb') {
+            format = 'rgb';
+            toSet.alpha = +toSet.alpha.toFixed(2);
+          } else {
+            toSet.r = Math.round(toSet.r);
+            toSet.g = Math.round(toSet.g);
+            toSet.b = Math.round(toSet.b);
+          }
         // hex-format
         } else if (match = colorString.match(this._validateHex)) {
           if (match[1] !== undefined) { // six hex numbers
@@ -263,26 +283,6 @@
           }
           if (this.format !== 'hex') {
             format = 'hex';
-          }
-        // rgb-format
-        } else if (match = colorString.match(this._validateRgb)) {
-          if (match[1] === undefined) { // no alpha
-            toSet.alpha = 1;
-            toSet.alphaMode = false;
-          } else { // with alpha
-            toSet.alpha = this._normalizedClamp(+match[5]);
-            toSet.alphaMode = true;
-          }
-          toSet.r = this._mathMod(+match[2], 256);
-          toSet.g = this._mathMod(+match[3], 256);
-          toSet.b = this._mathMod(+match[4], 256);
-          if (this.format !== 'rgb') {
-            format = 'rgb';
-            toSet.alpha = +toSet.alpha.toFixed(2);
-          } else {
-            toSet.r = Math.round(toSet.r);
-            toSet.g = Math.round(toSet.g);
-            toSet.b = Math.round(toSet.b);
           }
         } else {
           // last try
@@ -314,7 +314,23 @@
               }
             }
             break;
+        case 'rgb':
+          if (!isNaN(this.r) && !isNaN(this.g) && !isNaN(this.b)) {
+            if (this.alphaMode === true) {
+              this.colorString = `rgba(${Math.round(this.r)}, ${Math.round(this.g)}, ${Math.round(this.b)}, ${this.alpha === undefined ? 0 : this.alpha})`;
+            } else {
+              this.colorString = `rgb(${Math.round(this.r)}, ${Math.round(this.g)}, ${Math.round(this.b)})`;
+            }
+          }
+          case 'text':
+            if (!this.alphaMode) {
+              const rgba = this._testColor(this.colorString);
+              if (rgba.r === this.r && rgba.b === this.b && rgba.g === this.g) {
+                break;
+              }
+            }
           case 'hex':
+          default:
             if (this.hex !== undefined) {
               if (this.alphaMode === true) {
                 this.colorString = `${this.hex}${this._alphaToHex(this.alpha, this.hex.length === 4 ? 1 : 2)}`;
@@ -323,20 +339,6 @@
               }
             }
             break;
-          case 'text':
-            const rgba = this._testColor(this.colorString);
-            if (rgba.r === this.r && rgba.b === this.b && rgba.g === this.g) {
-              break;
-            }
-          case 'rgb':
-          default:
-            if (!isNaN(this.r) && !isNaN(this.g) && !isNaN(this.b)) {
-              if (this.alphaMode === true) {
-                this.colorString = `rgba(${Math.round(this.r)}, ${Math.round(this.g)}, ${Math.round(this.b)}, ${this.alpha === undefined ? 0 : this.alpha})`;
-              } else {
-                this.colorString = `rgb(${Math.round(this.r)}, ${Math.round(this.g)}, ${Math.round(this.b)})`;
-              }
-            }
         }
       }
 
