@@ -311,7 +311,7 @@
           case 'hsl':
             if (!isNaN(this.h) && !isNaN(this.s) && !isNaN(this.l)) {
               if (this.alphaMode === true) {
-                this.colorString = `hsla(${this.h.toFixed(this.hslPrecision || 0)}, ${(this.s*100).toFixed(this.hslPrecision || 0)}%, ${(this.l*100).toFixed(this.hslPrecision || 0)}%, ${this.alpha === undefined ? 0 : this.alpha})`;
+                this.colorString = `hsla(${this.h.toFixed(this.hslPrecision || 0)}, ${(this.s*100).toFixed(this.hslPrecision || 0)}%, ${(this.l*100).toFixed(this.hslPrecision || 0)}%, ${this.alpha === undefined ? 1 : this.alpha})`;
               } else {
                 this.colorString = `hsl(${this.h.toFixed(this.hslPrecision || 0)}, ${(this.s*100).toFixed(this.hslPrecision || 0)}%, ${(this.l*100).toFixed(this.hslPrecision || 0)}%)`;
               }
@@ -341,7 +341,7 @@
           default:
             if (!isNaN(this.r) && !isNaN(this.g) && !isNaN(this.b)) {
               if (this.alphaMode === true) {
-                this.colorString = `rgba(${Math.round(this.r)}, ${Math.round(this.g)}, ${Math.round(this.b)}, ${this.alpha === undefined ? 0 : this.alpha})`;
+                this.colorString = `rgba(${Math.round(this.r)}, ${Math.round(this.g)}, ${Math.round(this.b)}, ${this.alpha === undefined ? 1 : this.alpha})`;
               } else {
                 this.colorString = `rgb(${Math.round(this.r)}, ${Math.round(this.g)}, ${Math.round(this.b)})`;
               }
@@ -647,7 +647,7 @@
           s: undefined,
           l: undefined,
           hex: undefined,
-          alpha: undefined
+          alpha: 1
         })
       }
 
