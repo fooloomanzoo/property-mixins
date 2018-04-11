@@ -157,6 +157,9 @@
         testcanvas.style.position = 'fixed';
         this.appendChild(testcanvas);
         this._testCanvasContext = testcanvas.getContext("2d");
+        // test if `#rrggbbaa` is supported
+        const rgba = this._testColor('#ff000080');
+        this._hexAlphaSupported = (rgba.r === 255 && rgba.g === 0 && rgba.b === 0 && rgba.alpha === 0.5);
       }
 
       _testColor(value) {
@@ -168,7 +171,7 @@
           r: imgData.data[0],
           g: imgData.data[1],
           b: imgData.data[2],
-          alpha: this._normalizedClamp(imgData.data[3] / 255),
+          alpha: this._hexToAlpha(imgData.data[3].toString(16), 2),
           alphaMode: imgData.data[3] !== 255
         }
       }
@@ -314,31 +317,35 @@
               }
             }
             break;
-        case 'rgb':
-          if (!isNaN(this.r) && !isNaN(this.g) && !isNaN(this.b)) {
-            if (this.alphaMode === true) {
-              this.colorString = `rgba(${Math.round(this.r)}, ${Math.round(this.g)}, ${Math.round(this.b)}, ${this.alpha === undefined ? 0 : this.alpha})`;
-            } else {
-              this.colorString = `rgb(${Math.round(this.r)}, ${Math.round(this.g)}, ${Math.round(this.b)})`;
-            }
-          }
           case 'text':
             if (!this.alphaMode) {
+              // keeping color string if possible
               const rgba = this._testColor(this.colorString);
               if (rgba.r === this.r && rgba.b === this.b && rgba.g === this.g) {
                 break;
               }
             }
           case 'hex':
-          default:
             if (this.hex !== undefined) {
               if (this.alphaMode === true) {
-                this.colorString = `${this.hex}${this._alphaToHex(this.alpha, this.hex.length === 4 ? 1 : 2)}`;
+                if (this._hexAlphaSupported) {
+                  this.colorString = `${this.hex}${this._alphaToHex(this.alpha, this.hex.length === 4 ? 1 : 2)}`;
+                  break;
+                }
               } else {
                 this.colorString = this.hex;
+                break;
               }
             }
-            break;
+          case 'rgb':
+          default:
+            if (!isNaN(this.r) && !isNaN(this.g) && !isNaN(this.b)) {
+              if (this.alphaMode === true) {
+                this.colorString = `rgba(${Math.round(this.r)}, ${Math.round(this.g)}, ${Math.round(this.b)}, ${this.alpha === undefined ? 0 : this.alpha})`;
+              } else {
+                this.colorString = `rgb(${Math.round(this.r)}, ${Math.round(this.g)}, ${Math.round(this.b)})`;
+              }
+            }
         }
       }
 
@@ -567,7 +574,7 @@
 
       _hexToAlpha(hex, length) {
         const base = Math.pow(16, length) - 1;
-        return parseInt(hex, 16) / base;
+        return Math.round((100 * parseInt(hex, 16)) / base) / 100;
       }
 
       hslToRgb(h, s, l) { // not rounded yet
