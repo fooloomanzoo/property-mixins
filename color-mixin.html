@@ -215,7 +215,7 @@
         this._debouncedSetValue();
       }
 
-      _colorStringChanged(colorString, oldValue) {
+      _colorStringChanged(colorString) {
         if (colorString === undefined) {
           this._resetColor();
           return;
@@ -334,7 +334,7 @@
               if (rgba.r === this.r && rgba.b === this.b && rgba.g === this.g) {
                 break;
               }
-            }
+            } // falls through
           case 'hex':
             if (this.hex !== undefined) {
               if (this.alphaMode === true) {
@@ -346,7 +346,7 @@
                 this.colorString = this.hex;
                 break;
               }
-            }
+            } // falls through
           case 'rgb':
           default:
             if (!isNaN(this.r) && !isNaN(this.g) && !isNaN(this.b)) {
