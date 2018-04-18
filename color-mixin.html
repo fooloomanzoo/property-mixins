@@ -178,6 +178,9 @@
       }
 
       _testColor(value) {
+        if (!this._testCanvasContext) {
+          this._createTestCanvas();
+        }
         this._testCanvasContext.clearRect(0, 0, 1, 1);
         this._testCanvasContext.fillStyle = value || 'rgba(0,0,0,1)';
         this._testCanvasContext.fillRect(0, 0, 1, 1);
