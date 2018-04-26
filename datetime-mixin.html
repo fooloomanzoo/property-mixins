@@ -457,7 +457,7 @@
         if (isNaN(value)) {
           return;
         }
-
+        this._checkDefaultTimezone(value);
         this._setDate(new Date(+value));
       }
 
@@ -469,7 +469,7 @@
         if (isNaN(d)) {
           return;
         }
-
+        this._checkDefaultTimezone(d);
         if (this.valueAsNumber !== +d) {
           this._setDate(new Date(d));
         }
@@ -571,13 +571,10 @@
         if (datetime === undefined) {
           return;
         }
-        if (typeof datetime === 'object' && datetime.getDate) {
-          // 'datetime' is a Date Object
-          return datetime;
-        }
-        if (!isNaN(+datetime)) {
-          // 'datetime' is a number
-          return new Date(+datetime);
+
+        if ((typeof datetime === 'object' && datetime.getDate) || !isNaN(+datetime)) {
+          // 'datetime' is a Date Object or Number
+          return new Date(datetime);
         }
         const match = this._regexpDatetime.exec(datetime);
         if (match) {
@@ -585,6 +582,7 @@
             if (match[1] === undefined) {
               match[0] = '1970-01-01T' + match[2] + match[3];
             }
+            const d = new Date(match[0]);
             return new Date(match[0]);
           } else {
             const d = new Date((match[1] || '1970-01-01') + 'T' + (match[2] || '00:00:00.000') + 'Z');
@@ -742,12 +740,12 @@
           if (this.timezone) {
             this.setProperties(this._computeTimezoneOffset(this.timezone));
           } else {
-            this.setProperties(this._computeTimezone((d || new Date()).getTimezoneOffset()));
+            this.setProperties(this._computeTimezone((d !== undefined ? new Date(d) : new Date()).getTimezoneOffset()));
           }
           this.__updatingTimezoneOffset = false;
         }
         if (this._recentLocalTimezoneOffset === undefined) {
-          this._recentLocalTimezoneOffset = (d || new Date()).getTimezoneOffset();
+          this._recentLocalTimezoneOffset = (d !== undefined ? new Date(d) : new Date()).getTimezoneOffset();
         }
       }
 
