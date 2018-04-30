@@ -446,6 +446,8 @@
             this.__updatingTimezoneOffset = false;
           }
         }
+
+        this._recentLocalTimezoneOffset = d.getTimezoneOffset();
         this._setDate(d);
       }
 
@@ -457,7 +459,6 @@
         if (isNaN(value)) {
           return;
         }
-        this._checkDefaultTimezone(value);
         this._setDate(new Date(+value));
       }
 
@@ -469,7 +470,6 @@
         if (isNaN(d)) {
           return;
         }
-        this._checkDefaultTimezone(d);
         if (this.valueAsNumber !== +d) {
           this._setDate(new Date(d));
         }
@@ -483,28 +483,18 @@
           this._correctTimezoneShift(d);
           d = this._checkThreshold(d);
 
-          const value = +d;
-
-          if (+this.valueAsDate !== value || this.valueAsNumber !== value) {
-            this.setProperties({
-              valueAsDate: d,
-              valueAsNumber: value
-            })
-            return;
-          }
-          d = new Date(d);
-
           // shift date, so that date properties are according to timezone
-          d.setMinutes(d.getMinutes() - this._timezoneOffset);
+          const transformedDate = new Date(d);
+          transformedDate.setMinutes(d.getMinutes() - this._timezoneOffset);
 
-          d = this._clamp(d, this.clamp);
-          const year = d.getUTCFullYear(),
-            month = d.getUTCMonth() + 1,
-            day = d.getUTCDate(),
-            hour = d.getUTCHours(),
-            minute = d.getUTCMinutes(),
-            second = d.getUTCSeconds(),
-            millisecond = d.getUTCMilliseconds(),
+          transformedDate = this._clamp(transformedDate, this.clamp);
+          const year = transformedDate.getUTCFullYear(),
+            month = transformedDate.getUTCMonth() + 1,
+            day = transformedDate.getUTCDate(),
+            hour = transformedDate.getUTCHours(),
+            minute = transformedDate.getUTCMinutes(),
+            second = transformedDate.getUTCSeconds(),
+            millisecond = transformedDate.getUTCMilliseconds(),
             hour12 = (hour === 0) ? 12 : (hour > 12 ? hour - 12 : hour),
             isAm = hour < 12,
             date = this.__toDate(year, month, day),
@@ -512,6 +502,8 @@
             datetime = date + 'T' + time + this.timezone;
 
             this.setProperties({
+              valueAsDate: d,
+              valueAsNumber: +d,
               year: year,
               month: month,
               day: day,
@@ -751,7 +743,13 @@
 
       _correctTimezoneShift(d) {
         this._checkDefaultTimezone(d);
+
+        if (this.__updatingTimezoneOffset === true) {
+          return;
+        }
+
         const localTimezoneOffset = d.getTimezoneOffset();
+        console.log(this.nodeName, this._timezoneOffset, localTimezoneOffset, this._recentLocalTimezoneOffset);
         if (this._recentLocalTimezoneOffset !== localTimezoneOffset) {
           this.__updatingTimezoneOffset = true;
           // fixing offset when an inner shift occures (e.g. summer- or wintertime)
