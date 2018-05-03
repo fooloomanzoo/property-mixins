@@ -560,7 +560,7 @@
       }
 
       _fromDatetime(datetime) {
-        if (datetime === undefined) {
+        if (datetime === undefined || datetime === null) {
           return;
         }
 
