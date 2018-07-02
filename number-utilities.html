@@ -21,7 +21,7 @@
 
     let whole = Math.round(Math.pow(10, decimal) * a + Math.pow(10, decimal) * b);
 
-    const sign = whole < 0 ? '-' : '';
+    const sign = isNegative(whole) ? '-' : '';
     whole = '' + Math.abs(whole);
 
     for (let i = whole.length; i < decimal; i++) {
@@ -45,7 +45,7 @@
     if (decimal === 0) {
       return a * b;
     }
-    const sign = (a < 0 ? b > 0 : b < 0) ? '-' : '';
+    const sign = (isNegative(a) ? !isNegative(b) : isNegative(b)) ? '-' : '';
 
     a = Math.round(Math.pow(10, decimalA) * Math.abs(a));
     b = '' + Math.round(Math.pow(10, decimalB) * Math.abs(b));

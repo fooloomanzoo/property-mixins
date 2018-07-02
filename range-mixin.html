@@ -55,7 +55,12 @@
             type: Number,
             value: 1
           },
-
+          /**
+           * start where to increment the value
+           */
+          startAt: {
+            type: Number
+          },
           /**
            * value of the input
            * @type {number}
@@ -78,6 +83,14 @@
            * @type {boolean}
            */
           saturate: {
+            type: Boolean,
+            observer: '_updateValue'
+          },
+          /**
+           * if true, the value will break on 0 to -0
+           * @type {boolean}
+           */
+          useNegativeZero: {
             type: Boolean,
             observer: '_updateValue'
           },
@@ -152,17 +165,25 @@
           min = this.min,
           max = this.max;
 
+        if (this.useNegativeZero && oldValue === 0 && value !== 0) {
+          if (numberUtilities.isNegative0(oldValue)) {
+            return 0;
+          }
+          return -0;
+        }
         if (min !== undefined && value <= min) {
           if (saturate || value === min || max === undefined || oldValue !== min) {
             return min;
           }
           return max;
-        } else if (max !== undefined && value >= max) {
+        }
+        if (max !== undefined && value >= max) {
           if (saturate || value === max || min === undefined || max !== oldValue) {
             return max;
           }
           return min;
-        } else if (this.noClamp) {
+        }
+        if (this.noClamp) {
           return value;
         }
         return this._checkStep(value, this._step);
@@ -212,6 +233,21 @@
         }
         this._step = this._safeMult(step, stepMod || 1);
         this._updateValue();
+      }
+
+      _increm(step) {
+        const value = +this._safeAdd(this.valueAsNumber, step || this._step);
+        if (isNaN(value)) {
+          if (!isNaN(this.startAt)) {
+            this.valueAsNumber = +this.startAt;
+          } else if (!isNaN(this.default)) {
+            this.valueAsNumber = +this.default;
+          } else {
+            this.valueAsNumber = this.min < 0 ? 0 : this.min || 0;
+          }
+        } else {
+          this.valueAsNumber = value;
+        }
       }
     }
   }

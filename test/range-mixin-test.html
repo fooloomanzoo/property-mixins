@@ -74,6 +74,7 @@
           assert.isUndefined(element.default, 'default is not defined');
           assert.isUndefined(element.saturate, 'saturate is not defined');
           assert.isUndefined(element.noClamp, 'noClamp is not defined');
+          assert.isUndefined(element.startAt, 'startAt is not defined');
           done();
         });
 
@@ -83,6 +84,43 @@
           assert.equal(element.valueAsNumber, 3, 'valueAsNumber should be set');
           element.valueAsNumber = undefined;
           assert.equal(element.valueAsNumber, 3, 'valueAsNumber should be reset');
+          done();
+        });
+
+        test('start at value', done => {
+          let element = fixture('basic');
+          element.startAt = 3;
+          element._increm(1);
+          assert.equal(element.valueAsNumber, 3, 'valueAsNumber should use startAt');
+          done();
+        });
+
+        test('increment', done => {
+          let element = fixture('basic');
+          element.valueAsNumber = 3;
+          element._increm(1);
+          assert.equal(element.valueAsNumber, 4, 'valueAsNumber should use increment');
+          element._increm(-1);
+          assert.equal(element.valueAsNumber, 3, 'valueAsNumber should use decrease');
+          done();
+        });
+
+        test('use negative zero', done => {
+          let element = fixture('basic');
+          element.useNegativeZero = true;
+          element.valueAsNumber = 1;
+          element._increm(-1);
+          assert.isTrue(!numberUtilities.isNegative0(element.valueAsNumber) && element.valueAsNumber === 0, 'valueAsNumber decrease to positive zero');
+          element._increm(-1);
+          assert.isTrue(numberUtilities.isNegative0(element.valueAsNumber), 'valueAsNumber should be negative zero');
+          element._increm(-1);
+          assert.equal(element.valueAsNumber, -1, 'valueAsNumber should decrease from negative zero');
+          element._increm(1);
+          assert.isTrue(numberUtilities.isNegative0(element.valueAsNumber), 'valueAsNumber should increase to negative zero');
+          element._increm(1);
+          assert.isTrue(!numberUtilities.isNegative0(element.valueAsNumber) && element.valueAsNumber === 0, 'valueAsNumber should increase to positive zero');
+          element._increm(1);
+          assert.equal(element.valueAsNumber, 1, 'valueAsNumber should increase from positive zero');
           done();
         });
       });
@@ -115,6 +153,11 @@
       });
 
       suite('clamp', () => {
+        test('clamp value', done => {
+          let element = fixture('clamp');
+          assert.equal(element.valueAsNumber, 1, 'value should clamp');
+          done();
+        });
         test('clamp value', done => {
           let element = fixture('clamp');
           assert.equal(element.valueAsNumber, 1, 'value should clamp');
