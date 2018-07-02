@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>datetime-mixin test</title>
+
+    <script src="../../webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+    <script src="../../iron-test-helpers/test-helpers.js"></script>
+
+    <link rel="import" href="../demo/elements/basic-datetime-element.html">
+    <link rel="import" href="../demo/elements/form-datetime-element.html">
+  </head>
+  <body>
+
+    <test-fixture id="basic">
+      <template>
+        <basic-datetime-element></basic-datetime-element>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="setting properties">
+      <template>
+        <basic-datetime-element datetime="1980-02-01T02:03:04.567-07:15"></basic-datetime-element>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="clamp">
+      <template>
+        <basic-datetime-element clamp="minute"></basic-datetime-element>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="form-element">
+      <template>
+        <form-datetime-element></form-datetime-element>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="form-element and set value">
+      <template>
+        <form-datetime-element value="318244684567"></form-datetime-element>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="form-element and set value and timezone">
+      <template>
+        <form-datetime-element value="318244684567" timezone="-01:30"></form-datetime-element>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="form-element and date for value-property">
+      <template>
+        <form-datetime-element value="1980-02-01" property-for-value="date"></form-datetime-element>
+      </template>
+    </test-fixture>
+
+    <script>
+      suite('basic', () => {
+
+        test('instantiating the element with default properties should work', done => {
+          let element = fixture('basic');
+          assert.isUndefined(element.date, 'no date is defined');
+          assert.isUndefined(element.time, 'no time is defined');
+          assert.isUndefined(element.datetime, 'no datetime is defined');
+          assert.isUndefined(element.valueAsNumber, 'no valueAsNumber is defined');
+          assert.isUndefined(element.valueAsDate, 'no valueAsDate is defined');
+          assert.isUndefined(element.year, 'no year is defined');
+          assert.isUndefined(element.month, 'no month is defined');
+          assert.isUndefined(element.day, 'no day is defined');
+          assert.isUndefined(element.hour, 'no hour is defined');
+          assert.isUndefined(element.hour12, 'no hour12 is defined');
+          assert.isUndefined(element.minute, 'no minute is defined');
+          assert.isUndefined(element.second, 'no second is defined');
+          assert.isUndefined(element.millisecond, 'no millisecond is defined');
+          assert.isUndefined(element.timezone, 'no timezone is defined');
+          assert.isUndefined(element._timezoneOffset, 'no timezone-offset is defined');
+          assert.isUndefined(element._timeZoneHours, 'no timezone-hours is defined');
+          assert.isUndefined(element._timeZoneMinutes, 'no timezone-minutes is defined');
+          done();
+        });
+
+        test('calling "now" on the element should work', done => {
+          let element = fixture('basic');
+          assert.isDefined(element.now, '"now" exists');
+          element.now();
+          assert.isDefined(element.date, 'date is defined');
+          assert.isDefined(element.time, 'time is defined');
+          assert.isDefined(element.datetime, 'datetime is defined');
+          assert.isDefined(element.valueAsNumber, 'valueAsNumber is defined');
+          assert.isDefined(element.valueAsDate, 'valueAsDate is defined');
+          assert.isDefined(element.year, 'year is defined');
+          assert.isDefined(element.month, 'month is defined');
+          assert.isDefined(element.day, 'day is defined');
+          assert.isDefined(element.hour, 'hour is defined');
+          assert.isDefined(element.minute, 'minute is defined');
+          assert.isDefined(element.second, 'second is defined');
+          assert.isDefined(element.millisecond, 'millisecond is defined');
+          assert.isDefined(element.timezone, 'timezone is defined');
+          assert.isDefined(element._timezoneOffset, 'timezone-offset is defined');
+          assert.isDefined(element._timeZoneHours, 'timezone-hours is defined');
+          assert.isDefined(element._timeZoneMinutes, 'timezone-minutes is defined');
+          done();
+        });
+
+        test('setting date (uninitialized)', done => {
+          let element = fixture('basic');
+
+          element.setAttribute('date', '1980-02-01');
+          assert.equal(element.year, 1980, 'year should be set');
+          assert.equal(element.month, 2, 'month should be set');
+          assert.equal(element.day, 1, 'day should be set');
+          assert.equal(element.hour, 0, 'hour is set to 0');
+          assert.equal(element.minute, 0, 'minute is set to 0');
+          assert.equal(element.second, 0, 'second is set to 0');
+          assert.equal(element.millisecond, 0, 'millisecond is set to 0');
+          assert.isDefined(element.time, 'time is defined');
+          assert.isDefined(element.datetime, 'datetime is defined');
+          assert.isDefined(element.valueAsNumber, 'valueAsNumber is defined');
+          assert.isDefined(element.valueAsDate, 'valueAsDate is defined');
+          assert.isDefined(element.timezone, 'timezone is defined');
+          assert.isDefined(element._timezoneOffset, 'timezone-offset is defined');
+          assert.isDefined(element._timeZoneHours, 'timezone-hours is defined');
+          assert.isDefined(element._timeZoneMinutes, 'timezone-minutes is defined');
+          done();
+        });
+
+        test('setting date', done => {
+          let element = fixture('basic');
+          element.now();
+          const time = element.time;
+
+          element.setAttribute('date', '1980-02-01');
+          assert.equal(element.year, 1980, 'year should be set');
+          assert.equal(element.month, 2, 'month should be set' + element.datetime);
+          assert.equal(element.day, 1, 'day should be set');
+          assert.equal(element.time, time, 'time should not change, when date is set');
+          assert.isDefined(element.datetime, 'datetime is defined');
+          assert.isDefined(element.valueAsNumber, 'valueAsNumber is defined');
+          assert.isDefined(element.valueAsDate, 'valueAsDate is defined');
+          done();
+        });
+
+        test('setting date (b.c.)', done => {
+          let element = fixture('basic');
+
+          element.setAttribute('date', '-021980-02-01');
+          assert.equal(element.year, -21980, 'year should be set');
+          assert.equal(element.month, 2, 'month should be set');
+          assert.equal(element.day, 1, 'day should be set');
+          assert.equal(element.hour, 0, 'hour is set to 0');
+          assert.equal(element.minute, 0, 'minute is set to 0');
+          assert.equal(element.second, 0, 'second is set to 0');
+          assert.equal(element.millisecond, 0, 'millisecond is set to 0');
+          assert.equal(element.datetime.indexOf('-021980-02-01'), 0, 'datetime should be correctly set');
+          done();
+        });
+
+        test('setting time', done => {
+          let element = fixture('basic');
+          element.now();
+          const date = element.date;
+
+          element.setAttribute('time', '02:03:04.567');
+
+          assert.equal(element.hour, 2, 'hour should be set');
+          assert.equal(element.minute, 3, 'minute should be set');
+          assert.equal(element.second, 4, 'second should be set');
+          assert.equal(element.millisecond, 567, 'millisecond should be set');
+          assert.equal(element.date, date, 'date should not change, when time is set');
+          assert.isDefined(element.datetime, 'datetime is defined');
+          assert.isDefined(element.valueAsNumber, 'valueAsNumber is defined');
+          assert.isDefined(element.valueAsDate, 'valueAsDate is defined');
+          done();
+        });
+
+        test('setting datetime without timezone', done => {
+          let element = fixture('basic');
+          element.setAttribute('datetime', '1980-02-01T02:03:04.567');
+
+          assert.equal(element.year, 1980, 'year should be set');
+          assert.equal(element.month, 2, 'month should be set');
+          assert.equal(element.day, 1, 'day should be set');
+          assert.equal(element.hour, 2, 'hour should be set');
+          assert.equal(element.minute, 3, 'minute should be set');
+          assert.equal(element.second, 4, 'second should be set');
+          assert.equal(element.millisecond, 567, 'millisecond should be set');
+          assert.isDefined(element.timezone, 'timezone is defined');
+          assert.isDefined(element._timezoneOffset, 'timezone-offset is defined');
+          assert.isDefined(element._timeZoneHours, 'timezone-hours is defined');
+          assert.isDefined(element._timeZoneMinutes, 'timezone-minutes is defined');
+          assert.isDefined(element.date, 'date is defined');
+          assert.isDefined(element.time, 'time is defined');
+          assert.isDefined(element.valueAsNumber, 'valueAsNumber is defined');
+          assert.isDefined(element.valueAsDate, 'valueAsDate is defined');
+          done();
+        });
+
+        test('setting datetime in GMT', done => {
+          let element = fixture('basic');
+          element.setAttribute('datetime', '1980-02-01T02:03:04.567Z');
+
+          assert.equal(element.year, 1980, 'year should be set');
+          assert.equal(element.month, 2, 'month should be set');
+          assert.equal(element.day, 1, 'day should be set');
+          assert.equal(element.hour, 2, 'hour should be set');
+          assert.equal(element.minute, 3, 'minute should be set');
+          assert.equal(element.second, 4, 'second should be set');
+          assert.equal(element.millisecond, 567, 'millisecond should be set');
+          assert.equal(element.timezone, '+00:00', 'timezone should be set');
+          assert.equal(element._timezoneOffset, 0, 'timezone-offset should be set');
+          assert.equal(element._timeZoneHours, 0, 'timezone-hours should be set');
+          assert.equal(element._timeZoneMinutes, 0, 'timezone-minutes should be set');
+          assert.equal(element.date, '1980-02-01', 'date should be set');
+          assert.equal(element.time, '02:03:04.567', 'date should be set');
+          assert.equal(element.valueAsNumber, 318218584567, 'valueAsNumber should be set');
+          assert.equal(element.valueAsDate.toISOString(), '1980-02-01T02:03:04.567Z', 'valueAsDate should be set');
+          done();
+        });
+
+        test('setting datetime with timezone', done => {
+          let element = fixture('basic');
+          element.setAttribute('datetime', '1980-02-01T02:03:04.567-07:15');
+
+          assert.equal(element.year, 1980, 'year should be set');
+          assert.equal(element.month, 2, 'month should be set');
+          assert.equal(element.day, 1, 'day should be set');
+          assert.equal(element.hour, 2, 'hour should be set');
+          assert.equal(element.minute, 3, 'minute should be set');
+          assert.equal(element.second, 4, 'second should be set');
+          assert.equal(element.millisecond, 567, 'millisecond should be set');
+          assert.equal(element.timezone, '-07:15', 'timezone should be set');
+          assert.equal(element._timezoneOffset, 7*60 + 15, 'timezone-offset should be set');
+          assert.equal(element._timeZoneHours, -7, 'timezone-hours should be set');
+          assert.equal(element._timeZoneMinutes, 15, 'timezone-minutes should be set');
+          assert.equal(element.date, '1980-02-01', 'date should be set');
+          assert.equal(element.time, '02:03:04.567', 'date should be set');
+          assert.equal(element.valueAsNumber, 318244684567, 'valueAsNumber should be set');
+          assert.equal(element.valueAsDate.toISOString(), '1980-02-01T09:18:04.567Z', 'valueAsDate should be set');
+          done();
+        });
+
+        test('setting value-as-number', done => {
+          let element = fixture('basic');
+          element.setAttribute('value-as-number', '318244684567');
+
+          assert.isDefined(element.date, 'date is defined');
+          assert.isDefined(element.time, 'time is defined');
+          assert.isDefined(element.datetime, 'datetime is defined');
+          assert.isDefined(element.valueAsNumber, 'valueAsNumber is defined');
+          assert.isDefined(element.year, 'year is defined');
+          assert.isDefined(element.month, 'month is defined');
+          assert.isDefined(element.day, 'day is defined');
+          assert.isDefined(element.hour, 'hour is defined');
+          assert.isDefined(element.minute, 'minute is defined');
+          assert.isDefined(element.second, 'second is defined');
+          assert.isDefined(element.millisecond, 'millisecond is defined');
+          assert.isDefined(element.timezone, 'timezone is defined');
+          assert.isDefined(element._timezoneOffset, 'timezone-offset is defined');
+          assert.isDefined(element._timeZoneHours, 'timezone-hours is defined');
+          assert.isDefined(element._timeZoneMinutes, 'timezone-minutes is defined');
+          assert.equal(element.valueAsDate.toISOString(), '1980-02-01T09:18:04.567Z', 'valueAsDate should be set');
+          done();
+        });
+
+        test('setting value-as-date', done => {
+          let element = fixture('basic');
+          element.setAttribute('value-as-date', new Date(318244684567).toISOString());
+
+          assert.isDefined(element.date, 'date is defined');
+          assert.isDefined(element.time, 'time is defined');
+          assert.isDefined(element.datetime, 'datetime is defined');
+          assert.isDefined(element.year, 'year is defined');
+          assert.isDefined(element.month, 'month is defined');
+          assert.isDefined(element.day, 'day is defined');
+          assert.isDefined(element.hour, 'hour is defined');
+          assert.isDefined(element.minute, 'minute is defined');
+          assert.isDefined(element.second, 'second is defined');
+          assert.isDefined(element.millisecond, 'millisecond is defined');
+          assert.isDefined(element.timezone, 'timezone is defined');
+          assert.isDefined(element._timezoneOffset, 'timezone-offset is defined');
+          assert.isDefined(element._timeZoneHours, 'timezone-hours is defined');
+          assert.isDefined(element._timeZoneMinutes, 'timezone-minutes is defined');
+          assert.equal(element.valueAsDate.toISOString(), '1980-02-01T09:18:04.567Z', 'valueAsDate should be set');
+          assert.equal(element.valueAsNumber, 318244684567, 'valueAsNumber should be set');
+          done();
+        });
+
+        test('setting value-as-date', done => {
+          let element = fixture('basic');
+          element.setAttribute('default', new Date(318244684567).toISOString());
+
+          assert.isDefined(element.date, 'date is defined');
+          assert.isDefined(element.time, 'time is defined');
+          assert.isDefined(element.datetime, 'datetime is defined');
+          assert.isDefined(element.year, 'year is defined');
+          assert.isDefined(element.month, 'month is defined');
+          assert.isDefined(element.day, 'day is defined');
+          assert.isDefined(element.hour, 'hour is defined');
+          assert.isDefined(element.minute, 'minute is defined');
+          assert.isDefined(element.second, 'second is defined');
+          assert.isDefined(element.millisecond, 'millisecond is defined');
+          assert.isDefined(element.timezone, 'timezone is defined');
+          assert.isDefined(element._timezoneOffset, 'timezone-offset is defined');
+          assert.isDefined(element._timeZoneHours, 'timezone-hours is defined');
+          assert.isDefined(element._timeZoneMinutes, 'timezone-minutes is defined');
+          assert.equal(element.valueAsDate.toISOString(), '1980-02-01T09:18:04.567Z', 'valueAsDate should be set');
+          assert.equal(element.valueAsNumber, 318244684567, 'valueAsNumber should be set');
+
+          element._resetDate();
+          assert.equal(element.valueAsNumber, 318244684567, 'valueAsNumber should be set after reset');
+          done();
+        });
+
+        test('setting year', done => {
+          let element = fixture('basic');
+          element.setAttribute('year', '1980');
+
+          assert.equal(element.year, 1980, 'year should be set');
+          assert.isDefined(element.timezone, 'timezone is defined');
+          assert.isDefined(element.date, 'date is defined');
+          assert.isDefined(element.time, 'time is defined');
+          assert.isDefined(element.datetime, 'datetime is defined');
+          assert.isDefined(element.valueAsNumber, 'valueAsNumber is defined');
+          assert.isDefined(element.valueAsDate, 'valueAsDate is defined');
+          done();
+        });
+
+        test('setting month', done => {
+          let element = fixture('basic');
+          element.setAttribute('month', '2');
+
+          assert.equal(element.month, 2, 'month should be set');
+          assert.isDefined(element.timezone, 'timezone is defined');
+          assert.isDefined(element.date, 'date is defined');
+          assert.isDefined(element.time, 'time is defined');
+          assert.isDefined(element.datetime, 'datetime is defined');
+          assert.isDefined(element.valueAsNumber, 'valueAsNumber is defined');
+          assert.isDefined(element.valueAsDate, 'valueAsDate is defined');
+          done();
+        });
+
+        test('setting day', done => {
+          let element = fixture('basic');
+          element.setAttribute('day', '1');
+
+          assert.equal(element.day, 1, 'day should be set');
+          assert.isDefined(element.timezone, 'timezone is defined');
+          assert.isDefined(element.date, 'date is defined');
+          assert.isDefined(element.time, 'time is defined');
+          assert.isDefined(element.datetime, 'datetime is defined');
+          assert.isDefined(element.valueAsNumber, 'valueAsNumber is defined');
+          assert.isDefined(element.valueAsDate, 'valueAsDate is defined');
+          done();
+        });
+
+        test('setting hour', done => {
+          let element = fixture('basic');
+          element.setAttribute('hour', '2');
+
+          assert.equal(element.hour, 2, 'hour should be set');
+          assert.equal(element.hour12, 2, 'hour12 should be set');
+          assert.isDefined(element.timezone, 'timezone is defined');
+          assert.isDefined(element.date, 'date is defined');
+          assert.isDefined(element.time, 'time is defined');
+          assert.isDefined(element.datetime, 'datetime is defined');
+          assert.isDefined(element.valueAsNumber, 'valueAsNumber is defined');
+          assert.isDefined(element.valueAsDate, 'valueAsDate is defined');
+          done();
+        });
+
+        test('setting minute', done => {
+          let element = fixture('basic');
+          element.setAttribute('minute', '3');
+
+          assert.equal(element.minute, 3, 'minute should be set');
+          assert.isDefined(element.timezone, 'timezone is defined');
+          assert.isDefined(element.date, 'date is defined');
+          assert.isDefined(element.time, 'time is defined');
+          assert.isDefined(element.datetime, 'datetime is defined');
+          assert.isDefined(element.valueAsNumber, 'valueAsNumber is defined');
+          assert.isDefined(element.valueAsDate, 'valueAsDate is defined');
+          done();
+        });
+
+        test('setting second', done => {
+          let element = fixture('basic');
+          element.setAttribute('second', '4');
+
+          assert.equal(element.second, 4, 'second should be set');
+          assert.isDefined(element.timezone, 'timezone is defined');
+          assert.isDefined(element.date, 'date is defined');
+          assert.isDefined(element.time, 'time is defined');
+          assert.isDefined(element.datetime, 'datetime is defined');
+          assert.isDefined(element.valueAsNumber, 'valueAsNumber is defined');
+          assert.isDefined(element.valueAsDate, 'valueAsDate is defined');
+          done();
+        });
+
+        test('setting millisecond', done => {
+          let element = fixture('basic');
+          element.setAttribute('millisecond', '567');
+
+          assert.equal(element.millisecond, 567, 'millisecond should be set');
+          assert.isDefined(element.timezone, 'timezone is defined');
+          assert.isDefined(element.date, 'date is defined');
+          assert.isDefined(element.time, 'time is defined');
+          assert.isDefined(element.datetime, 'datetime is defined');
+          assert.isDefined(element.valueAsNumber, 'valueAsNumber is defined');
+          assert.isDefined(element.valueAsDate, 'valueAsDate is defined');
+          done();
+        });
+
+        test('setting timezone', done => {
+          let element = fixture('basic');
+
+          element.timezone = "+00:53";
+          assert.equal(element._timezoneOffset, -53, 'timezone-offset is set');
+          assert.isDefined(element._timeZoneHours, -0, 'timezone-hours is set');
+          assert.isDefined(element._timeZoneMinutes, 53, 'timezone-minutes is set');
+
+          element.timezone = "-00:53";
+          assert.equal(element._timezoneOffset, 53, 'timezone-offset is set');
+          assert.isDefined(element._timeZoneHours, 0, 'timezone-hours is set');
+          assert.isDefined(element._timeZoneMinutes, 53, 'timezone-minutes is set');
+
+          element.timezone = "+01:30";
+          assert.equal(element._timezoneOffset, -90, 'timezone-offset is set');
+          assert.isDefined(element._timeZoneHours, -1, 'timezone-hours is set');
+          assert.isDefined(element._timeZoneMinutes, 30, 'timezone-minutes is set');
+          done();
+        });
+
+        test('changing timezone (initialized)', done => {
+          let element = fixture('basic');
+          element.now();
+          const date = element.date;
+          const time = element.time;
+
+          element.setAttribute('timezone', '+09:00');
+          assert.equal(element.date, date, 'date should not change, when timezone is set');
+          assert.equal(element.time, time, 'time should not change, when timezone is set');
+
+          element.setAttribute('timezone', '-09:00');
+          assert.equal(element.date, date, 'date should not change, when timezone is set');
+          assert.equal(element.time, time, 'time should not change, when timezone is set');
+
+          assert.equal(element._timezoneOffset, 540, 'timezone-offset should be set');
+          assert.equal(element._timeZoneHours, -9, 'timezone-hours should be set');
+          assert.equal(element._timeZoneMinutes, 0, 'timezone-minutes should be set');
+          done();
+        });
+
+        test('setting hour12 values', done => {
+          let element = fixture('basic');
+          element.setAttribute('datetime', '1980-02-01T02:03:04.567Z');
+
+          assert.isTrue(element.isAm, '2\'clock should be A.M.');
+          assert.equal(element.hour12, 2, 'hour12 should be set');
+
+          element.setAttribute('hour', '15');
+          assert.isFalse(element.isAm, '15:00 should be P.M.');
+          assert.equal(element.hour12, 3, 'hour12 should be set');
+
+          element.setAttribute('hour12', '9');
+          assert.isFalse(element.isAm, 'isAm should not change');
+          assert.equal(element.hour, 21, 'hour should be set');
+
+          element.isAm = true;
+          assert.equal(element.hour12, 9, 'hour12 should not change');
+          assert.equal(element.hour, 9, 'hour should be set');
+
+          element.setAttribute('hour', '0');
+          assert.isTrue(element.isAm, '00:xx should be A.M.');
+          assert.equal(element.hour12, 12, 'hour12 should be 12');
+
+          element.setAttribute('hour', '12');
+          assert.isFalse(element.isAm, '12:xx should be P.M.');
+          assert.equal(element.hour12, 12, 'hour12 should be 12');
+          done();
+        });
+      });
+
+      suite('setting properties', () => {
+
+        test('setting property should work', done => {
+          let element = fixture('setting properties');
+          assert.equal(element.year, 1980, 'year should be set');
+          assert.equal(element.month, 2, 'month should be set');
+          assert.equal(element.day, 1, 'day should be set');
+          assert.equal(element.hour, 2, 'hour should be set');
+          assert.equal(element.minute, 3, 'minute should be set');
+          assert.equal(element.second, 4, 'second should be set');
+          assert.equal(element.millisecond, 567, 'millisecond should be set');
+          assert.equal(element.timezone, '-07:15', 'timezone should be set');
+          assert.equal(element._timezoneOffset, 7*60 + 15, 'timezone-offset should be set');
+          assert.equal(element._timeZoneHours, -7, 'timezone-hours should be set');
+          assert.equal(element._timeZoneMinutes, 15, 'timezone-minutes should be set');
+          assert.equal(element.date, '1980-02-01', 'date should be set');
+          assert.equal(element.time, '02:03:04.567', 'date should be set');
+          assert.equal(element.valueAsNumber, 318244684567, 'valueAsNumber should be set');
+          assert.equal(element.valueAsDate.toISOString(), '1980-02-01T09:18:04.567Z', 'valueAsDate should be set');
+          done();
+        });
+      });
+
+      suite('clamp', () => {
+
+        test('setting "clamp"', done => {
+          let element = fixture('clamp');
+          element.now();
+          assert.equal(element.minute, 0, 'minute should be clamped');
+          assert.equal(element.second, 0, 'second should be clamped');
+          assert.equal(element.millisecond, 0, 'millisecond should be clamped');
+          element.clamp = 'hour';
+          assert.equal(element.hour, 0, 'hour should be clamped');
+          done();
+        });
+      });
+
+      suite('form-element', () => {
+        test('instantiating the element with default properties should work', done => {
+          let element = fixture('form-element');
+          assert.isUndefined(element.value, 'no value is defined');
+          done();
+        });
+
+        test('calling "now" on the element should work', done => {
+          let element = fixture('form-element');
+          assert.isDefined(element.now, '"now" exists');
+          element.now();
+          assert.isDefined(element.value, 'value is defined');
+          done();
+        });
+
+        test('changing "propertyForValue" should invoke the actual selected preperty', done => {
+          let element = fixture('form-element');
+          element.now();
+          let day = element.day;
+
+          element.propertyForValue = 'datetime';
+          element.propertyForValue = 'hour';
+          element.propertyForValue = 'day';
+
+          element.value = element.value + 1;
+          assert.equal(element.day, day + 1, '"day" has changed ');
+          done();
+
+        });
+      });
+
+
+      suite('form-element and set value', () => {
+        test('valueAsNumber and valueAsDate is set', done => {
+          let element = fixture('form-element and set value');
+          assert.equal(element.valueAsNumber, 318244684567, 'valueAsNumber should be set');
+          assert.equal(element.valueAsDate.toISOString(), '1980-02-01T09:18:04.567Z', 'valueAsDate should be set');
+          done();
+        });
+
+        test('local timezone', done => {
+          let element = fixture('form-element and set value');
+
+          assert.equal(element._timezoneOffset, new Date(element.value).getTimezoneOffset(), 'timezoneOffset should be the set to local');
+          done();
+        });
+      });
+
+
+      suite('form-element and set value and timezone', () => {
+        test('timezone', done => {
+          let element = fixture('form-element and set value and timezone');
+
+          assert.equal(element.value, 318244684567, 'value should not change');
+          assert.equal(element.valueAsNumber, 318244684567, 'valueAsNumber should be set');
+          assert.equal(element._timezoneOffset, 90, 'timezoneOffset should be the set');
+          assert.equal(element.datetime, '1980-02-01T07:48:04.567-01:30', 'datetime should be the set');
+          done();
+        });
+      });
+
+
+      suite('form-element and date for value-property', () => {
+        test('timezone', done => {
+          let element = fixture('form-element and date for value-property');
+
+          assert.equal(element.date, '1980-02-01', 'date should be set');
+          done();
+        });
+      });
+
+    </script>
+
+  </body>
+</html>

@@ -1,0 +1,13 @@
+<link rel="import" href="../../../polymer/polymer.html">
+<link rel="import" href="../../datetime-mixin.html">
+
+<dom-module id="basic-datetime-element">
+  <script>
+    class BasicDatetimeElement extends DatetimeMixin(Polymer.Element) { // eslint-disable-line no-undef
+      static get is() {
+        return 'basic-datetime-element';
+      }
+    }
+    window.customElements.define(BasicDatetimeElement.is, BasicDatetimeElement);
+  </script>
+</dom-module>

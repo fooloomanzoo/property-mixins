@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>number-format-mixin test</title>
+
+    <script src="../../webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+    <script src="../../iron-test-helpers/test-helpers.js"></script>
+
+    <link rel="import" href="../number-utilities.html">
+  </head>
+  <body>
+
+    <script>
+
+      suite('decimal precision', () => {
+        test('basic', done => {
+          let a = 1.22;
+          assert.equal(window.numberUtilities.decimalPrecision(a), 2, 'should deliver precission');
+          done();
+        });
+
+        test('int number', done => {
+          let a = 5e+30;
+          assert.equal(window.numberUtilities.decimalPrecision(a), 0, 'should give no precission');
+          done();
+        });
+
+        test('notation with no decimal part', done => {
+          let a = 1e-25;
+          assert.equal(+window.numberUtilities.decimalPrecision(a), 25, 'should use only exponential part');
+          done();
+        });
+
+        test('notation with decimal part', done => {
+          let a = 1.33e-35;
+          assert.equal(window.numberUtilities.decimalPrecision(a), 37, 'should add decimal part precision');
+          done();
+        });
+      });
+
+      suite('safe-add', () => {
+        test('basic', done => {
+          let a = -1.12;
+          const b = 2.22;
+          a = window.numberUtilities.safeAdd(a, b);
+          assert.equal(a, 1.1, 'basic add');
+          done();
+        });
+
+        test('big queue', done => {
+          let a = -1000;
+          const b = 1e-3;
+          for (let i = 1; i <= 1e6; i++) {
+            a = window.numberUtilities.safeAdd(a, b);
+          }
+          assert.equal(a, 0, 'a is integer');
+          done();
+        });
+      });
+
+
+      suite('safe-mult', () => {
+        test('basic', done => {
+          let a = 1;
+          const b = 0.1;
+          a = window.numberUtilities.safeMult(a, b);
+          assert.equal(a, 0.1, 'basic multiplication');
+          done();
+        });
+
+        test('negative first factor', done => {
+          let a = -1;
+          const b = 0.1;
+          a = window.numberUtilities.safeMult(a, b);
+          assert.equal(a, -0.1, 'basic multiplication');
+          done();
+        });
+
+        test('negative second factor', done => {
+          let a = 1;
+          const b = -0.1;
+          a = window.numberUtilities.safeMult(a, b);
+          assert.equal(a, -0.1, 'basic multiplication');
+          done();
+        });
+
+        test('negative factors', done => {
+          let a = -1;
+          const b = -0.1;
+          a = window.numberUtilities.safeMult(a, b);
+          assert.equal(a, 0.1, 'basic multiplication');
+          done();
+        });
+
+        test('fractional factors', done => {
+          let a = -1.5;
+          const b = 0.1;
+
+          a = window.numberUtilities.safeMult(a, b);
+          assert.equal(a, -0.15, 'basic multiplication');
+          done();
+        });
+
+        test('exponential notation', done => {
+          let a = 1.5e-10;
+          const b = 1e-9;
+
+          a = window.numberUtilities.safeMult(a, b);
+          assert.equal(a, 1.5e-19, 'basic multiplication');
+          done();
+        });
+
+        test('big queue', done => {
+          let a = 1;
+          const b = 0.1;
+          const c = 10;
+
+          const start = performance.now();
+          for (let i = 1; i < 5e4; i++) {
+            let s = performance.now();
+            for (let j = 1; j < 15; j++) {
+              a = window.numberUtilities.safeMult(a, b);
+            }
+            for (let k = 1; k < 15; k++) {
+              a = window.numberUtilities.safeMult(a, c);
+            }
+          }
+          assert.equal(a, 1, 'a is integer');
+          done();
+        });
+      });
+
+    </script>
+
+  </body>
+</html>

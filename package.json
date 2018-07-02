@@ -4,8 +4,10 @@
   "description": "mixin for custom elements to extends property mixins for data formats",
   "scripts": {
     "prepublish": "npm run build && git add . && git commit -m \"publish new version\" && npm version patch && git push",
-    "build": "git pull && bower update -f && polymer analyze > analysis.json",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "polymer analyze > analysis.json",
+    "test": "polymer test",
+    "test:ie": "polymer test -p --config-file=wct.ie.conf.json",
+    "test:p": "polymer test -p --config-file=wct.p.conf.json"
   },
   "repository": {
     "type": "git",
@@ -25,6 +27,5 @@
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/fooloomanzoo/property-mixins/issues"
-  },
-  "homepage": "https://github.com/fooloomanzoo/property-mixins#readme"
+  }
 }

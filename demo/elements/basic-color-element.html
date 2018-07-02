@@ -1,0 +1,13 @@
+<link rel="import" href="../../../polymer/polymer.html">
+<link rel="import" href="../../color-mixin.html">
+
+<dom-module id="basic-color-element">
+  <script>
+    class BasicColorElement extends ColorMixin(Polymer.Element) { // eslint-disable-line no-undef
+      static get is() {
+        return 'basic-color-element';
+      }
+    }
+    window.customElements.define(BasicColorElement.is, BasicColorElement);
+  </script>
+</dom-module>

@@ -1,0 +1,161 @@
+<!doctype html>
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<html>
+
+<head>
+
+  <title>datetime demo</title>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+  <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+
+  <link rel="import" href="elements/basic-datetime-element.html">
+  <link rel="import" href="elements/form-datetime-element.html">
+
+  <custom-style><style is="custom-style" include="demo-pages-shared-styles">
+    demo-snippet {
+      --demo-snippet-code: {
+        max-height: 250px;
+      }
+      --demo-snippet: {
+        max-width: 600px;
+      }
+    }
+    .result {
+      display: flex;
+      flex-direction: column;
+      margin: 0.75em;
+      padding: 0.5em;
+      line-height: 1.5;
+    }
+    .result b {
+      display: flex;
+      position: relative;
+      justify-content: center;
+    }
+    input[type=range] {
+      flex: 1 0 auto;
+    }
+    input.for_range {
+      display: inline-block;
+      position: relative;
+      width: 60px;
+      color: #fff;
+      text-align: center;
+      border-radius: 3px;
+      background: #2c3e50;
+      padding: 5px 10px;
+      margin-left: 8px;
+      border-width: 0;
+      flex: 0 1 auto;
+    }
+    input.for_range:after {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-top: 7px solid transparent;
+      border-right: 7px solid #2c3e50;
+      border-bottom: 7px solid transparent;
+      content: '';
+      transform: translate(-100%,-50%);
+    }
+  </style></custom-style>
+
+</head>
+
+<body>
+  <h3>
+    basic datetime element
+  </h3>
+  <demo-snippet>
+    <template>
+      <dom-bind><template is="dom-bind">
+        <basic-datetime-element
+          value-as-number="{{value}}" value-as-date="{{dateobj}}" date="{{date}}" datetime="{{datetime}}" date="{{date}}" time="{{time}}" timezone="{{timezone}}"
+          year="{{year}}" month="{{month}}" day="{{day}}" hour="{{hour}}" hour12="{{hour12}}" minute="{{minute}}" second="{{second}}" millisecond="{{millisecond}}"
+          ></basic-datetime-element>
+        <div class="vertical-section-container result">
+          <div><code>numeric value</code>: <b>[[value]]</b></div>
+          <div><code>date object value</code>: <b>[[dateobj]]</b></div>
+          <div><code>date</code>: <b>
+            <input list="date" value="{{date::change}}"/>
+                  <datalist id="date">
+                    <option value=""></option>
+                    <option value="1003-06-11">2003-06-11</option>
+                    <option value="1503-08-31">1503-08-31</option>
+                    <option value="2003-03-01">2003-03-01</option>
+                  </datalist>
+            </b></div>
+          <div><code>time</code>: <b>
+            <input list="time" value="{{time::change}}"/>
+                  <datalist id="time">
+                    <option value=""></option>
+                    <option value="11:01">11:01</option>
+                    <option value="15:22:33">15:22:33</option>
+                    <option value="23:01:12.002">23:01:12.002</option>
+                  </datalist>
+            </b></div>
+          <div><code>datetime</code>: <b>
+            <input value="{{datetime::change}}"/>
+            </b></div>
+          <div><code>timezone</code>: <b><input pattern="[+-]\d\d:\d\d" value="{{timezone::change}}"></b></div>
+          <div><code>year</code>: <b>
+            <input type="range" name="year" value="{{year::input}}" step="1" min="-1000" max="3000"/>
+            <input size="4" type="number" class="for_range" id="year" value="{{year::input}}" step="1"/>
+            </b></div>
+          <div><code>month</code>: <b>
+            <input type="range" name="month" value="{{month::input}}" min="1" max="12" step="1"/>
+            <input size="4" type="number" class="for_range" id="month" value="{{month::input}}" min="1" max="12" step="1"/>
+            </b></div>
+          <div><code>day</code>: <b>
+            <input type="range" name="day" value="{{day::input}}" min="1" max="31" step="1"/>
+            <input size="4" type="number" class="for_range" id="day" value="{{day::input}}" min="1" max="31" step="1"/>
+            </b></div>
+          <div><code>hour</code>: <b>
+            <input type="range" name="hour" value="{{hour::input}}" min="0" max="23" step="1"/>
+            <input size="4" type="number" class="for_range" id="hour" value="{{hour::input}}" min="0" max="23" step="1"/>
+            </b></div>
+          <div><code>hour12</code>: <b>
+            <input type="range" name="hour12" value="{{hour12::input}}" min="0" max="12" step="1"/>
+            <input size="4" type="number" class="for_range" id="hour12" value="{{hour12::input}}" min="0" max="12" step="1"/>
+            </b></div>
+          <div><code>minute</code>: <b>
+            <input type="range" name="minute" value="{{minute::input}}" min="0" max="59" step="1"/>
+            <input size="4" type="number" class="for_range" id="minute" value="{{minute::input}}" min="0" max="59" step="1"/>
+            </b></div>
+          <div><code>second</code>: <b>
+            <input type="range" name="second" value="{{second::input}}" min="0" max="59" step="1"/>
+            <input size="4" type="number" class="for_range" id="second" value="{{second::input}}" min="0" max="59" step="1"/>
+            </b></div>
+          <div><code>millisecond</code>: <b>
+            <input type="range" name="millisecond" value="{{millisecond::input}}" min="0" max="999" step="1"/>
+            <input size="4" type="number" class="for_range" id="millisecond" value="{{millisecond::input}}" min="0" max="999" step="1"/>
+            </b></div>
+        </div>
+      </template></dom-bind>
+    </template>
+  </demo-snippet>
+
+  <script type="text/javascript">
+    // const element = document.querySelector('basic-datetime-element');
+    // element.setAttribute('datetime', '1980-02-01T02:03:04.567Z');
+  </script>
+
+</body>
+
+</html>

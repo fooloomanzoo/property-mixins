@@ -1,0 +1,13 @@
+<link rel="import" href="../../../polymer/polymer.html">
+<link rel="import" href="../../intl-datetime-format-mixin.html">
+
+<dom-module id="basic-intl-datetime-format-element">
+  <script>
+    class BasicIntlDatetimeFormatElement extends IntlDatetimeFormatMixin(Polymer.Element) { // eslint-disable-line no-undef
+      static get is() {
+        return 'basic-intl-datetime-format-element';
+      }
+    }
+    window.customElements.define(BasicIntlDatetimeFormatElement.is, BasicIntlDatetimeFormatElement);
+  </script>
+</dom-module>

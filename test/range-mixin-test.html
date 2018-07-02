@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>number-format-mixin test</title>
+
+    <script src="../../webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+    <script src="../../iron-test-helpers/test-helpers.js"></script>
+
+    <link rel="import" href="../demo/elements/basic-range-element.html">
+  </head>
+  <body>
+
+    <test-fixture id="basic">
+      <template>
+        <basic-range-element></basic-range-element>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="min">
+      <template>
+        <basic-range-element min="2" value-as-number="-1"></basic-range-element>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="max">
+      <template>
+        <basic-range-element max="2" value-as-number="3"></basic-range-element>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="min-max-switched">
+      <template>
+        <basic-range-element min="3" max="-1"></basic-range-element>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="clamp">
+      <template>
+        <basic-range-element step="0.5" value-as-number="1.24"></basic-range-element>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="no clamp">
+      <template>
+        <basic-range-element step="0.5" value-as-number="1.25" no-clamp></basic-range-element>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="no saturation">
+      <template>
+        <basic-range-element min="-2" max="2" ></basic-range-element>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="saturate">
+      <template>
+        <basic-range-element min="-2" max="2" saturate></basic-range-element>
+      </template>
+    </test-fixture>
+
+    <script>
+
+      suite('basic', () => {
+        test('default properties', done => {
+          let element = fixture('basic');
+          assert.isUndefined(element.min, 'min is not defined');
+          assert.isUndefined(element.max, 'max is not defined');
+          assert.equal(element.step, 1, 'step is defined');
+          assert.isUndefined(element.valueAsNumber, 'valueAsNumber is not defined');
+          assert.isUndefined(element.default, 'default is not defined');
+          assert.isUndefined(element.saturate, 'saturate is not defined');
+          assert.isUndefined(element.noClamp, 'noClamp is not defined');
+          done();
+        });
+
+        test('setting default', done => {
+          let element = fixture('basic');
+          element.default = 3;
+          assert.equal(element.valueAsNumber, 3, 'valueAsNumber should be set');
+          element.valueAsNumber = undefined;
+          assert.equal(element.valueAsNumber, 3, 'valueAsNumber should be reset');
+          done();
+        });
+      });
+
+      suite('min', () => {
+        test('setting min', done => {
+          let element = fixture('min');
+          assert.equal(element.min, 2, 'min is set');
+          assert.equal(element.valueAsNumber, element.min, 'value is set to min');
+          done();
+        });
+      });
+
+      suite('max', () => {
+        test('setting max', done => {
+          let element = fixture('max');
+          assert.equal(element.max, 2, 'max is set');
+          assert.equal(element.valueAsNumber, element.max, 'value is set to max');
+          done();
+        });
+      });
+
+      suite('min-max-switched', () => {
+        test('min is higher than max', done => {
+          let element = fixture('min-max-switched');
+          assert.equal(element.max, 3, 'max should switch');
+          assert.equal(element.min, -1, 'min should switch');
+          done();
+        });
+      });
+
+      suite('clamp', () => {
+        test('clamp value', done => {
+          let element = fixture('clamp');
+          assert.equal(element.valueAsNumber, 1, 'value should clamp');
+          done();
+        });
+      });
+
+      suite('no clamp', () => {
+        test('clamp value', done => {
+          let element = fixture('no clamp');
+          assert.equal(element.valueAsNumber, 1.25, 'value should not clamp');
+          done();
+        });
+      });
+
+      suite('saturation', () => {
+        test('saturate value', done => {
+          let element = fixture('saturate');
+          element.valueAsNumber = 2;
+          element.valueAsNumber = 5;
+          assert.equal(element.valueAsNumber, 2, 'value should saturate');
+          element.valueAsNumber = -2;
+          element.valueAsNumber = -5;
+          assert.equal(element.valueAsNumber, -2, 'value should saturate');
+          done();
+        });
+
+        test('saturate value', done => {
+          let element = fixture('no saturation');
+          element.valueAsNumber = 2;
+          element.valueAsNumber = 5;
+          assert.equal(element.valueAsNumber, -2, 'value should not saturate');
+          element.valueAsNumber = -2;
+          element.valueAsNumber = -5;
+          assert.equal(element.valueAsNumber, 2, 'value should not saturate');
+          done();
+        });
+      });
+    </script>
+
+  </body>
+</html>

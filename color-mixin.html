@@ -1,3 +1,4 @@
+<link rel="import" href="number-utilities.html">
 <script>
   /**
    * Mixin that provides web-color-properties. Its `color-string` converts automatically beetween different formats (hex, rgb and hsl) and provides an alpha-colorString.
@@ -12,6 +13,10 @@
       constructor() {
         super();
         this._validFormats = ['rgb', 'hex', 'hsl', 'auto'];
+        this._validateRgb = /^\s*rgb(a)?\(\s*(-?\d+)\s*,\s*(-?\d+)\s*,\s*(-?\d+)(?:\s*,\s*(-?\d*(?:\.(?:\d*)?)?))?\s*\)\s*$/;
+        this._validateHex = /^\s*(?:(#[A-Fa-f0-9]{6})([A-Fa-f0-9]{2})?|(#[A-Fa-f0-9]{3})([A-Fa-f0-9])?)\s*$/;
+        this._validateHsl = /^\s*hsl(a)?\(\s*(-?\d+(?:\.\d*)?)\s*,\s*(-?\d*(?:\.(?:\d*)?)?%?)\s*,\s*(-?\d*(?:\.(?:\d*)?)?%?)(?:\s*,\s*(-?\d*(?:\.(?:\d*)?)?))?\s*\)\s*$/;
+        this._validatePercent = /(-?\d*(?:\.(?:\d*)?)?)%/;
       }
 
       static get properties() {
@@ -101,38 +106,13 @@
             observer: '_formatChanged'
           },
           /**
-           * hex-color
+           * value as color-string
            */
           colorString: {
             type: String,
             notify: true,
             observer: '_colorStringChanged'
-          },
-
-          _validateHex: {
-            type: RegExp,
-            readOnly: true,
-            value: /^\s*(?:(#[A-Fa-f0-9]{6})([A-Fa-f0-9]{2})?|(#[A-Fa-f0-9]{3})([A-Fa-f0-9])?)\s*$/
-          },
-
-          _validateRgb: {
-            type: RegExp,
-            readOnly: true,
-            value: /^\s*rgb(a)?\(\s*(-?\d+)\s*,\s*(-?\d+)\s*,\s*(-?\d+)(?:\s*,\s*(-?\d*(?:\.(?:\d*)?)?))?\s*\)\s*$/
-          },
-
-          _validateHsl: {
-            type: RegExp,
-            readOnly: true,
-            value: /^\s*hsl(a)?\(\s*(-?\d+(?:\.\d*)?)\s*,\s*(-?\d*(?:\.(?:\d*)?)?%?)\s*,\s*(-?\d*(?:\.(?:\d*)?)?%?)(?:\s*,\s*(-?\d*(?:\.(?:\d*)?)?))?\s*\)\s*$/
-          },
-
-          _validatePercent: {
-            type: RegExp,
-            readOnly: true,
-            value: /(-?\d*(?:\.(?:\d*)?)?)%/
           }
-
         }
       }
 
@@ -653,11 +633,11 @@
       }
 
       _mathMod(dividend, divisor) {
-        return ((dividend % divisor) + divisor) % divisor;
+        return numberUtilities.mathMod(dividend, divisor);
       }
 
       _normalizedClamp(n) {
-        return n > 1 ? 1 : n < 0 ? 0 : n;
+        return numberUtilities.normalizedClamp(n);
       }
     }
   }

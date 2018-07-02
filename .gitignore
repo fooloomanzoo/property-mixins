@@ -2,6 +2,7 @@ bower_components
 components
 node_modules
 build
+test_result.json
 
 # Logs
 logs

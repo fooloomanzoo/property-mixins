@@ -1,18 +1,29 @@
-<link rel="import" href="intl-datetime-format-mixin.html">
+<link rel="import" href="number-utilities.html">
 <script>
   /**
    * Mixin that provides datetime-properties
    *
-   * @appliesMixin IntlDatetimeFormatMixin
    * @mixinFunction
    * @polymer
    *
-   * @param {Object} superClass class to extend
-   * @return {Object} extended class
+   * @demo demo/datetime-demo.html
    */
   const DatetimeMixin = superClass => { // eslint-disable-line no-unused-vars no-undef
 
-    return class extends IntlDatetimeFormatMixin(superClass) { // eslint-disable-line no-undef
+    return class extends (superClass) { // eslint-disable-line no-undef
+
+      constructor() {
+        super();
+        /**
+         * Regular Expression for datetime-string
+         */
+        this._regexpDatetime = /^([+-]?\d+-?\d\d-?\d\d)?(?:T?(?:(\d\d:?\d\d(?::?\d\d(?:\.?\d\d\d)?)?)([+-]\d\d:?\d\d|Z)?)?)$/;
+
+        /**
+         * Regular Expression for datetime-string
+         */
+        this._regexpTimezone = /(?:([+-]\d\d):?(\d\d)|Z)$/;
+      }
 
       static get properties() {
         return {
@@ -176,7 +187,8 @@
            */
           clamp: {
             type: String,
-            notify: true
+            notify: true,
+            observer: '_clampChanged'
           },
 
           /**
@@ -222,22 +234,6 @@
           },
 
           /**
-           * Regular Expression for datetime-string
-           */
-          _regexpDatetime: {
-            type: RegExp,
-            value: /^(-?\d+-\d\d-\d\d)?(?:T?(?:(\d\d:\d\d(?::\d\d(?:\.\d\d\d)?)?)([+-]\d\d:\d\d|Z)?)?)$/
-          },
-
-          /**
-           * Regular Expression for datetime-string
-           */
-          _regexpTimezone: {
-            type: RegExp,
-            value: /(?:([+-]\d\d):(\d\d)|Z)$/
-          },
-
-          /**
            * lock to date and ignore time
            */
           _dateLocked: {
@@ -251,23 +247,6 @@
           _timeOnly: {
             type: Boolean,
             value: false
-          },
-
-          /**
-           * order of date-parts
-           */
-          dateOrder: {
-            type: Object,
-            value: function() {
-              return {
-                year: 1,
-                month: 3,
-                day: 5,
-                timeFirst: false,
-                dateFirst: true
-              };
-            },
-            notify: true
           }
         }
       }
@@ -296,7 +275,7 @@
        *  Sets value to the actual date
        **/
       now() {
-        const d = new Date();
+        let d = new Date();
         if (this._timeOnly) {
           if (!this.timezone || !this.date) {
             this.__updatingTimezoneOffset = true;
@@ -357,7 +336,7 @@
         }
 
         // shift to UTC
-        d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+        d.setMinutes(d.getMinutes() - (isNaN(this._timezoneOffset) ? d.getTimezoneOffset() : this._timezoneOffset));
         if (year !== undefined) {
           d.setUTCFullYear(year);
         }
@@ -397,13 +376,21 @@
           }
           return;
         }
+
         if (!date && this._timeOnly) {
           this.__updatingTimezoneOffset = true;
           this._timezoneOffset = 0;
           this.__updatingTimezoneOffset = false;
-          date = '1970-01-01';
         }
-        this.datetime = (date || '1970-01-01') + 'T' + (time || ((this.timezone && this.timezone.length === 5) ? this.timezone.slice(1) : '00:00')) + (this.timezone || '+00:00');
+
+        date = date || '1970-01-01';
+        time = time || '00:00:00.000';
+
+        if (!this.timezone) {
+          this._checkDefaultTimezone(new Date(date + 'T' + time + 'Z'));
+        }
+
+        this.datetime = date + 'T' + time + this.timezone;
       }
 
       _datetimeChanged(datetime) {
@@ -459,7 +446,9 @@
         if (isNaN(value)) {
           return;
         }
-        this._setDate(new Date(+value));
+        if (value !== +this.valueAsDate) {
+          this._setDate(new Date(value));
+        }
       }
 
       _valueAsDateChanged(d) {
@@ -483,11 +472,19 @@
           this._correctTimezoneShift(d);
           d = this._checkThreshold(d);
 
+          const toSet = {}, value = +d;
+          if (this.valueAsNumber !== value) {
+            toSet.valueAsNumber = value;
+          }
+          if (+this.valueAsDate !== value) {
+            toSet.valueAsDate = new Date(d);
+          }
           // shift date, so that date properties are according to timezone
-          const transformedDate = new Date(d);
+          let transformedDate = new Date(d);
           transformedDate.setMinutes(d.getMinutes() - this._timezoneOffset);
 
           transformedDate = this._clamp(transformedDate, this.clamp);
+
           const year = transformedDate.getUTCFullYear(),
             month = transformedDate.getUTCMonth() + 1,
             day = transformedDate.getUTCDate(),
@@ -501,22 +498,25 @@
             time = this._dateLocked ? '00:00:00.000' : this.__toTime(hour, minute, second, millisecond),
             datetime = date + 'T' + time + this.timezone;
 
-            this.setProperties({
-              valueAsDate: d,
-              valueAsNumber: +d,
-              year: year,
-              month: month,
-              day: day,
-              hour: hour,
-              minute: minute,
-              second: second,
-              millisecond: millisecond,
-              isAm: isAm,
-              hour12: hour12,
-              datetime: datetime,
-              date: date,
-              time: time
-            });
+          if(!(year === this.year && month === this.month && day === this.day && hour === this.hour && hour12 === this.hour12 && isAm === this.isAm && minute === this.minute && second === this.second && millisecond === this.millisecond)) {
+            toSet.year = year;
+            toSet.month = month;
+            toSet.day = day;
+            toSet.hour = hour;
+            toSet.hour12 = hour12;
+            toSet.minute = minute;
+            toSet.second = second;
+            toSet.millisecond = millisecond;
+            toSet.isAm = isAm;
+          }
+
+          if (!(datetime === this.datetime && date === this.date && time === this.time)) {
+            toSet.date = date;
+            toSet.time = time;
+            toSet.datetime = datetime;
+          }
+
+          this.setProperties(toSet);
         } else if (!isNaN(d = new Date(this.default))) {
           this._setDate(d);
         } else if (!isNaN(this.valueAsNumber)) {
@@ -560,7 +560,7 @@
       }
 
       _fromDatetime(datetime) {
-        if (datetime === undefined) {
+        if (!datetime) {
           return;
         }
 
@@ -585,6 +585,16 @@
             }
             return d;
           }
+        }
+      }
+
+      _clampChanged(clamp) {
+        if (clamp === undefined) {
+          return;
+        }
+
+        if (this.valueAsDate) {
+          this._setDate(this.valueAsDate);
         }
       }
 
@@ -732,12 +742,12 @@
           if (this.timezone) {
             this.setProperties(this._computeTimezoneOffset(this.timezone));
           } else {
-            this.setProperties(this._computeTimezone((d !== undefined ? new Date(d) : new Date()).getTimezoneOffset()));
+            this.setProperties(this._computeTimezone((d !== undefined ? d : new Date()).getTimezoneOffset()));
           }
           this.__updatingTimezoneOffset = false;
         }
         if (this._recentLocalTimezoneOffset === undefined) {
-          this._recentLocalTimezoneOffset = (d !== undefined ? new Date(d) : new Date()).getTimezoneOffset();
+          this._recentLocalTimezoneOffset = (d !== undefined ? d : new Date()).getTimezoneOffset();
         }
       }
 
@@ -749,7 +759,7 @@
         }
 
         const localTimezoneOffset = d.getTimezoneOffset();
-        console.log(this.nodeName, this._timezoneOffset, localTimezoneOffset, this._recentLocalTimezoneOffset);
+
         if (this._recentLocalTimezoneOffset !== localTimezoneOffset) {
           this.__updatingTimezoneOffset = true;
           // fixing offset when an inner shift occures (e.g. summer- or wintertime)
@@ -775,10 +785,6 @@
           return;
         }
 
-        // if (this.__updatingTimezoneOffset) {
-        //   return;
-        // }
-
         const toSet = this._computeTimezoneOffset(timezone);
         if (toSet._timezoneOffset !== this._timezoneOffset) {
           this.__updatingTimezoneOffset = true;
@@ -802,8 +808,9 @@
         if (hour === undefined || minute === undefined) {
           return;
         }
-        const offsetMinutes = -(hour < 0 ? -1 : 1) * (Math.abs(hour) * 60 + minute),
-          timezone = (hour >= 0 ? '+' : '') + this._pad(hour, 2) + ':' + this._pad(minute, 2);
+        const hourIsNegative = numberUtilities.isNegative(hour),
+          offsetMinutes = (hourIsNegative ? 1 : -1) * (Math.abs(hour) * 60 + minute),
+          timezone = (hourIsNegative ? '-' : '+') + this._pad(Math.abs(hour), 2) + ':' + this._pad(minute, 2);
         if (offsetMinutes !== this._timezoneOffset) {
           // this.__updatingTimezoneOffset = true;
           this.setProperties({
@@ -827,13 +834,14 @@
             timezone: '+00:00'
           };
         }
-        const hour = -(offsetMinutes < 0 ? -1 : 1) * Math.floor(Math.abs(offsetMinutes) / 60),
+        const offsetIsNegative = offsetMinutes < 0,
+          hour = (offsetIsNegative ? 1 : -1) * Math.floor(Math.abs(offsetMinutes) / 60),
           minute = Math.abs(offsetMinutes) % 60;
         return {
           _timezoneOffset: offsetMinutes,
           _timeZoneHours: hour,
           _timeZoneMinutes: minute,
-          timezone: (hour >= 0 ? '+' : '') + this._pad(hour, 2) + ':' + this._pad(minute, 2)
+          timezone: (numberUtilities.isNegative(hour) ? '-' : '+') + this._pad(Math.abs(hour), 2) + ':' + this._pad(minute, 2)
         }
       }
 
@@ -851,7 +859,7 @@
           const hour = +match[1],
             minute = +match[2];
           return {
-            _timezoneOffset: (hour > 0 ? -1 : 1) * (Math.abs(hour) * 60 + minute),
+            _timezoneOffset: (numberUtilities.isNegative(hour) ? 1 : -1) * (Math.abs(hour) * 60 + minute),
             _timeZoneHours: hour,
             _timeZoneMinutes: minute,
             timezone: timezone
@@ -867,103 +875,6 @@
           return d.getDate();
         }
         return 31;
-      }
-
-      _localeChanged(locale) {
-        super._localeChanged(locale);
-
-        // test locale dateformat, to define the order of the parts of the date
-        // create datestring in locale format
-        let d = new Date(Date.UTC(1970, 10, 22, 18, 44));
-
-        // filter the number in the current locale representation and unicode-left- or right-control-marks
-        // (only internet explorer: https://www.csgpro.com/blog/2016/08/a-bad-date-with-internet-explorer-11-trouble-with-new-unicode-characters-in-javascript-date-strings)
-        const formatedDateParts = {
-          year: d.toLocaleDateString(locale, {
-            year: '2-digit',
-            timeZone: 'UTC',
-            hour12: false
-          }).replace(/[\u200E\u200F]/g, '').slice(0, 2),
-          month: d.toLocaleDateString(locale, {
-            month: '2-digit',
-            timeZone: 'UTC',
-            hour12: false
-          }).replace(/[\u200E\u200F]/g, '').slice(0, 2),
-          day: d.toLocaleDateString(locale, {
-            day: '2-digit',
-            timeZone: 'UTC',
-            hour12: false
-          }).replace(/[\u200E\u200F]/g, '').slice(0, 2),
-          hour: d.toLocaleTimeString(locale, {
-            hour: '2-digit',
-            timeZone: 'UTC',
-            hour12: false
-          }).replace(/[\u200E\u200F]/g, '').slice(0, 2),
-        };
-
-        // using UTC-timezone to avoid conflicts when comparing
-        const localeDateString = d.toLocaleString(locale, {
-          year: '2-digit',
-          month: '2-digit',
-          day: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit',
-          timeZone: 'UTC',
-          hour12: false
-        }).replace(/[\u200E\u200F]/g, '');
-
-        let occurrence = {
-          year: localeDateString.indexOf(formatedDateParts.year),
-          month: localeDateString.indexOf(formatedDateParts.month),
-          day: localeDateString.indexOf(formatedDateParts.day),
-          hour: localeDateString.indexOf(formatedDateParts.hour)
-        };
-
-        // setting datetime order
-        const order = {
-          year: null,
-          month: null,
-          day: null,
-          timeFirst: occurrence.year > occurrence.hour,
-          dateFirst: occurrence.year < occurrence.hour
-        };
-
-        if (occurrence.year < occurrence.month) {
-          if (occurrence.year < occurrence.day) {
-            order.year = 1;
-            if (occurrence.month < occurrence.day) {
-              order.month = 3;
-              order.day = 5;
-            } else {
-              order.day = 3;
-              order.month = 5;
-            }
-          } else {
-            order.day = 1;
-            order.year = 3;
-            order.month = 5;
-          }
-        } else {
-          if (occurrence.month < occurrence.day) {
-            order.month = 1;
-            if (occurrence.year < occurrence.day) {
-              order.year = 3;
-              order.day = 5;
-            } else {
-              order.day = 3;
-              order.year = 5;
-            }
-          } else {
-            order.day = 1;
-            order.month = 3;
-            order.year = 5;
-          }
-        }
-
-        this.setProperties({
-          dateOrder: order,
-          hour12Format: this.hour12Format === undefined ? Boolean(new Intl.DateTimeFormat(locale).resolvedOptions().hour12) : this.hour12Format
-        });
       }
     }
   }

@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>datetime-format-mixin test</title>
+
+    <script src="../../webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+    <script src="../../iron-test-helpers/test-helpers.js"></script>
+
+    <link rel="import" href="../demo/elements/basic-intl-datetime-format-element.html">
+  </head>
+  <body>
+
+    <test-fixture id="basic">
+      <template>
+        <basic-intl-datetime-format-element></basic-intl-datetime-format-element>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="en">
+      <template>
+        <basic-intl-datetime-format-element locale="en"></basic-intl-datetime-format-element>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="de">
+      <template>
+        <basic-intl-datetime-format-element locale="de"></basic-intl-datetime-format-element>
+      </template>
+    </test-fixture>
+
+    <script>
+      suite('basic', () => {
+
+        test('default format', done => {
+          let element = fixture('basic');
+          assert.isDefined(element.locale, 'locale is defined');
+          assert.isDefined(element.decimalSeparator, 'decimalSeparator is defined');
+          assert.isDefined(element.dateSeparator, 'dateSeparator is defined');
+          assert.isDefined(element.timeSeparator, 'timeSeparator is defined');
+          assert.isDefined(element.amString, 'amString is defined');
+          assert.isDefined(element.pmString, 'pmString is defined');
+          assert.isDefined(element.dateOrder, 'dateOrder is defined');
+          done();
+        });
+      });
+
+      suite('setting locale="en"', () => {
+
+        test('datetime format', done => {
+          let element = fixture('en');
+
+          assert.equal(element.decimalSeparator, '.', 'decimalSeparator should be set to "english"-format');
+          assert.equal(element.dateSeparator, '/', 'dateSeparator should be set to "english"-format');
+          assert.equal(element.timeSeparator, ':', 'timeSeparator should be set to "english"-format');
+          assert.equal(element.dateOrder.year, 5, 'dateOrder should be set to "english"-format' + JSON.stringify(element.dateOrder));
+          assert.equal(element.dateOrder.month, 1, 'dateOrder should be set to "english"-format');
+          assert.equal(element.dateOrder.day, 3, 'dateOrder should be set to "english"-format');
+          assert.equal(element.dateOrder.timeFirst, false, 'dateOrder should be set to "english"-format');
+          done();
+        });
+      });
+
+      suite('setting locale="de"', () => {
+
+        test('datetime format', done => {
+          let element = fixture('de');
+
+          assert.equal(element.decimalSeparator, ',', 'decimalSeparator should be set to "german"-format');
+          assert.equal(element.dateSeparator, '.', 'dateSeparator should be set to "german"-format');
+          assert.equal(element.timeSeparator, ':', 'timeSeparator should be set to "german"-format');
+          assert.equal(element.dateOrder.year, 5, 'dateOrder should be set to "german"-format');
+          assert.equal(element.dateOrder.month, 3, 'dateOrder should be set to "german"-format');
+          assert.equal(element.dateOrder.day, 1, 'dateOrder should be set to "german"-format');
+          assert.equal(element.dateOrder.timeFirst, false, 'dateOrder should be set to "german"-format');
+          done();
+        });
+      });
+
+    </script>
+
+  </body>
+</html>

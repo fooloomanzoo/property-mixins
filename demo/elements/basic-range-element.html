@@ -1,0 +1,13 @@
+<link rel="import" href="../../../polymer/polymer.html">
+<link rel="import" href="../../range-mixin.html">
+
+<dom-module id="basic-range-element">
+  <script>
+    class BasicRangeElement extends RangeMixin(Polymer.Element) { // eslint-disable-line no-undef
+      static get is() {
+        return 'basic-range-element';
+      }
+    }
+    window.customElements.define(BasicRangeElement.is, BasicRangeElement);
+  </script>
+</dom-module>

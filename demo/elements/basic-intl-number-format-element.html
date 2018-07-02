@@ -1,0 +1,13 @@
+<link rel="import" href="../../../polymer/polymer.html">
+<link rel="import" href="../../intl-number-format-mixin.html">
+
+<dom-module id="basic-intl-number-format-element">
+  <script>
+    class BasicIntlNumberFormatElement extends IntlNumberFormatMixin(Polymer.Element) { // eslint-disable-line no-undef
+      static get is() {
+        return 'basic-intl-number-format-element';
+      }
+    }
+    window.customElements.define(BasicIntlNumberFormatElement.is, BasicIntlNumberFormatElement);
+  </script>
+</dom-module>

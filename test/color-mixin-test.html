@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, maximum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>number-format-mixin test</title>
+
+    <script src="../../webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+    <script src="../../iron-test-helpers/test-helpers.js"></script>
+
+    <link rel="import" href="../demo/elements/basic-color-element.html">
+  </head>
+  <body>
+
+    <test-fixture id="basic">
+      <template>
+        <basic-color-element></basic-color-element>
+      </template>
+    </test-fixture>
+
+    <script>
+
+      suite('basic', () => {
+        test('default properties', done => {
+          let element = fixture('basic');
+          assert.isUndefined(element.hex, 'hex is not defined');
+          assert.equal(element.format, 'auto', 'format is "auto"');
+          assert.equal(element.alpha, 1, 'alpha is defined');
+          assert.isUndefined(element.colorString, 'colorString is not defined');
+          assert.isUndefined(element.r, 'r is not defined');
+          assert.isUndefined(element.g, 'g is not defined');
+          assert.isUndefined(element.b, 'b is not defined');
+          assert.isUndefined(element.h, 'h is not defined');
+          assert.isUndefined(element.s, 's is not defined');
+          assert.isUndefined(element.l, 'l is not defined');
+          assert.isUndefined(element.l, 'l is not defined');
+          done();
+        });
+
+        test('random', done => {
+          let element = fixture('basic');
+          element.random();
+          // setting  is async, so wait one tick.
+          Polymer.Base.async(function() {
+            assert.isDefined(element.colorString, 'colorString should be set');
+            done();
+          }, 1);
+        });
+
+        test('random (auto)', done => {
+          let element = fixture('basic');
+          element.format = 'auto';
+          element.random();
+
+          // assert.match(element.colorString, '', 'colorString should be set');
+          // setting  is async, so wait one tick.
+          Polymer.Base.async(function() {
+            assert.isDefined(element.colorString, 'colorString should be set');
+            done();
+          }, 1);
+        });
+
+      });
+    </script>
+
+  </body>
+</html>

@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>number-format-mixin test</title>
+
+    <script src="../../webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+    <script src="../../iron-test-helpers/test-helpers.js"></script>
+
+    <link rel="import" href="../demo/elements/basic-intl-number-format-element.html">
+  </head>
+  <body>
+
+    <test-fixture id="basic">
+      <template>
+        <basic-intl-number-format-element></basic-intl-number-format-element>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="currency">
+      <template>
+        <basic-intl-number-format-element number-style="currency"></basic-intl-number-format-element>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="units">
+      <template>
+        <basic-intl-number-format-element unit="°"></basic-intl-number-format-element>
+      </template>
+    </test-fixture>
+
+    <script>
+
+      suite('basic', () => {
+        test('default properties', done => {
+          let element = fixture('basic');
+          assert.isDefined(element.locale, 'locale is defined');
+          assert.isDefined(element.decimalSeparator, 'decimalSeparator is defined');
+          assert.isDefined(element.groupingSeparator, 'groupingSeparator is defined');
+          assert.isFunction(element.formatNumber, 'timeSeparator is a function');
+          assert.isFunction(element.parseNumber, 'parseNumber is a function');
+          done();
+        });
+
+        test('format number', done => {
+          let element = fixture('basic');
+          assert.isDefined(element.locale, 'locale is defined');
+          assert.isDefined(element.decimalSeparator, 'decimalSeparator is defined');
+          assert.isDefined(element.groupingSeparator, 'groupingSeparator is defined');
+          assert.isFunction(element.formatNumber, 'timeSeparator is a function');
+          assert.isFunction(element.parseNumber, 'parseNumber is a function');
+          done();
+        });
+
+        test('keep negative zero', done => {
+          let element = fixture('basic');
+          assert.equal(element.formatNumber(-0), '-0', 'format negative zero');
+          assert.isTrue(numberUtilities.isNegative0(element.parseNumber('-0')), 'parse negative zero');
+          done();
+        });
+
+        test('minimumFractionDigits', done => {
+          let element = fixture('basic');
+          element.setProperties({locale: 'en', minimumFractionDigits: 4});
+          assert.equal(element.formatNumber(123987654321.456), '123987654321.4560', 'format number');
+          assert.equal(element.formatNumber(0.123456), '0.123456', 'format number ' + JSON.stringify(element._numberOptions));
+          done();
+        });
+
+        test('maximumFractionDigits', done => {
+          let element = fixture('basic');
+          element.setProperties({locale: 'en', maximumFractionDigits: 4});
+          assert.equal(element.formatNumber(1.00006), '1.0001', 'format number');
+          assert.equal(element.formatNumber(0.1), '0.1', 'format number');
+          done();
+        });
+
+        test('minimumIntegerDigits', done => {
+          let element = fixture('basic');
+          element.setProperties({locale: 'en', minimumIntegerDigits: 4});
+          assert.equal(element.formatNumber(1), '0001', 'format number');
+          assert.equal(element.formatNumber(1.2), '0001.2', 'format number');
+          done();
+        });
+
+        test('minimumSignificantDigits', done => {
+          let element = fixture('basic');
+          element.setProperties({locale: 'en', minimumSignificantDigits: 4});
+          assert.equal(element.formatNumber(123), '123.0', 'format number');
+          assert.equal(element.formatNumber(123.45), '123.45', 'format number');
+          assert.equal(element.formatNumber(1.23), '1.230', 'format number');
+          assert.equal(element.formatNumber(1.2345), '1.2345', 'format number');
+          done();
+        });
+
+        test('maximumSignificantDigits', done => {
+          let element = fixture('basic');
+          element.setProperties({locale: 'en', maximumSignificantDigits: 4});
+          assert.equal(element.formatNumber(123), '123', 'format number');
+          assert.equal(element.formatNumber(123.45), '123.5', 'format number');
+          assert.equal(element.formatNumber(0.0012345), '0.001235', 'format number');
+          done();
+        });
+
+        test('grouping (english style)', done => {
+          let element = fixture('basic');
+          element.setProperties({locale: 'en', useGrouping: true});
+          assert.equal(element.formatNumber(1000.1), '1,000.1', 'use grouping');
+          assert.equal(element.parseNumber('1,000.1'), 1000.1, 'parse grouped number');
+          done();
+        });
+
+        test('grouping (german style)', done => {
+          let element = fixture('basic');
+          element.setProperties({locale: 'de', useGrouping: true});
+          assert.equal(element.formatNumber(1000.1), '1.000,1', 'use grouping');
+          assert.equal(element.parseNumber('1.000,1'), 1000.1, 'parse grouped number');
+          done();
+        });
+      });
+
+
+      suite('currency', () => {
+        test('default properties', done => {
+          let element = fixture('currency');
+          assert.equal(element._numberOptions.style, 'decimal', 'fallback, when no currency is given');
+          assert.equal(element.formatNumber(2), '2', 'fallback format');
+          done();
+        });
+
+        test('EUR in "en", symbol', done => {
+          let element = fixture('currency');
+          element.setProperties({locale: 'en', currency: 'EUR', currencyDisplay: 'symbol'});
+          assert.equal(element.formatNumber(100), '€100', '100 euros with symbol');
+          done();
+        });
+
+        test('EUR in "de", name', done => {
+          let element = fixture('currency');
+          element.setProperties({locale: 'en', currency: 'EUR', currencyDisplay: 'name'});
+          assert.equal(element.formatNumber(100), '100 euros', '100 euros with name');
+          done();
+        });
+      });
+
+
+      suite('units', () => {
+        test('default properties', done => {
+          let element = fixture('units');
+          assert.isDefined(element.unit, '"unit" is defined');
+          assert.isDefined(element.unitSeparator, '"unitSeparator" is defined');
+          done();
+        });
+
+        test('format number', done => {
+          let element = fixture('units');
+          assert.equal(element.formatNumber(100), '100' + element.unitSeparator + element.unit, 'number is formatedl');
+          done();
+        });
+      });
+
+    </script>
+
+  </body>
+</html>

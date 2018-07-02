@@ -1,6 +1,9 @@
 <link rel="import" href="range-mixin.html">
 
 <script>
+
+  let knownLocaleNumberFormatOptions = new Map();
+
   /**
    * Mixin that provides intl-format-locale for numbers and computes some separation strings for usage (only `latn`-numeral-system is possible).
    *
@@ -86,7 +89,7 @@
           },
 
           /**
-           * the separator to separate value and unit
+           * the separator to separate value and unit (default: '\u202F')
            */
           unitSeparator: {
             type: String,
@@ -205,33 +208,37 @@
           return;
         }
 
-        // decimal separator
-        const numberString = (0.5).toLocaleString(locale, {
-          minimumIntergerDigits: 1,
-          minimumFractionsDigits: 1
-        });
-        const decimalSeparator = numberString[1];
+        if (!knownLocaleNumberFormatOptions.has(locale)) {
+          // decimal separator
+          const numberString = (0.5).toLocaleString(locale, {
+            minimumIntergerDigits: 1,
+            minimumFractionsDigits: 1
+          });
+          const decimalSeparator = numberString[1];
 
-        // grouping separator
-        const nogroupingString = (1000000).toLocaleString(locale, {
-          useGrouping: false
-        });
-        const groupingString = (1000000).toLocaleString(locale, {
-          useGrouping: true
-        });
+          // grouping separator
+          const nogroupingString = (1000000).toLocaleString(locale, {
+            useGrouping: false
+          });
+          const groupingString = (1000000).toLocaleString(locale, {
+            useGrouping: true
+          });
 
-        let groupingSeparator;
-        for (let i = 0; i < nogroupingString.length; i++) {
-          if (groupingString[i] !== nogroupingString[i]) {
-            groupingSeparator = groupingString[i];
-            break;
+          let groupingSeparator;
+          for (let i = 0; i < nogroupingString.length; i++) {
+            if (groupingString[i] !== nogroupingString[i]) {
+              groupingSeparator = groupingString[i];
+              break;
+            }
           }
+
+          knownLocaleNumberFormatOptions.set(locale, {
+            decimalSeparator: decimalSeparator,
+            groupingSeparator: groupingSeparator
+          });
         }
 
-        this.setProperties({
-          decimalSeparator: decimalSeparator,
-          groupingSeparator: groupingSeparator
-        }, true);
+        this.setProperties(knownLocaleNumberFormatOptions.get(locale), true);
       }
 
       _computeNumberOptions(minimumIntegerDigits, minimumFractionDigits, maximumFractionDigits, minimumSignificantDigits, maximumSignificantDigits, useGrouping, style, currency, currencyDisplay) {
@@ -241,40 +248,47 @@
           useGrouping: Boolean(useGrouping),
           style: style || 'decimal'
         }
-        if (currency !== undefined) {
-          options.currency = currency;
+
+        if (style === 'currency') {
+          if (currency !== undefined) {
+            options.currency = currency;
+            if (currencyDisplay && ['symbol', 'code', 'name'].indexOf(this.currencyDisplay) !== -1) {
+              options.currencyDisplay = currencyDisplay;
+            } else {
+              options.currencyDisplay = new Intl.NumberFormat(this.locale, {style: 'currency', currency: this.currency}).resolvedOptions().currencyDisplay || 'symbol';;
+            }
+          } else {
+            console.warn('No currency is given. Using number style: \'decimal\'.');
+            options.style = 'decimal';
+          }
         }
-        if (currencyDisplay !== undefined) {
-          options.currencyDisplay = currencyDisplay;
+
+        if (!isNaN(maximumFractionDigits)) {
+          options.maximumFractionDigits = (maximumFractionDigits < minimumFractionDigits && !isNaN(minimumFractionDigits)) ? minimumFractionDigits : maximumFractionDigits;
+        } else if (!isNaN(minimumFractionDigits)) {
+          options.maximumFractionDigits = 20;
         }
-        if (maximumFractionDigits !== undefined) {
-          options.maximumFractionDigits = maximumFractionDigits < minimumFractionDigits ? minimumFractionDigits : maximumFractionDigits;
-        }
-        if (minimumSignificantDigits !== undefined) {
+        if (!isNaN(minimumSignificantDigits)) {
           options.minimumSignificantDigits = minimumSignificantDigits;
         }
-        if (maximumSignificantDigits !== undefined) {
-          options.maximumSignificantDigits = maximumSignificantDigits < minimumSignificantDigits ? minimumSignificantDigits : maximumSignificantDigits;
+        if (!isNaN(maximumSignificantDigits)) {
+          options.maximumSignificantDigits = (maximumSignificantDigits < minimumSignificantDigits && !isNaN(minimumSignificantDigits)) ? minimumSignificantDigits : maximumSignificantDigits;
         }
         return options;
       }
 
       _computeFormatNumber(locale, numberOptions, unit) {
-        if (numberOptions && numberOptions.style === 'currency' && !numberOptions.currency) {
-          console.warn('No currency is given. Using number style: \'decimal\'.');
-          numberOptions.style = 'decimal';
-        }
         if (numberOptions && numberOptions.style !== 'decimal') {
           unit = '';
         }
         const format = new Intl.NumberFormat(locale, numberOptions).format;
         if (unit) {
           return (n) => {
-            return ((this.alwaysSign && n >= 0) ? '+' : '') + format(n) + this.unitSeparator + unit;
+            return (numberUtilities.isNegative0(n) ? '-' : ((this.alwaysSign && n >= 0) ? '+' : '')) + format(n) + this.unitSeparator + unit;
           }
         }
         return (n) => {
-          return ((this.alwaysSign && n >= 0) ? '+' : '') + format(n);
+          return (numberUtilities.isNegative0(n) ? '-' : ((this.alwaysSign && n >= 0) ? '+' : '')) + format(n);
         }
       }
 
