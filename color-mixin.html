@@ -106,6 +106,12 @@
             observer: '_formatChanged'
           },
           /**
+           * format is locked and does not switch according to the colorString
+           */
+          lockFormat: {
+            type: Boolean
+          },
+          /**
            * value as color-string
            */
           colorString: {
@@ -283,7 +289,7 @@
           toSet = this._testColor(colorString);
           format = 'auto';
         }
-        if (format && this.format !== format) {
+        if (!this.lockFormat && format && this.format !== format) {
           toSet.format = format;
         }
         this.setProperties(toSet);
