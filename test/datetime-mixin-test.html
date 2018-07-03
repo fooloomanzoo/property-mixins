@@ -267,7 +267,7 @@
 
         test('setting value-as-date', done => {
           let element = fixture('basic');
-          element.setAttribute('value-as-date', new Date(318244684567).toISOString());
+          element.setAttribute('value-as-date', '1980-02-01T09:18:04.567Z');
 
           assert.isDefined(element.date, 'date is defined');
           assert.isDefined(element.time, 'time is defined');
@@ -283,7 +283,7 @@
           assert.isDefined(element._timezoneOffset, 'timezone-offset is defined');
           assert.isDefined(element._timeZoneHours, 'timezone-hours is defined');
           assert.isDefined(element._timeZoneMinutes, 'timezone-minutes is defined');
-          assert.equal(element.valueAsDate.toISOString(), '1980-02-01T09:18:04.567Z', 'valueAsDate should be set');
+          assert.equal(+element.valueAsDate, 318244684567, 'valueAsDate should be set' + new Date(318244684567).toISOString()+ element.valueAsDate.toISOString());
           assert.equal(element.valueAsNumber, 318244684567, 'valueAsNumber should be set');
           done();
         });

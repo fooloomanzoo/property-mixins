@@ -406,7 +406,7 @@
           return;
         }
 
-        if (typeof datetime === 'object') {
+        if (typeof datetime === 'object' && datetime instanceof Date) {
           // 'date' is a Date Object
           this._recentLocalTimezoneOffset = datetime.getTimezoneOffset();
           this._setDate(datetime);
@@ -460,8 +460,9 @@
         if (isNaN(d)) {
           return;
         }
+
         if (this.valueAsNumber !== +d) {
-          this._setDate(new Date(d));
+          this._setDate(new Date(+d));
         }
       }
 
@@ -478,10 +479,11 @@
             toSet.valueAsNumber = value;
           }
           if (+this.valueAsDate !== value) {
-            toSet.valueAsDate = new Date(d);
+            toSet.valueAsDate = new Date(value);
           }
           // shift date, so that date properties are according to timezone
-          let transformedDate = new Date(d);
+          let transformedDate = new Date(value);
+
           transformedDate.setMinutes(d.getMinutes() - this._timezoneOffset);
 
           transformedDate = this._clamp(transformedDate, this.clamp);
@@ -516,8 +518,8 @@
             toSet.time = time;
             toSet.datetime = datetime;
           }
-
           this.setProperties(toSet);
+
         } else if (!isNaN(d = new Date(this.default))) {
           this._setDate(d);
         } else if (!isNaN(this.valueAsNumber)) {
