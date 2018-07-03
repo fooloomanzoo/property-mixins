@@ -1,0 +1,151 @@
+<!doctype html>
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<html>
+
+<head>
+
+  <title>color demo</title>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+  <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+
+  <link rel="import" href="elements/basic-color-element.html">
+  <link rel="import" href="elements/form-color-element.html">
+
+  <custom-style><style is="custom-style" include="demo-pages-shared-styles">
+    demo-snippet {
+      --demo-snippet-code: {
+        max-height: 250px;
+      }
+      --demo-snippet: {
+        max-width: 600px;
+      }
+    }
+    .result {
+      display: flex;
+      flex-direction: column;
+      margin: 0.75em;
+      padding: 0.5em;
+      line-height: 1.5;
+    }
+    .result b {
+      display: flex;
+      position: relative;
+      justify-content: center;
+    }
+    input[type=range] {
+      flex: 1 0 auto;
+    }
+    input.for_range {
+      display: inline-block;
+      position: relative;
+      width: 60px;
+      color: #fff;
+      text-align: center;
+      border-radius: 3px;
+      background: #2c3e50;
+      padding: 5px 10px;
+      margin-left: 8px;
+      border-width: 0;
+      flex: 0 1 auto;
+    }
+    input.for_range:after {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-top: 7px solid transparent;
+      border-right: 7px solid #2c3e50;
+      border-bottom: 7px solid transparent;
+      content: '';
+      transform: translate(-100%,-50%);
+    }
+  </style></custom-style>
+
+</head>
+
+<body>
+  <h3>
+    basic color element
+  </h3>
+  <demo-snippet>
+    <template>
+      <dom-bind><template is="dom-bind">
+        <basic-color-element
+          color-string="{{value}}" hex="{{hex}}"
+          r="{{r}}" g="{{g}}" b="{{b}}" h="{{h}}" s="{{s}}" l="{{l}}" alpha="{{alpha}}" format="[[format]]"
+          ></basic-color-element>
+        <div class="vertical-section-container result">
+          <div><code>color string</code>: <b>
+            <input list="color" value="{{value::change}}"/>
+                  <datalist id="value">
+                    <option value=""></option>
+                    <option value="#123abc">123abc</option>
+                    <option value="coral">coral</option>
+                    <option value="rgb(12,123,231)">rgb(12,123,231)</option>
+                    <option value="rgba(112,23,31,0.4)">rgba(112,23,31,0.4))</option>
+                  </datalist>
+            </b></div>
+          <div><code>format</code>: <b>
+              <select id="format" value="{{format::change}}">
+                <option value="auto">auto</option>
+                <option value="hex">hex</option>
+                <option value="rgb">rgb</option>
+                <option value="hsl">hsl</option>
+              </select>
+            </b></div><br>
+          <div><code>r</code>: <b>
+            <input type="range" name="r" value="{{r::input}}" min="0" max="255" step="1"/>
+            <input size="3" type="number" class="for_range" id="r" value="{{r::input}}" step="1"  min="0" max="255"/>
+            </b></div>
+          <div><code>g</code>: <b>
+            <input type="range" name="g" value="{{g::input}}" min="0" max="255" step="1"/>
+            <input size="3" type="number" class="for_range" id="g" value="{{g::input}}" step="1"  min="0" max="255"/>
+            </b></div>
+          <div><code>b</code>: <b>
+            <input type="range" name="b" value="{{b::input}}" min="0" max="255" step="1"/>
+            <input size="3" type="number" class="for_range" id="b" value="{{b::input}}" step="1"  min="0" max="255"/>
+            </b></div>
+          <div><code>h</code>: <b>
+            <input type="range" name="h" value="{{h::input}}" min="0" max="359" step="1"/>
+            <input size="4" type="number" class="for_range" id="h" value="{{h::input}}" min="0" max="359" step="1"/>
+            </b></div>
+          <div><code>s</code>: <b>
+            <input type="range" name="s" value="{{s::input}}" min="0" max="1" step="0.01"/>
+            <input size="4" type="number" class="for_range" id="s" value="{{s::input}}" min="0" max="1" step="0.01"/>
+            </b></div>
+          <div><code>l</code>: <b>
+            <input type="range" name="l" value="{{l::input}}" min="0" max="1" step="0.01"/>
+            <input size="4" type="number" class="for_range" id="l" value="{{l::input}}" min="0" max="1" step="0.01"/>
+            </b></div>
+          <div><code>alpha</code>: <b>
+            <input type="range" name="alpha" value="{{alpha::input}}" min="0" max="1" step="0.01"/>
+            <input size="4" type="number" class="for_range" id="alpha" value="{{alpha::input}}" min="0" max="1" step="0.01"/>
+            </b></div>
+        </div>
+      </template></dom-bind>
+    </template>
+  </demo-snippet>
+
+  <script type="text/javascript">
+    // const element = document.querySelector('basic-color-element');
+    // element.setAttribute('color', '1980-02-01T02:03:04.567Z');
+  </script>
+
+</body>
+
+</html>
