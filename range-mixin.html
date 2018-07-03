@@ -37,7 +37,7 @@
           },
 
           /**
-           * a step modifier. this is useful if you are having one step for multible elements that represent parts of numbers, like when you are having one input for the decimal part and one for the integer part.
+           * a step modifier. this is useful if you are having one step for multiple elements that represent parts of numbers, like when you are having one input for the decimal part and one for the integer part.
            * For example:
            *   * if `step` is `0.002` and the `step-mod` is `1000`, `2` will be used
            *   * if `step` is `10` and the `step-mod` is `0.02`, `0.2` will be used
@@ -165,12 +165,6 @@
           min = this.min,
           max = this.max;
 
-        if (this.useNegativeZero && oldValue === 0 && value !== 0) {
-          if (numberUtilities.isNegative0(oldValue)) {
-            return 0;
-          }
-          return -0;
-        }
         if (min !== undefined && value <= min) {
           if (saturate || value === min || max === undefined || oldValue !== min) {
             return min;
@@ -236,7 +230,20 @@
       }
 
       _increm(step) {
-        const value = +this._safeAdd(this.valueAsNumber, step || this._step);
+
+        if (this.useNegativeZero && this.valueAsNumber === 0) {
+          if ((1/this.valueAsNumber) === Infinity) { // oldValue is +0
+            if (step < 0) { // switch to -0
+              this.valueAsNumber = new Number(-0);
+              return;
+            }
+          } else if (step > 0) {  // oldValue is -0
+            // switch to +0
+            this.valueAsNumber = new Number(0);
+            return;
+          }
+        }
+        const value = +this._safeAdd(this.valueAsNumber, step);
         if (isNaN(value)) {
           if (!isNaN(this.startAt)) {
             this.valueAsNumber = +this.startAt;
@@ -245,9 +252,31 @@
           } else {
             this.valueAsNumber = this.min < 0 ? 0 : this.min || 0;
           }
+        } else if (this.useNegativeZero && value === 0) {
+          if (step < 0) { // coming from positive
+            this.valueAsNumber = 0;
+          } else if (step > 0) {  // coming from negative
+            this.valueAsNumber = -0;
+          }
         } else {
           this.valueAsNumber = value;
         }
+      }
+
+      /**
+       * increase value by step
+       * @type {[type]}
+       */
+      increase() {
+        this._increm(this.step);
+      }
+
+      /**
+       * decrease value by step
+       * @type {[type]}
+       */
+      decrease() {
+        this._increm(-this.step);
       }
     }
   }

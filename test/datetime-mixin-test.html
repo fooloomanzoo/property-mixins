@@ -319,6 +319,12 @@
           element.setAttribute('year', '1980');
 
           assert.equal(element.year, 1980, 'year should be set');
+          assert.equal(element.month, 1, 'month should be set');
+          assert.equal(element.day, 1, 'day should be set');
+          assert.equal(element.hour, 0, 'hour should be set');
+          assert.equal(element.minute, 0, 'minute should be set');
+          assert.equal(element.second, 0, 'second should be set');
+          assert.equal(element.millisecond, 0, 'millisecond should be set');
           assert.isDefined(element.timezone, 'timezone is defined');
           assert.isDefined(element.date, 'date is defined');
           assert.isDefined(element.time, 'time is defined');
@@ -332,7 +338,15 @@
           let element = fixture('basic');
           element.setAttribute('month', '2');
 
+          const d = new Date();
+          assert.equal(element.year, d.getFullYear(), 'year should be set');
           assert.equal(element.month, 2, 'month should be set');
+          assert.equal(element.day, 1, 'day should be set');
+          assert.equal(element.hour, 0, 'hour should be set');
+          assert.equal(element.minute, 0, 'minute should be set');
+          assert.equal(element.second, 0, 'second should be set');
+          assert.equal(element.millisecond, 0, 'millisecond should be set');
+
           assert.isDefined(element.timezone, 'timezone is defined');
           assert.isDefined(element.date, 'date is defined');
           assert.isDefined(element.time, 'time is defined');
@@ -346,7 +360,14 @@
           let element = fixture('basic');
           element.setAttribute('day', '1');
 
+          const d = new Date();
+          assert.equal(element.year, d.getFullYear(), 'year should be set');
+          assert.equal(element.month, 1, 'month should be set');
           assert.equal(element.day, 1, 'day should be set');
+          assert.equal(element.hour, 0, 'hour should be set');
+          assert.equal(element.minute, 0, 'minute should be set');
+          assert.equal(element.second, 0, 'second should be set');
+          assert.equal(element.millisecond, 0, 'millisecond should be set');
           assert.isDefined(element.timezone, 'timezone is defined');
           assert.isDefined(element.date, 'date is defined');
           assert.isDefined(element.time, 'time is defined');
@@ -360,8 +381,15 @@
           let element = fixture('basic');
           element.setAttribute('hour', '2');
 
+          const d = new Date();
+          assert.equal(element.year, d.getFullYear(), 'year should be set');
+          assert.equal(element.month, 1, 'month should be set');
+          assert.equal(element.day, 1, 'day should be set');
           assert.equal(element.hour, 2, 'hour should be set');
           assert.equal(element.hour12, 2, 'hour12 should be set');
+          assert.equal(element.minute, 0, 'minute should be set');
+          assert.equal(element.second, 0, 'second should be set');
+          assert.equal(element.millisecond, 0, 'millisecond should be set');
           assert.isDefined(element.timezone, 'timezone is defined');
           assert.isDefined(element.date, 'date is defined');
           assert.isDefined(element.time, 'time is defined');
@@ -375,7 +403,14 @@
           let element = fixture('basic');
           element.setAttribute('minute', '3');
 
+          const d = new Date();
+          assert.equal(element.year, d.getFullYear(), 'year should be set');
+          assert.equal(element.month, 1, 'month should be set');
+          assert.equal(element.day, 1, 'day should be set');
+          assert.equal(element.hour, 0, 'hour should be set');
           assert.equal(element.minute, 3, 'minute should be set');
+          assert.equal(element.second, 0, 'second should be set');
+          assert.equal(element.millisecond, 0, 'millisecond should be set');
           assert.isDefined(element.timezone, 'timezone is defined');
           assert.isDefined(element.date, 'date is defined');
           assert.isDefined(element.time, 'time is defined');
@@ -389,7 +424,14 @@
           let element = fixture('basic');
           element.setAttribute('second', '4');
 
+          const d = new Date();
+          assert.equal(element.year, d.getFullYear(), 'year should be set');
+          assert.equal(element.month, 1, 'month should be set');
+          assert.equal(element.day, 1, 'day should be set');
+          assert.equal(element.hour, 0, 'hour should be set');
+          assert.equal(element.minute, 0, 'minute should be set');
           assert.equal(element.second, 4, 'second should be set');
+          assert.equal(element.millisecond, 0, 'millisecond should be set');
           assert.isDefined(element.timezone, 'timezone is defined');
           assert.isDefined(element.date, 'date is defined');
           assert.isDefined(element.time, 'time is defined');
@@ -403,6 +445,13 @@
           let element = fixture('basic');
           element.setAttribute('millisecond', '567');
 
+          const d = new Date();
+          assert.equal(element.year, d.getFullYear(), 'year should be set');
+          assert.equal(element.month, 1, 'month should be set');
+          assert.equal(element.day, 1, 'day should be set');
+          assert.equal(element.hour, 0, 'hour should be set');
+          assert.equal(element.minute, 0, 'minute should be set');
+          assert.equal(element.second, 0, 'second should be set');
           assert.equal(element.millisecond, 567, 'millisecond should be set');
           assert.isDefined(element.timezone, 'timezone is defined');
           assert.isDefined(element.date, 'date is defined');

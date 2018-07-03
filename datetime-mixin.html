@@ -323,20 +323,21 @@
                 d.setUTCDate(1);
               }
               d.setMinutes(d.getMinutes() + d.getTimezoneOffset());
-            } else {
-              d = new Date((this.date || this._toDate(new Date())) + 'T' + (this.time || '00:00') + (this.timezone || 'Z'));
+            } else if (this.date) {
+              d = new Date(this.date + 'T' + (this.time || '00:00') + (this.timezone || 'Z'));
               if (!this.timezone) {
                 d.setMinutes(d.getMinutes() + d.getTimezoneOffset());
               }
             }
             if (isNaN(d)) {
-              d = new Date();
+              d = new Date((new Date).getFullYear(), 0, 1, 0, 0, 0, 0);
             }
           }
         }
 
         // shift to UTC
         d.setMinutes(d.getMinutes() - (isNaN(this._timezoneOffset) ? d.getTimezoneOffset() : this._timezoneOffset));
+
         if (year !== undefined) {
           d.setUTCFullYear(year);
         }

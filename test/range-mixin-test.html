@@ -20,6 +20,12 @@
       </template>
     </test-fixture>
 
+    <test-fixture id="negative zero">
+      <template>
+        <basic-range-element use-negative-zero step="1"></basic-range-element>
+      </template>
+    </test-fixture>
+
     <test-fixture id="min">
       <template>
         <basic-range-element min="2" value-as-number="-1"></basic-range-element>
@@ -98,29 +104,75 @@
         test('increment', done => {
           let element = fixture('basic');
           element.valueAsNumber = 3;
-          element._increm(1);
+          element.step = 1;
+          element.increase();
           assert.equal(element.valueAsNumber, 4, 'valueAsNumber should use increment');
-          element._increm(-1);
+          element.decrease();
           assert.equal(element.valueAsNumber, 3, 'valueAsNumber should use decrease');
           done();
         });
+      });
 
-        test('use negative zero', done => {
-          let element = fixture('basic');
-          element.useNegativeZero = true;
+      suite('negative zero', () => {
+        test('from 1 to +0', done => {
+          let element = fixture('negative zero');
           element.valueAsNumber = 1;
-          element._increm(-1);
+          element.decrease();
           assert.isTrue(!numberUtilities.isNegative0(element.valueAsNumber) && element.valueAsNumber === 0, 'valueAsNumber decrease to positive zero');
-          element._increm(-1);
-          assert.isTrue(numberUtilities.isNegative0(element.valueAsNumber), 'valueAsNumber should be negative zero');
-          element._increm(-1);
+          done();
+        });
+
+        test('from +0 to -0', done => {
+          let element = fixture('negative zero');
+          element.valueAsNumber = 0;
+          element.decrease();
+          assert.isTrue(numberUtilities.isNegative0(element.valueAsNumber), 'valueAsNumber should be negative zero'+element.valueAsNumber);
+          done();
+        });
+
+        test('from -0 to -1', done => {
+          let element = fixture('negative zero');
+          element.valueAsNumber = -0;
+          element.decrease();
           assert.equal(element.valueAsNumber, -1, 'valueAsNumber should decrease from negative zero');
-          element._increm(1);
-          assert.isTrue(numberUtilities.isNegative0(element.valueAsNumber), 'valueAsNumber should increase to negative zero');
-          element._increm(1);
-          assert.isTrue(!numberUtilities.isNegative0(element.valueAsNumber) && element.valueAsNumber === 0, 'valueAsNumber should increase to positive zero');
-          element._increm(1);
+          done();
+        });
+
+        test('from -1 to -0', done => {
+          let element = fixture('negative zero');
+          element.valueAsNumber = -1;
+          element.increase();
+          assert.isTrue(numberUtilities.isNegative0(element.valueAsNumber), 'valueAsNumber should increase to negative zero'+element.valueAsNumber);
+          done();
+        });
+
+        test('from -0 to +0', done => {
+          let element = fixture('negative zero');
+          element.valueAsNumber = -0;
+          element.increase();
+          assert.isTrue(!numberUtilities.isNegative0(element.valueAsNumber) && element.valueAsNumber === 0, 'valueAsNumber should increase to positive zero' + element.valueAsNumber);
+          done();
+        });
+
+        test('from +0 to 1', done => {
+          let element = fixture('negative zero');
+          element.valueAsNumber = 0;
+          element.increase();
           assert.equal(element.valueAsNumber, 1, 'valueAsNumber should increase from positive zero');
+          done();
+        });
+
+        test('multiple', done => {
+          let element = fixture('negative zero');
+          element.valueAsNumber = -2;
+          for (var i = 0; i < 5; i++) {
+            element.increase();
+          }
+          assert.equal(element.valueAsNumber, 2, 'valueAsNumber should increase over zero');
+          for (var i = 0; i < 5; i++) {
+            element.decrease();
+          }
+          assert.equal(element.valueAsNumber, -2, 'valueAsNumber should decrease back over zero');
           done();
         });
       });
