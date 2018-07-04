@@ -12,6 +12,7 @@
 
     <link rel="import" href="../demo/elements/basic-datetime-element.html">
     <link rel="import" href="../demo/elements/form-datetime-element.html">
+    <link rel="import" href="../number-utilities.html">
   </head>
   <body>
 
@@ -333,7 +334,7 @@
           assert.equal(element.valueAsDate.toISOString(), '1980-02-01T09:18:04.567Z', 'valueAsDate should be set');
           assert.equal(element.valueAsNumber, 318244684567, 'valueAsNumber should be set');
 
-          element._resetDate();
+          element.resetDate();
           assert.equal(element.valueAsNumber, 318244684567, 'valueAsNumber should be set after reset');
           done();
         });
@@ -523,6 +524,42 @@
           assert.equal(element._timezoneOffset, 540, 'timezone-offset should be set');
           assert.equal(element._timeZoneHours, -9, 'timezone-hours should be set');
           assert.equal(element._timeZoneMinutes, 0, 'timezone-minutes should be set');
+          done();
+        });
+
+        test('changing timezone and using negative zero', done => {
+          let element = fixture('basic');
+          element.now();
+          element.setAttribute('timezone', '-00:00');
+
+          assert.isTrue(!numberUtilities.isNegative0(element._timezoneOffset) && element._timezoneOffset === 0, '1: timezone-offset should be +0');
+          assert.isTrue(numberUtilities.isNegative0(element._timeZoneHours), '1: timezone-hours should be -0');
+          assert.equal(element._timeZoneMinutes, 0, '1: timezone-minutes should be 0');
+          assert.equal(element.timezone, '+00:00', '1: timezone should be change to +00:00');
+
+          element._timeZoneHours = +0;
+          assert.isTrue(numberUtilities.isNegative0(element._timezoneOffset), '1.1: timezone-offset should be +0');
+          assert.isTrue(!numberUtilities.isNegative0(element._timeZoneHours) && element._timezoneOffset === 0, '1.1: timezone-hours should be +0');
+          assert.equal(element._timeZoneMinutes, 0, '1.1: timezone-minutes should be 0');
+          assert.equal(element.timezone, '+00:00', '1.1: timezone should be change to +00:00');
+
+          element.setAttribute('timezone', '-00:15');
+          assert.equal(element._timezoneOffset, 15, '2: timezone-offset should be 15');
+          assert.isTrue(numberUtilities.isNegative0(element._timeZoneHours), '2: timezone-hours should be -0');
+          assert.equal(element._timeZoneMinutes, 15, '2: timezone-minutes should be 15');
+
+          element.setAttribute('timezone', '+00:15');
+          assert.equal(element._timezoneOffset, -15, '3: timezone-offset should be -15');
+          assert.isTrue(!numberUtilities.isNegative0(element._timeZoneHours) && element._timeZoneHours === 0, '3: timezone-hours should be +0');
+          assert.equal(element._timeZoneMinutes, 15, '3: timezone-minutes should be 0');
+
+
+          element.setAttribute('timezone', '-06:30');
+          element._timeZoneHours = -0;
+
+          assert.equal(element._timezoneOffset, 30, '4: timezone-offset should be 30');
+          assert.isTrue(numberUtilities.isNegative0(element._timeZoneHours), '4: timezone-hours should be -0');
+          assert.equal(element._timeZoneMinutes, 30, '4: timezone-minutes should be 30');
           done();
         });
 

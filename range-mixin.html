@@ -135,7 +135,6 @@
 
         if (value !== this.valueAsNumber) {
           this.valueAsNumber = value;
-          return;
         }
       }
 
@@ -230,16 +229,15 @@
       }
 
       _increm(step) {
-
         if (this.useNegativeZero && this.valueAsNumber === 0) {
           if ((1/this.valueAsNumber) === Infinity) { // oldValue is +0
             if (step < 0) { // switch to -0
-              this.valueAsNumber = new Number(-0);
+              this.valueAsNumber = -0;
               return;
             }
           } else if (step > 0) {  // oldValue is -0
             // switch to +0
-            this.valueAsNumber = new Number(0);
+            this.valueAsNumber = 0;
             return;
           }
         }
@@ -277,6 +275,17 @@
        */
       decrease() {
         this._increm(-this.step);
+      }
+
+      /**
+       * overwritten of polymer to handle -0
+       */
+      _shouldPropertyChange(property, value, old) {
+        if (value === 0 && old === 0) {
+          // differs if sign is different
+          return (1/value !== 1/old)
+        }
+        return super._shouldPropertyChange(property, value, old);
       }
     }
   }
