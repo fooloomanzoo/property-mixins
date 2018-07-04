@@ -130,6 +130,15 @@
           done();
         });
 
+        test('from 1 to -0', done => {
+          let element = fixture('negative zero');
+          element.valueAsNumber = 1;
+          element.decrease();
+          element.decrease();
+          assert.isTrue(numberUtilities.isNegative0(element.valueAsNumber), 'valueAsNumber should be negative zero'+element.valueAsNumber);
+          done();
+        });
+
         test('from -0 to -1', done => {
           let element = fixture('negative zero');
           element.valueAsNumber = -0;

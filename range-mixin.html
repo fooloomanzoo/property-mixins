@@ -201,6 +201,7 @@
         if (this.max !== undefined) {
           return this._safeAdd(this._safeMult(-Math.round((this.max - value) / step), step), this.max);
         }
+        // TODO: this is not sensitive against -0
         return this._safeMult(Math.round(value / step), step);
       }
 
