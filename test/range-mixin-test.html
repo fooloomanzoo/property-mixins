@@ -9,6 +9,7 @@
     <script src="../../webcomponentsjs/webcomponents-loader.js"></script>
     <script src="../../web-component-tester/browser.js"></script>
     <script src="../../iron-test-helpers/test-helpers.js"></script>
+    <link rel="import" href="../../polymer/polymer.html">
 
     <link rel="import" href="../demo/elements/basic-range-element.html">
   </head>
@@ -25,6 +26,13 @@
         <basic-range-element use-negative-zero step="1"></basic-range-element>
       </template>
     </test-fixture>
+
+    <dom-bind id="domBind1">
+      <template>
+        <basic-range-element id="range1" value-as-number="{{value}}" use-negative-zero></basic-range-element>
+        <basic-range-element id="range2" value-as-number="{{value}}" use-negative-zero></basic-range-element>
+      </template>
+    </dom-bind>
 
     <test-fixture id="min">
       <template>
@@ -182,6 +190,48 @@
             element.decrease();
           }
           assert.equal(element.valueAsNumber, -2, 'valueAsNumber should decrease back over zero');
+          done();
+        });
+      });
+
+      suite('dom-bind', () => {
+        let dombind,
+          el1,
+          el2;
+
+        setup( () => {
+          dombind = document.querySelector('#domBind1');
+          el1 = dombind.$.range1;
+          el2 = dombind.$.range2;
+          dombind.value = undefined;
+          el1.valueAsNumber = undefined;
+          el2.valueAsNumber = undefined;
+        })
+
+        // test('propagate negative zero change to positive zero', done => {
+        //   el1.valueAsNumber = -0
+        //
+        //   assert.isTrue(numberUtilities.isNegative0(el1.valueAsNumber), 'value of first element is set to -0');
+        //   assert.isTrue(numberUtilities.isNegative0(el2.valueAsNumber), 'value of second element is set to -0');
+        //
+        //   el1.valueAsNumber = 0;
+        //   assert.isTrue(!numberUtilities.isNegative0(el1.valueAsNumber) && el1.valueAsNumber === 0, 'value of first element is set to +0');
+        //   assert.isTrue(!numberUtilities.isNegative0(el2.valueAsNumber) && el2.valueAsNumber === 0, 'value of second element is set to +0');
+        //   done();
+        // });
+
+        test('propagate negative zero change to positive zero with default values', done => {
+          el1.default = 1;
+          el2.default = 2;
+
+          el1.valueAsNumber = -0
+
+          assert.isTrue(numberUtilities.isNegative0(el1.valueAsNumber), 'value of first element is set to -0');
+          assert.isTrue(numberUtilities.isNegative0(el2.valueAsNumber), 'value of second element is set to -0');
+
+          el1.valueAsNumber = 0;
+          assert.isTrue(!numberUtilities.isNegative0(el1.valueAsNumber) && el1.valueAsNumber === 0, 'value of first element is set to +0');
+          assert.isTrue(!numberUtilities.isNegative0(el2.valueAsNumber) && el2.valueAsNumber === 0, 'value of second element is set to +0');
           done();
         });
       });

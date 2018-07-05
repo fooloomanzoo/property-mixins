@@ -41,6 +41,7 @@
            * For example:
            *   * if `step` is `0.002` and the `step-mod` is `1000`, `2` will be used
            *   * if `step` is `10` and the `step-mod` is `0.02`, `0.2` will be used
+           * @type {number}
            */
           stepMod: {
             type: Number,
@@ -57,6 +58,7 @@
           },
           /**
            * start where to increment the value
+           * @type {number}
            */
           startAt: {
             type: Number
@@ -67,6 +69,16 @@
            */
           valueAsNumber: {
             type: Number,
+            notify: true,
+            reflectToAttribute: true,
+            observer: '_valueAsNumberChanged'
+          },
+          /**
+           * if `true`, valueAsNumber is negative, else it is positive
+           * @type {number}
+           */
+          isNegative: {
+            type: Boolean,
             notify: true,
             observer: '_valueAsNumberChanged'
           },
@@ -114,7 +126,7 @@
 
       connectedCallback() {
         super.connectedCallback();
-        if (this.valueAsNumber === undefined && !isNaN(this.default)) {
+        if (isNaN(this.valueAsNumber) && !isNaN(this.default)) {
           this.valueAsNumber = this.default;
         }
       }
@@ -131,11 +143,21 @@
       }
 
       _valueAsNumberChanged(value, oldValue) {
-        value = this._checkValue(value, oldValue);
-
-        if (value !== this.valueAsNumber) {
+        if (this.useNegativeZero && value === 0 && oldValue === 0 && (1/value !== 1/oldValue)) { // negative to positive zero switch
+          // intended switch to undefined for data-binding outside this element to be propagated
+          // WARNING: might cause unexpected behaviour
+          this.valueAsNumber = undefined; // enshure the value is reset so that data-change can take replace
           this.valueAsNumber = value;
+          return;
         }
+        if (isNaN(value)){
+          if (!isNaN(this.default)) {
+            this.valueAsNumber = this.default;
+          }
+          return;
+        }
+
+        this.valueAsNumber = this._checkValue(value, oldValue);
       }
 
       _defaultChanged(def) {
@@ -192,28 +214,34 @@
         if (!step) {
           return value;
         }
+        const isNegative0 = (this.useNegativeZero && numberUtilities.isNegative0(value));
         if (this.default !== undefined) {
-          return this._safeAdd(this._safeMult(Math.round((value - this.default) / step), step), this.default);
+          value = this._safeAdd(this._safeMult(Math.round((value - this.default) / step), step), this.default);
+        } else if (this.min !== undefined) {
+          value = this._safeAdd(this._safeMult(Math.round((value - this.min) / step), step), this.min);
+        } else if (this.max !== undefined) {
+          value = this._safeAdd(this._safeMult(-Math.round((this.max - value) / step), step), this.max);
+        } else {
+          value = this._safeMult(Math.round(value / step), step);
         }
-        if (this.min !== undefined) {
-          return this._safeAdd(this._safeMult(Math.round((value - this.min) / step), step), this.min);
-        }
-        if (this.max !== undefined) {
-          return this._safeAdd(this._safeMult(-Math.round((this.max - value) / step), step), this.max);
-        }
-        // TODO: this is not sensitive against -0
-        return this._safeMult(Math.round(value / step), step);
+        return (isNegative0 && value === 0) ? -0 : value;
       }
 
       /**
-       * emulating handwritten multiplication to keep precision
+       * Emulating handwritten multiplication to keep precision
+       * @param {?number} a First summand
+       * @param {?number} b Second summand
+       * @return {number} Sum
        */
       _safeMult(a, b) {
         return window.numberUtilities.safeMult(a, b);
       }
 
       /**
-       * emulating handwritten addition to keep precision
+       * Emulating handwritten addition to keep precision
+       * @param {?number} a First factor
+       * @param {?number} b Second factor
+       * @return {number} Product
        */
       _safeAdd(a, b) {
         return window.numberUtilities.safeAdd(a, b);
@@ -232,7 +260,8 @@
       _increm(step) {
         if (this.useNegativeZero && this.valueAsNumber === 0) {
           if ((1/this.valueAsNumber) === Infinity) { // oldValue is +0
-            if (step < 0) { // switch to -0
+            if (step < 0) {
+              // switch to -0
               this.valueAsNumber = -0;
               return;
             }
@@ -263,16 +292,14 @@
       }
 
       /**
-       * increase value by step
-       * @type {[type]}
+       * Increase value by step
        */
       increase() {
         this._increm(this.step);
       }
 
       /**
-       * decrease value by step
-       * @type {[type]}
+       * Decrease value by step
        */
       decrease() {
         this._increm(-this.step);
@@ -282,7 +309,7 @@
        * overwritten of polymer to handle -0
        */
       _shouldPropertyChange(property, value, old) {
-        if (value === 0 && old === 0) {
+        if (this.useNegativeZero && value === 0 && old === 0) {
           // differs if sign is different
           return (1/value !== 1/old)
         }
