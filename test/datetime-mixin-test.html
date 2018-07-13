@@ -646,23 +646,9 @@
 
         test('setting "min"', done => {
           let element = fixture('min');
+          const min = +new Date(element.min);
           element.date = "1970-01-01";
-
-          assert.equal(element.date, '1980-02-01', 'date should be set');
-          assert.equal(element.time, '02:03:04.567', 'date should be set');
-          assert.equal(element.valueAsNumber, 318244684567, 'valueAsNumber should be set');
-          assert.equal(element.valueAsDate.toISOString(), '1980-02-01T09:18:04.567Z', 'valueAsDate should be set');
-          assert.equal(element.year, 1980, 'year should be set');
-          assert.equal(element.month, 2, 'month should be set');
-          assert.equal(element.day, 1, 'day should be set');
-          assert.equal(element.hour, 2, 'hour should be set');
-          assert.equal(element.minute, 3, 'minute should be set');
-          assert.equal(element.second, 4, 'second should be set');
-          assert.equal(element.millisecond, 567, 'millisecond should be set');
-          assert.equal(element.timezone, '-07:15', 'timezone should be set');
-          assert.equal(element.offsetMinutes, 7*60 + 15, 'timezone-offset should be set');
-          assert.equal(element._timeZoneHours, -7, 'timezone-hours should be set');
-          assert.equal(element._timeZoneMinutes, 15, 'timezone-minutes should be set');
+          assert.equal(element.valueAsNumber, 318244684567, 'valueAsNumber should be set to min');
           done();
         });
 
@@ -682,23 +668,10 @@
 
         test('setting "max"', done => {
           let element = fixture('max');
+          const max = +new Date(element.max);
           element.date = "1990-01-01";
 
-          assert.equal(element.year, 1980, 'year should be set');
-          assert.equal(element.month, 2, 'month should be set');
-          assert.equal(element.day, 1, 'day should be set');
-          assert.equal(element.hour, 2, 'hour should be set');
-          assert.equal(element.minute, 3, 'minute should be set');
-          assert.equal(element.second, 4, 'second should be set');
-          assert.equal(element.millisecond, 567, 'millisecond should be set');
-          assert.equal(element.timezone, '-07:15', 'timezone should be set');
-          assert.equal(element.offsetMinutes, 7*60 + 15, 'timezone-offset should be set');
-          assert.equal(element._timeZoneHours, -7, 'timezone-hours should be set');
-          assert.equal(element._timeZoneMinutes, 15, 'timezone-minutes should be set');
-          assert.equal(element.date, '1980-02-01', 'date should be set');
-          assert.equal(element.time, '02:03:04.567', 'date should be set');
-          assert.equal(element.valueAsNumber, 318244684567, 'valueAsNumber should be set');
-          assert.equal(element.valueAsDate.toISOString(), '1980-02-01T09:18:04.567Z', 'valueAsDate should be set');
+          assert.equal(element.valueAsNumber, 318244684567, 'valueAsNumber should be set to max');
           done();
         });
 
