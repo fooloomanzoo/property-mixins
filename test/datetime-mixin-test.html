@@ -34,6 +34,18 @@
       </template>
     </test-fixture>
 
+    <test-fixture id="min">
+      <template>
+        <basic-datetime-element min="1980-02-01T02:03:04.567-07:15"></basic-datetime-element>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="max">
+      <template>
+        <basic-datetime-element max="1980-02-01T02:03:04.567-07:15"></basic-datetime-element>
+      </template>
+    </test-fixture>
+
     <test-fixture id="form-element">
       <template>
         <form-datetime-element></form-datetime-element>
@@ -77,7 +89,7 @@
           assert.isUndefined(element.second, 'no second is defined');
           assert.isUndefined(element.millisecond, 'no millisecond is defined');
           assert.isUndefined(element.timezone, 'no timezone is defined');
-          assert.isUndefined(element._timezoneOffset, 'no timezone-offset is defined');
+          assert.isUndefined(element.offsetMinutes, 'no timezone-offset is defined');
           assert.isUndefined(element._timeZoneHours, 'no timezone-hours is defined');
           assert.isUndefined(element._timeZoneMinutes, 'no timezone-minutes is defined');
           done();
@@ -100,7 +112,7 @@
           assert.isDefined(element.second, 'second is defined');
           assert.isDefined(element.millisecond, 'millisecond is defined');
           assert.isDefined(element.timezone, 'timezone is defined');
-          assert.isDefined(element._timezoneOffset, 'timezone-offset is defined');
+          assert.isDefined(element.offsetMinutes, 'timezone-offset is defined');
           assert.isDefined(element._timeZoneHours, 'timezone-hours is defined');
           assert.isDefined(element._timeZoneMinutes, 'timezone-minutes is defined');
           done();
@@ -122,7 +134,7 @@
           assert.isDefined(element.valueAsNumber, 'valueAsNumber is defined');
           assert.isDefined(element.valueAsDate, 'valueAsDate is defined');
           assert.isDefined(element.timezone, 'timezone is defined');
-          assert.isDefined(element._timezoneOffset, 'timezone-offset is defined');
+          assert.isDefined(element.offsetMinutes, 'timezone-offset is defined');
           assert.isDefined(element._timeZoneHours, 'timezone-hours is defined');
           assert.isDefined(element._timeZoneMinutes, 'timezone-minutes is defined');
           done();
@@ -192,7 +204,7 @@
           assert.isDefined(element.valueAsDate, 'valueAsDate is defined');
           assert.equal(element.valueAsNumber, 7384567, 'valueAsNumber is set');
           assert.equal(element.timezone, '+00:00', 'timezone should be set');
-          assert.equal(element._timezoneOffset, 0, 'timezone-offset should be set');
+          assert.equal(element.offsetMinutes, 0, 'timezone-offset should be set');
           assert.equal(element._timeZoneHours, 0, 'timezone-hours should be set');
           assert.equal(element._timeZoneMinutes, 0, 'timezone-minutes should be set');
           done();
@@ -211,7 +223,7 @@
           assert.equal(element.second, 4, 'second should be set');
           assert.equal(element.millisecond, 567, 'millisecond should be set');
           assert.isDefined(element.timezone, 'timezone is defined');
-          assert.equal(element._timezoneOffset, d.getTimezoneOffset(), 'timezone-offset is local');
+          assert.equal(element.offsetMinutes, d.getTimezoneOffset(), 'timezone-offset is local');
           assert.isDefined(element._timeZoneHours, 'timezone-hours is defined');
           assert.isDefined(element._timeZoneMinutes, 'timezone-minutes is defined');
           assert.isDefined(element.date, 'date is defined');
@@ -233,7 +245,7 @@
           assert.equal(element.second, 4, 'second should be set');
           assert.equal(element.millisecond, 567, 'millisecond should be set');
           assert.equal(element.timezone, '+00:00', 'timezone should be set');
-          assert.equal(element._timezoneOffset, 0, 'timezone-offset should be set');
+          assert.equal(element.offsetMinutes, 0, 'timezone-offset should be set');
           assert.equal(element._timeZoneHours, 0, 'timezone-hours should be set');
           assert.equal(element._timeZoneMinutes, 0, 'timezone-minutes should be set');
           assert.equal(element.date, '1980-02-01', 'date should be set');
@@ -255,7 +267,7 @@
           assert.equal(element.second, 4, 'second should be set');
           assert.equal(element.millisecond, 567, 'millisecond should be set');
           assert.equal(element.timezone, '-07:15', 'timezone should be set');
-          assert.equal(element._timezoneOffset, 7*60 + 15, 'timezone-offset should be set');
+          assert.equal(element.offsetMinutes, 7*60 + 15, 'timezone-offset should be set');
           assert.equal(element._timeZoneHours, -7, 'timezone-hours should be set');
           assert.equal(element._timeZoneMinutes, 15, 'timezone-minutes should be set');
           assert.equal(element.date, '1980-02-01', 'date should be set');
@@ -282,7 +294,7 @@
           assert.isDefined(element.second, 'second is defined');
           assert.isDefined(element.millisecond, 'millisecond is defined');
           assert.isDefined(element.timezone, 'timezone is defined');
-          assert.equal(element._timezoneOffset, d.getTimezoneOffset(), 'timezone-offset is local');
+          assert.equal(element.offsetMinutes, d.getTimezoneOffset(), 'timezone-offset is local');
           assert.isDefined(element._timeZoneHours, 'timezone-hours is defined');
           assert.isDefined(element._timeZoneMinutes, 'timezone-minutes is defined');
           assert.equal(element.valueAsDate.toISOString(), '1980-02-01T09:18:04.567Z', 'valueAsDate should be set');
@@ -305,7 +317,7 @@
           assert.isDefined(element.second, 'second is defined');
           assert.isDefined(element.millisecond, 'millisecond is defined');
           assert.isDefined(element.timezone, 'timezone is defined');
-          assert.equal(element._timezoneOffset, d.getTimezoneOffset(), 'timezone-offset is local');
+          assert.equal(element.offsetMinutes, d.getTimezoneOffset(), 'timezone-offset is local');
           assert.isDefined(element._timeZoneHours, 'timezone-hours is defined');
           assert.isDefined(element._timeZoneMinutes, 'timezone-minutes is defined');
           assert.equal(+element.valueAsDate, 318244684567, 'valueAsDate should be set' + new Date(318244684567).toISOString()+ element.valueAsDate.toISOString());
@@ -328,7 +340,7 @@
           assert.isDefined(element.second, 'second is defined');
           assert.isDefined(element.millisecond, 'millisecond is defined');
           assert.isDefined(element.timezone, 'timezone is defined');
-          assert.isDefined(element._timezoneOffset, 'timezone-offset is defined');
+          assert.isDefined(element.offsetMinutes, 'timezone-offset is defined');
           assert.isDefined(element._timeZoneHours, 'timezone-hours is defined');
           assert.isDefined(element._timeZoneMinutes, 'timezone-minutes is defined');
           assert.equal(element.valueAsDate.toISOString(), '1980-02-01T09:18:04.567Z', 'valueAsDate should be set');
@@ -491,17 +503,17 @@
           let element = fixture('basic');
 
           element.timezone = "+00:53";
-          assert.equal(element._timezoneOffset, -53, 'timezone-offset is set');
+          assert.equal(element.offsetMinutes, -53, 'timezone-offset is set');
           assert.isDefined(element._timeZoneHours, -0, 'timezone-hours is set');
           assert.isDefined(element._timeZoneMinutes, 53, 'timezone-minutes is set');
 
           element.timezone = "-00:53";
-          assert.equal(element._timezoneOffset, 53, 'timezone-offset is set');
+          assert.equal(element.offsetMinutes, 53, 'timezone-offset is set');
           assert.isDefined(element._timeZoneHours, 0, 'timezone-hours is set');
           assert.isDefined(element._timeZoneMinutes, 53, 'timezone-minutes is set');
 
           element.timezone = "+01:30";
-          assert.equal(element._timezoneOffset, -90, 'timezone-offset is set');
+          assert.equal(element.offsetMinutes, -90, 'timezone-offset is set');
           assert.isDefined(element._timeZoneHours, -1, 'timezone-hours is set');
           assert.isDefined(element._timeZoneMinutes, 30, 'timezone-minutes is set');
           done();
@@ -521,7 +533,7 @@
           assert.equal(element.date, date, 'date should not change, when timezone is set');
           assert.equal(element.time, time, 'time should not change, when timezone is set');
 
-          assert.equal(element._timezoneOffset, 540, 'timezone-offset should be set');
+          assert.equal(element.offsetMinutes, 540, 'timezone-offset should be set');
           assert.equal(element._timeZoneHours, -9, 'timezone-hours should be set');
           assert.equal(element._timeZoneMinutes, 0, 'timezone-minutes should be set');
           done();
@@ -532,24 +544,24 @@
           element.now();
           element.setAttribute('timezone', '-00:00');
 
-          assert.isTrue(!numberUtilities.isNegative0(element._timezoneOffset) && element._timezoneOffset === 0, '1: timezone-offset should be +0');
+          assert.isTrue(!numberUtilities.isNegative0(element.offsetMinutes) && element.offsetMinutes === 0, '1: timezone-offset should be +0');
           assert.isTrue(numberUtilities.isNegative0(element._timeZoneHours), '1: timezone-hours should be -0');
           assert.equal(element._timeZoneMinutes, 0, '1: timezone-minutes should be 0');
           assert.equal(element.timezone, '+00:00', '1: timezone should be change to +00:00');
 
           element._timeZoneHours = +0;
-          assert.isTrue(numberUtilities.isNegative0(element._timezoneOffset), '1.1: timezone-offset should be +0');
-          assert.isTrue(!numberUtilities.isNegative0(element._timeZoneHours) && element._timezoneOffset === 0, '1.1: timezone-hours should be +0');
+          assert.isTrue(numberUtilities.isNegative0(element.offsetMinutes), '1.1: timezone-offset should be +0');
+          assert.isTrue(!numberUtilities.isNegative0(element._timeZoneHours) && element.offsetMinutes === 0, '1.1: timezone-hours should be +0');
           assert.equal(element._timeZoneMinutes, 0, '1.1: timezone-minutes should be 0');
           assert.equal(element.timezone, '+00:00', '1.1: timezone should be change to +00:00');
 
           element.setAttribute('timezone', '-00:15');
-          assert.equal(element._timezoneOffset, 15, '2: timezone-offset should be 15');
+          assert.equal(element.offsetMinutes, 15, '2: timezone-offset should be 15');
           assert.isTrue(numberUtilities.isNegative0(element._timeZoneHours), '2: timezone-hours should be -0');
           assert.equal(element._timeZoneMinutes, 15, '2: timezone-minutes should be 15');
 
           element.setAttribute('timezone', '+00:15');
-          assert.equal(element._timezoneOffset, -15, '3: timezone-offset should be -15');
+          assert.equal(element.offsetMinutes, -15, '3: timezone-offset should be -15');
           assert.isTrue(!numberUtilities.isNegative0(element._timeZoneHours) && element._timeZoneHours === 0, '3: timezone-hours should be +0');
           assert.equal(element._timeZoneMinutes, 15, '3: timezone-minutes should be 0');
 
@@ -557,7 +569,7 @@
           element.setAttribute('timezone', '-06:30');
           element._timeZoneHours = -0;
 
-          assert.equal(element._timezoneOffset, 30, '4: timezone-offset should be 30');
+          assert.equal(element.offsetMinutes, 30, '4: timezone-offset should be 30');
           assert.isTrue(numberUtilities.isNegative0(element._timeZoneHours), '4: timezone-hours should be -0');
           assert.equal(element._timeZoneMinutes, 30, '4: timezone-minutes should be 30');
           done();
@@ -605,7 +617,7 @@
           assert.equal(element.second, 4, 'second should be set');
           assert.equal(element.millisecond, 567, 'millisecond should be set');
           assert.equal(element.timezone, '-07:15', 'timezone should be set');
-          assert.equal(element._timezoneOffset, 7*60 + 15, 'timezone-offset should be set');
+          assert.equal(element.offsetMinutes, 7*60 + 15, 'timezone-offset should be set');
           assert.equal(element._timeZoneHours, -7, 'timezone-hours should be set');
           assert.equal(element._timeZoneMinutes, 15, 'timezone-minutes should be set');
           assert.equal(element.date, '1980-02-01', 'date should be set');
@@ -626,6 +638,78 @@
           assert.equal(element.millisecond, 0, 'millisecond should be clamped');
           element.clamp = 'hour';
           assert.equal(element.hour, 0, 'hour should be clamped');
+          done();
+        });
+      });
+
+      suite('min', () => {
+
+        test('setting "min"', done => {
+          let element = fixture('min');
+          element.date = "1970-01-01";
+
+          assert.equal(element.date, '1980-02-01', 'date should be set');
+          assert.equal(element.time, '02:03:04.567', 'date should be set');
+          assert.equal(element.valueAsNumber, 318244684567, 'valueAsNumber should be set');
+          assert.equal(element.valueAsDate.toISOString(), '1980-02-01T09:18:04.567Z', 'valueAsDate should be set');
+          assert.equal(element.year, 1980, 'year should be set');
+          assert.equal(element.month, 2, 'month should be set');
+          assert.equal(element.day, 1, 'day should be set');
+          assert.equal(element.hour, 2, 'hour should be set');
+          assert.equal(element.minute, 3, 'minute should be set');
+          assert.equal(element.second, 4, 'second should be set');
+          assert.equal(element.millisecond, 567, 'millisecond should be set');
+          assert.equal(element.timezone, '-07:15', 'timezone should be set');
+          assert.equal(element.offsetMinutes, 7*60 + 15, 'timezone-offset should be set');
+          assert.equal(element._timeZoneHours, -7, 'timezone-hours should be set');
+          assert.equal(element._timeZoneMinutes, 15, 'timezone-minutes should be set');
+          done();
+        });
+
+        test('setting "max" below "min"', done => {
+          let element = fixture('min');
+          const min = element.min;
+          element.max = "1970-01-01";
+
+          assert.equal(element.min, "1970-01-01", 'min should switch');
+          assert.equal(element.max, min, 'max should switch');
+
+          done();
+        });
+      });
+
+      suite('max', () => {
+
+        test('setting "max"', done => {
+          let element = fixture('max');
+          element.date = "1990-01-01";
+
+          assert.equal(element.year, 1980, 'year should be set');
+          assert.equal(element.month, 2, 'month should be set');
+          assert.equal(element.day, 1, 'day should be set');
+          assert.equal(element.hour, 2, 'hour should be set');
+          assert.equal(element.minute, 3, 'minute should be set');
+          assert.equal(element.second, 4, 'second should be set');
+          assert.equal(element.millisecond, 567, 'millisecond should be set');
+          assert.equal(element.timezone, '-07:15', 'timezone should be set');
+          assert.equal(element.offsetMinutes, 7*60 + 15, 'timezone-offset should be set');
+          assert.equal(element._timeZoneHours, -7, 'timezone-hours should be set');
+          assert.equal(element._timeZoneMinutes, 15, 'timezone-minutes should be set');
+          assert.equal(element.date, '1980-02-01', 'date should be set');
+          assert.equal(element.time, '02:03:04.567', 'date should be set');
+          assert.equal(element.valueAsNumber, 318244684567, 'valueAsNumber should be set');
+          assert.equal(element.valueAsDate.toISOString(), '1980-02-01T09:18:04.567Z', 'valueAsDate should be set');
+          done();
+        });
+
+        test('setting "min" above "max"', done => {
+          let element = fixture('max');
+          const max = element.max;
+          element.min = "1990-01-01";
+
+          assert.equal(element.max, "1990-01-01", 'max should switch');
+          assert.equal(element.min, max, 'min should switch');
+
           done();
         });
       });
@@ -673,7 +757,7 @@
         test('local timezone', done => {
           let element = fixture('form-element and set value');
 
-          assert.equal(element._timezoneOffset, new Date(element.value).getTimezoneOffset(), 'timezoneOffset should be the set to local');
+          assert.equal(element.offsetMinutes, new Date(element.value).getTimezoneOffset(), 'timezoneOffset should be the set to local');
           done();
         });
       });
@@ -685,7 +769,7 @@
 
           assert.equal(element.value, 318244684567, 'value should not change');
           assert.equal(element.valueAsNumber, 318244684567, 'valueAsNumber should be set');
-          assert.equal(element._timezoneOffset, 90, 'timezoneOffset should be the set');
+          assert.equal(element.offsetMinutes, 90, 'timezoneOffset should be the set');
           assert.equal(element.datetime, '1980-02-01T07:48:04.567-01:30', 'datetime should be the set');
           done();
         });

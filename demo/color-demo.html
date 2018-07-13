@@ -23,8 +23,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
 
   <link rel="import" href="elements/basic-color-element.html">
-  <link rel="import" href="elements/form-color-element.html">
-
+  
   <custom-style><style is="custom-style" include="demo-pages-shared-styles">
     demo-snippet {
       --demo-snippet-code: {
@@ -92,13 +91,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <div class="vertical-section-container result">
           <div><code>color string</code>: <b>
             <input list="color" value="{{value::change}}"/>
-                  <datalist id="value">
-                    <option value=""></option>
-                    <option value="#123abc">123abc</option>
-                    <option value="coral">coral</option>
-                    <option value="rgb(12,123,231)">rgb(12,123,231)</option>
-                    <option value="rgba(112,23,31,0.4)">rgba(112,23,31,0.4))</option>
-                  </datalist>
+              <datalist id="value">
+                <option value=""></option>
+                <option value="#123abc">123abc</option>
+                <option value="coral">coral</option>
+                <option value="rgb(12,123,231)">rgb(12,123,231)</option>
+                <option value="rgba(112,23,31,0.4)">rgba(112,23,31,0.4))</option>
+              </datalist>
+            <input type="color" value="{{hex::change}}"/>
             </b></div>
           <div><code>format</code>: <b>
               <select id="format" value="{{format::change}}">
