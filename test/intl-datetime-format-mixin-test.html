@@ -56,9 +56,7 @@
           assert.equal(element.decimalSeparator, '.', 'decimalSeparator should be set to "english"-format');
           assert.equal(element.dateSeparator, '/', 'dateSeparator should be set to "english"-format');
           assert.equal(element.timeSeparator, ':', 'timeSeparator should be set to "english"-format');
-          assert.equal(element.dateOrder.year, 5, 'dateOrder should be set to "english"-format' + JSON.stringify(element.dateOrder));
-          assert.equal(element.dateOrder.month, 1, 'dateOrder should be set to "english"-format');
-          assert.equal(element.dateOrder.day, 3, 'dateOrder should be set to "english"-format');
+          assert.deepEqual(element.dateOrder.parts, ['month', 'day', 'year'], 'dateOrder should be set to "english"-format');
           assert.equal(element.dateOrder.timeFirst, false, 'dateOrder should be set to "english"-format');
           done();
         });
@@ -72,9 +70,7 @@
           assert.equal(element.decimalSeparator, ',', 'decimalSeparator should be set to "german"-format');
           assert.equal(element.dateSeparator, '.', 'dateSeparator should be set to "german"-format');
           assert.equal(element.timeSeparator, ':', 'timeSeparator should be set to "german"-format');
-          assert.equal(element.dateOrder.year, 5, 'dateOrder should be set to "german"-format');
-          assert.equal(element.dateOrder.month, 3, 'dateOrder should be set to "german"-format');
-          assert.equal(element.dateOrder.day, 1, 'dateOrder should be set to "german"-format');
+          assert.deepEqual(element.dateOrder.parts, ['day', 'month', 'year'], 'dateOrder should be set to "german"-format');
           assert.equal(element.dateOrder.timeFirst, false, 'dateOrder should be set to "german"-format');
           done();
         });
