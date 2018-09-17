@@ -1,47 +1,6 @@
 <link rel="import" href="number-utilities.html">
+<link rel="import" href="datetime-utilities.html">
 <script>
-  'use strict';
-function modifyDateComponents(year, month, day, hour, minute, second, millisecond, offsetMinutes) {
-  // the function must be applied on a Date
-  if (!(this instanceof Date)) {
-    return null;
-  }
-  let localTimezoneOffset = this.getTimezoneOffset();
-  if (isNaN(offsetMinutes)) {
-    offsetMinutes = localTimezoneOffset;
-  }
-  // shift to UTC
-  this.setMinutes(this.getMinutes() - offsetMinutes);
-
-  if (year !== undefined) {
-    this.setUTCFullYear(year);
-  }
-  if (month !== undefined) {
-    this.setUTCMonth(month - 1);
-  }
-  if (day !== undefined) {
-    this.setUTCDate(day);
-  }
-  if (hour !== undefined) {
-    this.setUTCHours(hour);
-  }
-  if (minute !== undefined) {
-    this.setUTCMinutes(minute);
-  }
-  if (second !== undefined) {
-    this.setUTCSeconds(second);
-  }
-  if (millisecond !== undefined) {
-    this.setUTCMilliseconds(millisecond);
-  }
-  // correct timezone shift
-  offsetMinutes = offsetMinutes - localTimezoneOffset + this.getTimezoneOffset();
-
-  // shift back from UTC to timezone
-  this.setMinutes(this.getMinutes() + offsetMinutes);
-
-  return {valueAsDate: this, offsetMinutes: offsetMinutes}
-}
   /**
    * Mixin that provides datetime-properties
    *
@@ -59,12 +18,12 @@ function modifyDateComponents(year, month, day, hour, minute, second, millisecon
         /**
          * Regular Expression for datetime-string
          */
-        this._regexpDatetime = /^([+-]?\d+-?\d\d-?\d\d)?(?:T?(?:(\d\d:?\d\d(?::?\d\d(?:\.?\d\d\d)?)?)([+-]\d\d:?\d\d|Z)?)?)$/;
+        this.regexpDatetime = /^([+-]?\d+-?\d\d-?\d\d)?(?:T?(?:(\d\d:?\d\d(?::?\d\d(?:\.?\d\d\d)?)?)([+-]\d\d:?\d\d|Z)?)?)$/;
 
         /**
-         * Regular Expression for datetime-string
+         * Regular Expression for timezone-string
          */
-        this._regexpTimezone = /(?:([+-]\d\d):?(\d\d)|Z)$/;
+        this.regexpTimezone = /(?:([+-]\d\d):?(\d\d)|Z)$/;
       }
 
       static get properties() {
@@ -267,6 +226,14 @@ function modifyDateComponents(year, month, day, hour, minute, second, millisecon
           },
 
           /**
+           * perspective starts at 0 (1970-01-01)
+           */
+          _timeOnly: {
+            type: Boolean,
+            value: false
+          },
+
+          /**
            * exclusive max day of month
            * @type {number}
            */
@@ -281,14 +248,6 @@ function modifyDateComponents(year, month, day, hour, minute, second, millisecon
           _dateLocked: {
             type: Boolean,
             computed: '_ifClamped(clamp, "hour")'
-          },
-
-          /**
-           * perspective starts at 0 (1970-01-01)
-           */
-          _timeOnly: {
-            type: Boolean,
-            value: false
           }
         }
       }
@@ -433,6 +392,18 @@ function modifyDateComponents(year, month, day, hour, minute, second, millisecon
         }
       }
 
+      /**
+       * modify date components of a date-object. it needs to be applied or called on a date object
+       * @param  {number} year
+       * @param  {number} month
+       * @param  {number} day
+       * @param  {number} hour
+       * @param  {number} minute
+       * @param  {number} second
+       * @param  {number} millisecond
+       * @param  {number} offsetMinutes
+       * @return {object} the changed object and the new offset-minutes
+       */
       _computeDatetime(year, month, day, hour, minute, second, millisecond) {
         if (this.__updatingTimezoneOffset) {
           return;
@@ -444,12 +415,14 @@ function modifyDateComponents(year, month, day, hour, minute, second, millisecon
           }
           return;
         }
-
+        // if existent modify the set date
         let d = new Date(this.valueAsDate);
         if (isNaN(d)) {
           d = new Date(this.valueAsNumber !== undefined ? this.valueAsNumber : this.datetime);
           if (isNaN(d)) {
+            // when a component is timeOnly
             if (this._timeOnly) {
+              // setting timezone to GMT if the date is not set
               if (!this.timezone || !this.date) {
                 this.__updatingTimezoneOffset = true;
                 this.offsetMinutes = 0;
@@ -477,40 +450,44 @@ function modifyDateComponents(year, month, day, hour, minute, second, millisecon
             }
           }
         }
-        console.log(d);
+        let localTimezoneOffset = d.getTimezoneOffset();
+        let offsetMinutes = this.offsetMinutes;
+        if (isNaN(offsetMinutes)) {
+          offsetMinutes = localTimezoneOffset;
+        }
+        // shift to UTC
+        d.setMinutes(d.getMinutes() - offsetMinutes);
 
-          this.__updatingTimezoneOffset = true;
-        this.setProperties(modifyDateComponents.apply(d, [...arguments, this.offsetMinutes]))
-          this.__updatingTimezoneOffset = false;
-        // // shift to UTC
-        // d.setMinutes(d.getMinutes() - (isNaN(this.offsetMinutes) ? d.getTimezoneOffset() : this.offsetMinutes));
-        //
-        // if (year !== undefined) {
-        //   d.setUTCFullYear(year);
-        // }
-        // if (month !== undefined) {
-        //   d.setUTCMonth(month - 1);
-        // }
-        // if (day !== undefined) {
-        //   d.setUTCDate(day);
-        // }
-        // if (hour !== undefined) {
-        //   d.setUTCHours(hour);
-        // }
-        // if (minute !== undefined) {
-        //   d.setUTCMinutes(minute);
-        // }
-        // if (second !== undefined) {
-        //   d.setUTCSeconds(second);
-        // }
-        // if (millisecond !== undefined) {
-        //   d.setUTCMilliseconds(millisecond);
-        // }
-        // this._correctTimezoneShift(d);
-        // // shift back from UTC to timezone
-        // d.setMinutes(d.getMinutes() + this.offsetMinutes);
-        //
-        // this.setDate(d);
+        if (year !== undefined) {
+          d.setUTCFullYear(year);
+        }
+        if (month !== undefined) {
+          d.setUTCMonth(month - 1);
+        }
+        if (day !== undefined) {
+          d.setUTCDate(day);
+        }
+        if (hour !== undefined) {
+          d.setUTCHours(hour);
+        }
+        if (minute !== undefined) {
+          d.setUTCMinutes(minute);
+        }
+        if (second !== undefined) {
+          d.setUTCSeconds(second);
+        }
+        if (millisecond !== undefined) {
+          d.setUTCMilliseconds(millisecond);
+        }
+        // correct timezone shift
+        offsetMinutes = offsetMinutes - localTimezoneOffset + d.getTimezoneOffset();
+
+        // shift back from UTC to timezone
+        d.setMinutes(this.getMinutes() + offsetMinutes);
+
+        this.__updatingTimezoneOffset = true;
+        this.setProperties({valueAsDate: this, offsetMinutes: offsetMinutes});
+        this.__updatingTimezoneOffset = false;
       }
 
       _dateTimeChanged(date, time) {
@@ -525,6 +502,7 @@ function modifyDateComponents(year, month, day, hour, minute, second, millisecon
           return;
         }
 
+        // when a component is timeOnly and date is not set use GMT
         if (!date && this._timeOnly) {
           this.__updatingTimezoneOffset = true;
           this.offsetMinutes = 0;
@@ -561,7 +539,7 @@ function modifyDateComponents(year, month, day, hour, minute, second, millisecon
         }
 
         let d;
-        const match = this._regexpDatetime.exec(datetime);
+        const match = this.regexpDatetime.exec(datetime);
         if (match === null) {
           return;
         }
@@ -587,10 +565,6 @@ function modifyDateComponents(year, month, day, hour, minute, second, millisecon
       }
 
       _valueAsNumberChanged(value) {
-        if (this.__updatingTimezoneOffset) {
-          return;
-        }
-
         if (isNaN(value)) {
           return;
         }
@@ -600,16 +574,13 @@ function modifyDateComponents(year, month, day, hour, minute, second, millisecon
       }
 
       _valueAsDateChanged(d) {
-        // if (this.__updatingTimezoneOffset) {
-        //   return;
-        // }
-
+        d = +d;
         if (isNaN(d)) {
           return;
         }
 
-        if (this.valueAsNumber !== +d) {
-          this.setDate(new Date(+d));
+        if (d !== this.valueAsNumber) {
+          this.setDate(new Date(d));
         }
       }
 
@@ -622,7 +593,7 @@ function modifyDateComponents(year, month, day, hour, minute, second, millisecon
           // 'datetime' is a Date Object or Number
           return new Date(datetime);
         }
-        const match = this._regexpDatetime.exec(datetime);
+        const match = this.regexpDatetime.exec(datetime);
         if (match) {
           if (match[3] !== undefined) {
             if (match[1] === undefined) {
@@ -829,8 +800,8 @@ function modifyDateComponents(year, month, day, hour, minute, second, millisecon
             this.resetDate();
           }
           return;
-        } else if (!(this._regexpTimezone.exec(timezone))) {
-          if (this._regexpTimezone.exec(oldValue)) {
+        } else if (!(this.regexpTimezone.exec(timezone))) {
+          if (this.regexpTimezone.exec(oldValue)) {
             this.setProperties(this._computeTimezoneOffset(oldValue));
             return;
           }
@@ -907,7 +878,7 @@ function modifyDateComponents(year, month, day, hour, minute, second, millisecon
             timezone: '+00:00'
           };
         }
-        const match = this._regexpTimezone.exec(timezone);
+        const match = this.regexpTimezone.exec(timezone);
         if (match) {
           const hour = +match[1],
             minute = +match[2];
