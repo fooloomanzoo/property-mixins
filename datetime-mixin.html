@@ -764,7 +764,7 @@
       }
 
       _checkDefaultTimezone(d) {
-        if (this.offsetMinutes === undefined) {
+        if (this.offsetMinutes === undefined || this.timezone === undefined) {
           this.__updatingTimezoneOffset = true;
           if (this.timezone) {
             this.setProperties(this._computeTimezoneOffset(this.timezone));
