@@ -1,5 +1,4 @@
 <link rel="import" href="number-utilities.html">
-<link rel="import" href="datetime-utilities.html">
 <script>
   /**
    * Mixin that provides datetime-properties
@@ -574,6 +573,9 @@
       }
 
       _valueAsDateChanged(d) {
+        if (typeof d === 'string') {
+          d = new Date(d);
+        }
         d = +d;
         if (isNaN(d)) {
           return;

@@ -78,9 +78,7 @@
             type: Object,
             value: function() {
               return {
-                year: 1,
-                month: 3,
-                day: 5,
+                parts: [],
                 timeFirst: false,
                 dateFirst: true
               };
@@ -200,41 +198,31 @@
 
           // setting datetime order
           const order = {
-            year: null,
-            month: null,
-            day: null,
+            parts: [],
             timeFirst: occurrence.year > occurrence.hour
           };
 
           if (occurrence.year < occurrence.month) {
             if (occurrence.year < occurrence.day) {
-              order.year = 1;
+              order.parts.push('year');
               if (occurrence.month < occurrence.day) {
-                order.month = 3;
-                order.day = 5;
+                order.parts.push('month', 'day');
               } else {
-                order.day = 3;
-                order.month = 5;
+                order.parts.push('day', 'month');
               }
             } else {
-              order.day = 1;
-              order.year = 3;
-              order.month = 5;
+              order.parts.push('day', 'year', 'month');
             }
           } else {
             if (occurrence.month < occurrence.day) {
-              order.month = 1;
+              order.parts.push('month');
               if (occurrence.year < occurrence.day) {
-                order.year = 3;
-                order.day = 5;
+                order.parts.push('year', 'day');
               } else {
-                order.day = 3;
-                order.year = 5;
+                order.parts.push('day', 'year');
               }
             } else {
-              order.day = 1;
-              order.month = 3;
-              order.year = 5;
+              order.parts.push('day', 'month', 'year');
             }
           }
 
