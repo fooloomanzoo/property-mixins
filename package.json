@@ -7,7 +7,7 @@
     "build:demo": "polymer analyze -i datetime-mixin.html color-mixin.html > analysis.json",
     "start": "polymer serve -o",
     "test": "polymer test",
-    "test:p": "polymer test --skip-update-check --skip-selenium-install --persistent"
+    "test:p": "polymer test -p --config-file=wct.p.conf.js"
   },
   "repository": {
     "type": "git",

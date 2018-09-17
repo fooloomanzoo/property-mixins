@@ -483,10 +483,10 @@
         offsetMinutes = offsetMinutes - localTimezoneOffset + d.getTimezoneOffset();
 
         // shift back from UTC to timezone
-        d.setMinutes(this.getMinutes() + offsetMinutes);
+        d.setMinutes(d.getMinutes() + offsetMinutes);
 
         this.__updatingTimezoneOffset = true;
-        this.setProperties({valueAsDate: this, offsetMinutes: offsetMinutes});
+        this.setProperties({valueAsDate: d, offsetMinutes: offsetMinutes});
         this.__updatingTimezoneOffset = false;
       }
 
