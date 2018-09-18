@@ -33,29 +33,9 @@
            */
           step: {
             type: Number,
-            value: 1
+            observer: '_stepChanged'
           },
 
-          /**
-           * a step modifier. this is useful if you are having one step for multiple elements that represent parts of numbers, like when you are having one input for the decimal part and one for the integer part.
-           * For example:
-           *   * if `step` is `0.002` and the `step-mod` is `1000`, `2` will be used
-           *   * if `step` is `10` and the `step-mod` is `0.02`, `0.2` will be used
-           * @type {number}
-           */
-          stepMod: {
-            type: Number,
-            value: 1
-          },
-
-          /**
-           * the used step, product of stepMod and step
-           * @type {number}
-           */
-          _step: {
-            type: Number,
-            value: 1
-          },
           /**
            * start where to increment the value
            * @type {number}
@@ -119,8 +99,7 @@
 
       static get observers() {
         return [
-          '_minMaxChanged(min, max)',
-          '_stepChanged(step, stepMod)'
+          '_minMaxChanged(min, max)'
         ]
       }
 
@@ -201,7 +180,7 @@
         if (this.noClamp) {
           return value;
         }
-        return this._checkStep(value, this._step);
+        return this._checkStep(value, this.step);
       }
 
       _updateValue() {
@@ -247,14 +226,28 @@
         return window.numberUtilities.safeAdd(a, b);
       }
 
-      _stepChanged(step, stepMod) {
+      _stepChanged(step) {
         step = step || 0;
+        // step should be positive
         if (step !== Math.abs(step)) {
           this.step = Math.abs(step);
           return;
         }
-        this._step = this._safeMult(step, stepMod || 1);
         this._updateValue();
+      }
+
+      /**
+       * Increase value by step
+       */
+      increase() {
+        this._increm(this.step || 1);
+      }
+
+      /**
+       * Decrease value by step
+       */
+      decrease() {
+        this._increm(-(this.step || 1));
       }
 
       _increm(step) {
@@ -289,20 +282,6 @@
         } else {
           this.valueAsNumber = value;
         }
-      }
-
-      /**
-       * Increase value by step
-       */
-      increase() {
-        this._increm(this.step);
-      }
-
-      /**
-       * Decrease value by step
-       */
-      decrease() {
-        this._increm(-this.step);
       }
 
       /**

@@ -52,6 +52,12 @@
       </template>
     </test-fixture>
 
+    <test-fixture id="step">
+      <template>
+        <basic-range-element step="12"></basic-range-element>
+      </template>
+    </test-fixture>
+
     <test-fixture id="clamp">
       <template>
         <basic-range-element step="0.5" value-as-number="1.24"></basic-range-element>
@@ -88,7 +94,7 @@
         test('default properties', done => {
           assert.isUndefined(element.min, 'min is not defined');
           assert.isUndefined(element.max, 'max is not defined');
-          assert.equal(element.step, 1, 'step is defined');
+          assert.isUndefined(element.step, 'step is not defined');
           assert.isUndefined(element.valueAsNumber, 'valueAsNumber is not defined');
           assert.isUndefined(element.default, 'default is not defined');
           assert.isUndefined(element.saturate, 'saturate is not defined');
@@ -107,20 +113,50 @@
 
         test('start at value', done => {
           element.startAt = 3;
-          element._increm(1);
+          element.increase();
           assert.equal(element.valueAsNumber, 3, 'valueAsNumber should use startAt');
           done();
         });
 
-        test('increment', done => {
-          element.valueAsNumber = 3;
-          element.step = 1;
+        test('increase with no step set', done => {
+          element.default = element.startAt = 3;
           element.increase();
           assert.equal(element.valueAsNumber, 4, 'valueAsNumber should use increment');
-          element.decrease();
-          assert.equal(element.valueAsNumber, 3, 'valueAsNumber should use decrease');
           done();
         });
+
+        test('decrease with no step set', done => {
+          element.default = element.startAt = 3;
+          element.decrease();
+          assert.equal(element.valueAsNumber, 2, 'valueAsNumber should use decrease');
+          done();
+        });
+
+        test('increase', done => {
+          element.step = 12;
+          element.default = element.startAt = 3;
+          element.increase();
+          assert.equal(element.valueAsNumber, 15, 'valueAsNumber should use increment');
+          done();
+        });
+
+        test('decrease', done => {
+          element.step = 12;
+          element.default = element.startAt = 3;
+          element.decrease();
+          assert.equal(element.valueAsNumber, -9, 'valueAsNumber should use decrease');
+          done();
+        });
+
+        test('increase (no clamp)', done => {
+          element.noClamp = true;
+          element.step = 12;
+          element.valueAsNumber = 3;
+          element.increase();
+          assert.equal(element.valueAsNumber, 15, 'valueAsNumber should use increment');
+          done();
+        });
+
       });
 
       suite('negative zero', () => {
