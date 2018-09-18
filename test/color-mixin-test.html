@@ -23,8 +23,14 @@
     <script>
 
       suite('basic', () => {
+
+        let element;
+
+        setup(function() {
+          element = fixture('basic');
+        });
+
         test('default properties', done => {
-          let element = fixture('basic');
           assert.isUndefined(element.hex, 'hex is not defined');
           assert.equal(element.format, 'auto', 'format is "auto"');
           assert.equal(element.alpha, 1, 'alpha is defined');
@@ -40,7 +46,6 @@
         });
 
         test('RegExp tests', done => {
-          let element = fixture('basic');
           // hex
           assert.isDefined(element._validateHex.exec('#128'), 'recognize 3-char hex');
           assert.isDefined(element._validateHex.exec('#1288'), 'recognize 4-char hex');
@@ -62,7 +67,6 @@
         });
 
         test('random', done => {
-          let element = fixture('basic');
           element.random();
           // setting  is async, so wait one tick.
           Polymer.Base.async(() => {
@@ -72,7 +76,6 @@
         });
 
         test('random (auto)', done => {
-          let element = fixture('basic');
           element.format = 'auto';
           element.random();
 
@@ -86,7 +89,6 @@
         });
 
         test('random (auto, alpha)', done => {
-          let element = fixture('basic');
           element.format = 'auto';
           element.alpha = 0.5;
           element.random();
@@ -105,7 +107,6 @@
         });
 
         test('random (rgb)', done => {
-          let element = fixture('basic');
           element.format = 'rgb';
           element.random();
 
@@ -118,7 +119,6 @@
         });
 
         test('random (hsl)', done => {
-          let element = fixture('basic');
           element.format = 'hsl';
           element.random();
 
@@ -131,7 +131,6 @@
         });
 
         test('changing alpha', done => {
-          let element = fixture('basic');
           element.format = 'rgb';
           element.random();
 
@@ -161,7 +160,6 @@
         });
 
         test('use hex alpha', done => {
-          let element = fixture('basic');
           element.colorString = '#12312380';
           assert.equal(element.alpha, 0.5, 'alpha should be 0.5')
           element.colorString = '#123c';
@@ -170,7 +168,6 @@
         });
 
         test('convert named colors', done => {
-          let element = fixture('basic');
           element.format = 'auto';
           element.colorString = 'coral';
 
@@ -190,7 +187,6 @@
         });
 
         test('convert from hex to hsl', done => {
-          let element = fixture('basic');
           element.format = 'hsl';
           element.lockFormat = true;
           element.colorString = '#123123';
@@ -204,7 +200,6 @@
         });
 
         test('convert from hex to rgb', done => {
-          let element = fixture('basic');
           element.format = 'rgb';
           element.lockFormat = true;
           element.colorString = '#123123';
@@ -218,7 +213,6 @@
         });
 
         test('convert from rgb to hex', done => {
-          let element = fixture('basic');
           element.format = 'hex';
           element.lockFormat = true;
           element.colorString = 'rgb(20,40,60)';
@@ -232,7 +226,6 @@
         });
 
         test('convert from rgb to hsl', done => {
-          let element = fixture('basic');
           element.format = 'hsl';
           element.lockFormat = true;
           element.colorString = 'rgb(20,40,60)';
@@ -246,7 +239,6 @@
         });
 
         test('convert from hsl to hex', done => {
-          let element = fixture('basic');
           element.format = 'hex';
           element.lockFormat = true;
           element.colorString = 'hsl(20,40%,60%)';
@@ -260,7 +252,6 @@
         });
 
         test('convert from hsl to rgb', done => {
-          let element = fixture('basic');
           element.format = 'rgb';
           element.lockFormat = true;
           element.colorString = 'hsl(20,40%,60%)';

@@ -34,9 +34,13 @@
 
     <script>
       suite('basic', () => {
+        let element;
+
+        setup(function() {
+          element = fixture('basic');
+        });
 
         test('default format', done => {
-          let element = fixture('basic');
           assert.isDefined(element.locale, 'locale is defined');
           assert.isDefined(element.decimalSeparator, 'decimalSeparator is defined');
           assert.isDefined(element.dateSeparator, 'dateSeparator is defined');
@@ -49,10 +53,13 @@
       });
 
       suite('setting locale="en"', () => {
+        let element;
+
+        setup(function() {
+          element = fixture('en');
+        });
 
         test('datetime format', done => {
-          let element = fixture('en');
-
           assert.equal(element.decimalSeparator, '.', 'decimalSeparator should be set to "english"-format');
           assert.equal(element.dateSeparator, '/', 'dateSeparator should be set to "english"-format');
           assert.equal(element.timeSeparator, ':', 'timeSeparator should be set to "english"-format');
@@ -63,10 +70,13 @@
       });
 
       suite('setting locale="de"', () => {
+        let element;
+
+        setup(function() {
+          element = fixture('de');
+        });
 
         test('datetime format', done => {
-          let element = fixture('de');
-
           assert.equal(element.decimalSeparator, ',', 'decimalSeparator should be set to "german"-format');
           assert.equal(element.dateSeparator, '.', 'dateSeparator should be set to "german"-format');
           assert.equal(element.timeSeparator, ':', 'timeSeparator should be set to "german"-format');

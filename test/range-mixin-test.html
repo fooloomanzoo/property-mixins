@@ -79,8 +79,13 @@
     <script>
 
       suite('basic', () => {
+        let element;
+
+        setup(function() {
+          element = fixture('basic');
+        });
+
         test('default properties', done => {
-          let element = fixture('basic');
           assert.isUndefined(element.min, 'min is not defined');
           assert.isUndefined(element.max, 'max is not defined');
           assert.equal(element.step, 1, 'step is defined');
@@ -93,7 +98,6 @@
         });
 
         test('setting default', done => {
-          let element = fixture('basic');
           element.default = 3;
           assert.equal(element.valueAsNumber, 3, 'valueAsNumber should be set');
           element.valueAsNumber = undefined;
@@ -102,7 +106,6 @@
         });
 
         test('start at value', done => {
-          let element = fixture('basic');
           element.startAt = 3;
           element._increm(1);
           assert.equal(element.valueAsNumber, 3, 'valueAsNumber should use startAt');
@@ -110,7 +113,6 @@
         });
 
         test('increment', done => {
-          let element = fixture('basic');
           element.valueAsNumber = 3;
           element.step = 1;
           element.increase();
@@ -122,8 +124,13 @@
       });
 
       suite('negative zero', () => {
+        let element;
+
+        setup(function() {
+          element = fixture('negative zero');
+        });
+
         test('from 1 to +0', done => {
-          let element = fixture('negative zero');
           element.valueAsNumber = 1;
           element.decrease();
           assert.isTrue(!numberUtilities.isNegative0(element.valueAsNumber) && element.valueAsNumber === 0, 'valueAsNumber decrease to positive zero');
@@ -131,7 +138,6 @@
         });
 
         test('from +0 to -0', done => {
-          let element = fixture('negative zero');
           element.valueAsNumber = 0;
           element.decrease();
           assert.isTrue(numberUtilities.isNegative0(element.valueAsNumber), 'valueAsNumber should be negative zero'+element.valueAsNumber);
@@ -139,7 +145,6 @@
         });
 
         test('from 1 to -0', done => {
-          let element = fixture('negative zero');
           element.valueAsNumber = 1;
           element.decrease();
           element.decrease();
@@ -148,7 +153,6 @@
         });
 
         test('from -0 to -1', done => {
-          let element = fixture('negative zero');
           element.valueAsNumber = -0;
           element.decrease();
           assert.equal(element.valueAsNumber, -1, 'valueAsNumber should decrease from negative zero');
@@ -156,7 +160,6 @@
         });
 
         test('from -1 to -0', done => {
-          let element = fixture('negative zero');
           element.valueAsNumber = -1;
           element.increase();
           assert.isTrue(numberUtilities.isNegative0(element.valueAsNumber), 'valueAsNumber should increase to negative zero'+element.valueAsNumber);
@@ -164,7 +167,6 @@
         });
 
         test('from -0 to +0', done => {
-          let element = fixture('negative zero');
           element.valueAsNumber = -0;
           element.increase();
           assert.isTrue(!numberUtilities.isNegative0(element.valueAsNumber) && element.valueAsNumber === 0, 'valueAsNumber should increase to positive zero' + element.valueAsNumber);
@@ -172,7 +174,6 @@
         });
 
         test('from +0 to 1', done => {
-          let element = fixture('negative zero');
           element.valueAsNumber = 0;
           element.increase();
           assert.equal(element.valueAsNumber, 1, 'valueAsNumber should increase from positive zero');
@@ -180,7 +181,6 @@
         });
 
         test('multiple', done => {
-          let element = fixture('negative zero');
           element.valueAsNumber = -2;
           for (var i = 0; i < 5; i++) {
             element.increase();
@@ -208,17 +208,17 @@
           el2.valueAsNumber = undefined;
         })
 
-        // test('propagate negative zero change to positive zero', done => {
-        //   el1.valueAsNumber = -0
-        //
-        //   assert.isTrue(numberUtilities.isNegative0(el1.valueAsNumber), 'value of first element is set to -0');
-        //   assert.isTrue(numberUtilities.isNegative0(el2.valueAsNumber), 'value of second element is set to -0');
-        //
-        //   el1.valueAsNumber = 0;
-        //   assert.isTrue(!numberUtilities.isNegative0(el1.valueAsNumber) && el1.valueAsNumber === 0, 'value of first element is set to +0');
-        //   assert.isTrue(!numberUtilities.isNegative0(el2.valueAsNumber) && el2.valueAsNumber === 0, 'value of second element is set to +0');
-        //   done();
-        // });
+        test('propagate negative zero change to positive zero', done => {
+          el1.valueAsNumber = -0
+
+          assert.isTrue(numberUtilities.isNegative0(el1.valueAsNumber), 'value of first element is set to -0');
+          assert.isTrue(numberUtilities.isNegative0(el2.valueAsNumber), 'value of second element is set to -0');
+
+          el1.valueAsNumber = 0;
+          assert.isTrue(!numberUtilities.isNegative0(el1.valueAsNumber) && el1.valueAsNumber === 0, 'value of first element is set to +0');
+          assert.isTrue(!numberUtilities.isNegative0(el2.valueAsNumber) && el2.valueAsNumber === 0, 'value of second element is set to +0');
+          done();
+        });
 
         test('propagate negative zero change to positive zero with default values', done => {
           el1.default = 1;
@@ -237,8 +237,13 @@
       });
 
       suite('min', () => {
+        let element;
+
+        setup(function() {
+          element = fixture('min');
+        });
+
         test('setting min', done => {
-          let element = fixture('min');
           assert.equal(element.min, 2, 'min is set');
           assert.equal(element.valueAsNumber, element.min, 'value is set to min');
           done();
@@ -246,8 +251,13 @@
       });
 
       suite('max', () => {
+        let element;
+
+        setup(function() {
+          element = fixture('max');
+        });
+
         test('setting max', done => {
-          let element = fixture('max');
           assert.equal(element.max, 2, 'max is set');
           assert.equal(element.valueAsNumber, element.max, 'value is set to max');
           done();
@@ -255,8 +265,13 @@
       });
 
       suite('min-max-switched', () => {
+        let element;
+
+        setup(function() {
+          element = fixture('min-max-switched');
+        });
+
         test('min is higher than max', done => {
-          let element = fixture('min-max-switched');
           assert.equal(element.max, 3, 'max should switch');
           assert.equal(element.min, -1, 'min should switch');
           done();
@@ -264,21 +279,30 @@
       });
 
       suite('clamp', () => {
+        let element;
+
+        setup(function() {
+          element = fixture('clamp');
+        });
+
         test('clamp value', done => {
-          let element = fixture('clamp');
           assert.equal(element.valueAsNumber, 1, 'value should clamp');
           done();
         });
         test('clamp value', done => {
-          let element = fixture('clamp');
           assert.equal(element.valueAsNumber, 1, 'value should clamp');
           done();
         });
       });
 
       suite('no clamp', () => {
+        let element;
+
+        setup(function() {
+          element = fixture('no clamp');
+        });
+
         test('clamp value', done => {
-          let element = fixture('no clamp');
           assert.equal(element.valueAsNumber, 1.25, 'value should not clamp');
           done();
         });
@@ -296,7 +320,7 @@
           done();
         });
 
-        test('saturate value', done => {
+        test('do not saturate value', done => {
           let element = fixture('no saturation');
           element.valueAsNumber = 2;
           element.valueAsNumber = 5;

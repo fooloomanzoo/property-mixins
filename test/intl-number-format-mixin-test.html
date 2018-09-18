@@ -35,8 +35,13 @@
     <script>
 
       suite('basic', () => {
+        let element;
+
+        setup(function() {
+          element = fixture('basic');
+        });
+
         test('default properties', done => {
-          let element = fixture('basic');
           assert.isDefined(element.locale, 'locale is defined');
           assert.isDefined(element.decimalSeparator, 'decimalSeparator is defined');
           assert.isDefined(element.groupingSeparator, 'groupingSeparator is defined');
@@ -46,7 +51,6 @@
         });
 
         test('format number', done => {
-          let element = fixture('basic');
           assert.isDefined(element.locale, 'locale is defined');
           assert.isDefined(element.decimalSeparator, 'decimalSeparator is defined');
           assert.isDefined(element.groupingSeparator, 'groupingSeparator is defined');
@@ -56,14 +60,12 @@
         });
 
         test('keep negative zero', done => {
-          let element = fixture('basic');
           assert.equal(element.formatNumber(-0), '-0', 'format negative zero');
           assert.isTrue(numberUtilities.isNegative0(element.parseNumber('-0')), 'parse negative zero');
           done();
         });
 
         test('minimumFractionDigits', done => {
-          let element = fixture('basic');
           element.setProperties({locale: 'en', minimumFractionDigits: 4});
           assert.equal(element.formatNumber(123987654321.456), '123987654321.4560', 'format number');
           assert.equal(element.formatNumber(0.123456), '0.123456', 'format number ' + JSON.stringify(element._numberOptions));
@@ -71,7 +73,6 @@
         });
 
         test('maximumFractionDigits', done => {
-          let element = fixture('basic');
           element.setProperties({locale: 'en', maximumFractionDigits: 4});
           assert.equal(element.formatNumber(1.00006), '1.0001', 'format number');
           assert.equal(element.formatNumber(0.1), '0.1', 'format number');
@@ -79,7 +80,6 @@
         });
 
         test('minimumIntegerDigits', done => {
-          let element = fixture('basic');
           element.setProperties({locale: 'en', minimumIntegerDigits: 4});
           assert.equal(element.formatNumber(1), '0001', 'format number');
           assert.equal(element.formatNumber(1.2), '0001.2', 'format number');
@@ -87,7 +87,6 @@
         });
 
         test('minimumSignificantDigits', done => {
-          let element = fixture('basic');
           element.setProperties({locale: 'en', minimumSignificantDigits: 4});
           assert.equal(element.formatNumber(123), '123.0', 'format number');
           assert.equal(element.formatNumber(123.45), '123.45', 'format number');
@@ -97,7 +96,6 @@
         });
 
         test('maximumSignificantDigits', done => {
-          let element = fixture('basic');
           element.setProperties({locale: 'en', maximumSignificantDigits: 4});
           assert.equal(element.formatNumber(123), '123', 'format number');
           assert.equal(element.formatNumber(123.45), '123.5', 'format number');
@@ -106,7 +104,6 @@
         });
 
         test('grouping (english style)', done => {
-          let element = fixture('basic');
           element.setProperties({locale: 'en', useGrouping: true});
           assert.equal(element.formatNumber(1000.1), '1,000.1', 'use grouping');
           assert.equal(element.parseNumber('1,000.1'), 1000.1, 'parse grouped number');
@@ -114,7 +111,6 @@
         });
 
         test('grouping (german style)', done => {
-          let element = fixture('basic');
           element.setProperties({locale: 'de', useGrouping: true});
           assert.equal(element.formatNumber(1000.1), '1.000,1', 'use grouping');
           assert.equal(element.parseNumber('1.000,1'), 1000.1, 'parse grouped number');
@@ -124,22 +120,25 @@
 
 
       suite('currency', () => {
+        let element;
+
+        setup(function() {
+          element = fixture('currency');
+        });
+
         test('default properties', done => {
-          let element = fixture('currency');
           assert.equal(element._numberOptions.style, 'decimal', 'fallback, when no currency is given');
           assert.equal(element.formatNumber(2), '2', 'fallback format');
           done();
         });
 
         test('EUR in "en", symbol', done => {
-          let element = fixture('currency');
           element.setProperties({locale: 'en', currency: 'EUR', currencyDisplay: 'symbol'});
           assert.equal(element.formatNumber(100), '€100', '100 euros with symbol');
           done();
         });
 
         test('EUR in "de", name', done => {
-          let element = fixture('currency');
           element.setProperties({locale: 'en', currency: 'EUR', currencyDisplay: 'name'});
           assert.equal(element.formatNumber(100), '100 euros', '100 euros with name');
           done();
@@ -148,15 +147,19 @@
 
 
       suite('units', () => {
+        let element;
+
+        setup(function() {
+          element = fixture('units');
+        });
+
         test('default properties', done => {
-          let element = fixture('units');
           assert.isDefined(element.unit, '"unit" is defined');
           assert.isDefined(element.unitSeparator, '"unitSeparator" is defined');
           done();
         });
 
         test('format number', done => {
-          let element = fixture('units');
           assert.equal(element.formatNumber(100), '100' + element.unitSeparator + element.unit, 'number is formatedl');
           done();
         });
