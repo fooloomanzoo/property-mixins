@@ -33,11 +33,27 @@
     </test-fixture>
 
     <script>
+      const specifier = new URLSearchParams(window.location.search).get('specifier');
+      const url = new URLSearchParams(window.location.search).get('url');
+
+      // applying suites to another element (e.g. when another element depends on the the same mixin)
+      if (specifier) {
+        suite(`Suite for ${specifier.toUpperCase()}`, function() {
+          test('loading dependencies', done => {
+            Polymer.importHref(url, e => done(), e => {
+              console.warn(`failed to load: ${url}`)
+            })
+          })
+        })
+      }
 
       suite('basic', () => {
         let element;
 
         setup(function() {
+          if (specifier) {
+            replace('basic-intl-number-format-element').with(specifier)
+          }
           element = fixture('basic');
         });
 
@@ -123,6 +139,9 @@
         let element;
 
         setup(function() {
+          if (specifier) {
+            replace('basic-intl-number-format-element').with(specifier)
+          }
           element = fixture('currency');
         });
 
@@ -150,6 +169,9 @@
         let element;
 
         setup(function() {
+          if (specifier) {
+            replace('basic-intl-number-format-element').with(specifier)
+          }
           element = fixture('units');
         });
 
