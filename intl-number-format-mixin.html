@@ -250,7 +250,7 @@
         }
 
         if (style === 'currency') {
-          if (currency !== undefined) {
+          if (currency) {
             options.currency = currency;
             if (currencyDisplay && ['symbol', 'code', 'name'].indexOf(this.currencyDisplay) !== -1) {
               options.currencyDisplay = currencyDisplay;
@@ -262,7 +262,6 @@
             options.style = 'decimal';
           }
         }
-
         if (!isNaN(maximumFractionDigits)) {
           options.maximumFractionDigits = (maximumFractionDigits < minimumFractionDigits && !isNaN(minimumFractionDigits)) ? minimumFractionDigits : maximumFractionDigits;
         } else if (!isNaN(minimumFractionDigits)) {
