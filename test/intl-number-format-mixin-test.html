@@ -16,7 +16,7 @@
 
     <test-fixture id="basic">
       <template>
-        <basic-intl-number-format-element id="bas"></basic-intl-number-format-element>
+        <basic-intl-number-format-element></basic-intl-number-format-element>
       </template>
     </test-fixture>
 
@@ -83,7 +83,6 @@
 
         test('minimumFractionDigits', done => {
           element.setProperties({locale: 'en', minimumFractionDigits: 4}, true);
-            console.log(element._numberOptions);
           assert.equal(element.formatNumber(123987654321.456), '123987654321.4560', 'format number');
           assert.equal(element.formatNumber(0.123456), '0.123456', 'format number ' + JSON.stringify(element._numberOptions));
           done();
@@ -133,6 +132,85 @@
           assert.equal(element.parseNumber('1.000,1'), 1000.1, 'parse grouped number');
           done();
         });
+
+        test('percent', done => {
+          element.setProperties({locale: 'de', numberStyle: 'percent'}, true);
+          assert.equal(element.formatNumber(10.01), '1001 %', 'default');
+          assert.equal(element.parseNumber('1000,1 %'), 10.001, 'parse percent');
+          element.setProperties({useGrouping: true}, true);
+          assert.equal(element.formatNumber(10.01), '1.001 %', 'use grouping');
+          assert.equal(element.parseNumber('1.000,1 %'), 10.001, 'parse percent with grouping');
+          element.setProperties({minimumFractionDigits: 1, useGrouping: false}, true);
+          assert.equal(element.formatNumber(10.001), '1000,1 %', 'minimal fraction digits');
+          done();
+        });
+
+        test('parse null', done => {
+          assert.isNaN(element.parseNumber(null), 'default');
+          element.setProperties({useGrouping: true}, true);
+          assert.isNaN(element.parseNumber(null), 'use grouping');
+          element.setProperties({locale: 'de', numberStyle: 'percent'}, true);
+          assert.isNaN(element.parseNumber(null), 'percent and grouping');
+          element.setProperties({useGrouping: false}, true);
+          assert.isNaN(element.parseNumber(null), 'use grouping');
+          done();
+        });
+
+        test('parse undefined', done => {
+          assert.isNaN(element.parseNumber(undefined), 'default');
+          element.setProperties({useGrouping: true}, true);
+          assert.isNaN(element.parseNumber(undefined), 'use grouping');
+          element.setProperties({locale: 'de', numberStyle: 'percent'}, true);
+          assert.isNaN(element.parseNumber(undefined), 'percent and grouping');
+          element.setProperties({useGrouping: false}, true);
+          assert.isNaN(element.parseNumber(undefined), 'use grouping');
+          done();
+        });
+
+        test('parse empty string', done => {
+          assert.isNaN(element.parseNumber(''), 'default');
+          element.setProperties({useGrouping: true}, true);
+          assert.isNaN(element.parseNumber(''), 'use grouping');
+          element.setProperties({locale: 'de', numberStyle: 'percent'}, true);
+          assert.isNaN(element.parseNumber(''), 'percent and grouping');
+          element.setProperties({useGrouping: false}, true);
+          assert.isNaN(element.parseNumber(''), 'use grouping');
+          done();
+        });
+
+        test('parse false', done => {
+          assert.isNaN(element.parseNumber(false), 'default');
+          element.setProperties({useGrouping: true}, true);
+          assert.isNaN(element.parseNumber(false), 'use grouping');
+          element.setProperties({locale: 'de', numberStyle: 'percent'}, true);
+          assert.isNaN(element.parseNumber(false), 'percent and grouping');
+          element.setProperties({useGrouping: false}, true);
+          assert.isNaN(element.parseNumber(false), 'use grouping');
+          done();
+        });
+
+        test('parse true', done => {
+          assert.isNaN(element.parseNumber(true), 'default');
+          element.setProperties({useGrouping: true}, true);
+          assert.isNaN(element.parseNumber(true), 'use grouping');
+          element.setProperties({locale: 'de', numberStyle: 'percent'}, true);
+          assert.isNaN(element.parseNumber(true), 'percent and grouping');
+          element.setProperties({useGrouping: false}, true);
+          assert.isNaN(element.parseNumber(true), 'use grouping');
+          done();
+        });
+
+        test('parse date', done => {
+          const d = new Date();
+          assert.isNotNaN(element.parseNumber(d), 'default');
+          element.setProperties({useGrouping: true}, true);
+          assert.isNotNaN(element.parseNumber(d), 'use grouping');
+          element.setProperties({locale: 'de', numberStyle: 'percent'}, true);
+          assert.isNotNaN(element.parseNumber(d), 'percent and grouping');
+          element.setProperties({useGrouping: false}, true);
+          assert.isNotNaN(element.parseNumber(d), 'use grouping');
+          done();
+        });
       });
 
 
@@ -180,6 +258,21 @@
           if (element._numberOptions.style = 'currency') {
             element.setProperties({locale: 'en', currencyDisplay: 'name'}, true);
             assert.equal(element.formatNumber(100), '100 euros', '100 euros with name');
+          } else {
+            console.warn('element might not use currency')
+          }
+          done();
+        });
+
+        test('parse', done => {
+          if (element._numberOptions.style = 'currency') {
+            element.setProperties({locale: 'en', currencyDisplay: 'symbol'}, true);
+            assert.equal(element.parseNumber('€100'), 100, '100 euros');
+            assert.isNaN(element.parseNumber(''), 'empty string');
+            assert.isNaN(element.parseNumber(false), 'false');
+            assert.isNaN(element.parseNumber(true), 'true');
+            assert.isNaN(element.parseNumber(null), 'null');
+            assert.isNaN(element.parseNumber(undefined), 'undefined');
           } else {
             console.warn('element might not use currency')
           }

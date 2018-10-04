@@ -1,8 +1,8 @@
 <link rel="import" href="range-mixin.html">
+<link rel="import" href="number-utilities.html">
 
 <script>
-
-  let knownLocaleNumberFormatOptions = new Map();
+  const knownLocaleNumberFormatOptions = new Map();
 
   /**
    * Mixin that provides intl-format-locale for numbers and computes some separation strings for usage (only `latn`-numeral-system is possible).
@@ -156,7 +156,7 @@
            */
           parseNumber: {
             type: Function,
-            computed: '_computeParseNumber(decimalSeparator, numberStyle, useGrouping)',
+            computed: '_computeParseNumber(decimalSeparator, _numberOptions)',
             notify: true
           },
 
@@ -291,28 +291,47 @@
         }
       }
 
-      _computeParseNumber(decimalSeparator, numberStyle, useGrouping) {
-        const regExpGrouping = new RegExp('[' + (this.groupingSeparator || '') + ']', 'g');
-        if (numberStyle === 'percent') {
-          if (useGrouping) {
-            return (input) => {
-              return window._numberUtilities._safeMult(input.replace(regExpGrouping, '').replace(decimalSeparator, '.'), 0.01);
+      _computeParseNumber(decimalSeparator, numberOptions) {
+        const regExpGrouping = new RegExp(`[${(this.groupingSeparator || '')}]`, 'g');
+        const regExpNotInNumber = this._regExpNotInNumber;
+        const safeMult = numberUtilities.safeMult;
+
+        let translateInput;
+        if (numberOptions.style === 'percent') {
+          if (numberOptions.useGrouping) {
+            translateInput = function(input) {
+              return safeMult(parseFloat(input.replace(regExpGrouping, '').replace(decimalSeparator, '.')), 0.01);
             }
           } else {
-            return (input) => {
-              return window._numberUtilities._safeMult(parseFloat(input.replace(decimalSeparator, '.')), 0.01);
+            translateInput = function(input) {
+              return safeMult(parseFloat(input.replace(decimalSeparator, '.')), 0.01);
+            }
+          }
+        } else {
+          if (numberOptions.useGrouping) {
+            translateInput = function(input) {
+              return parseFloat(input.replace(regExpGrouping, '').replace(decimalSeparator, '.').replace(regExpNotInNumber, ''));
+            }
+          } else {
+            translateInput = function(input) {
+              return parseFloat(input.replace(decimalSeparator, '.').replace(regExpNotInNumber, ''));
             }
           }
         }
-        if (useGrouping) {
-          return (input) => {
-            return parseFloat(input.replace(regExpGrouping, '').replace(decimalSeparator, '.').replace(this._regExpNotInNumber, ''));
-          }
-        } else {
-          return (input) => {
-            return parseFloat(input.replace(decimalSeparator, '.').replace(this._regExpNotInNumber, ''));
+
+        const parse = function(input) {
+          switch (typeof input) {
+            case 'number': return input;
+            case 'string': return translateInput(input);
+            case 'object':
+              if (input !== null && input.valueOf) {
+                return parse(input.valueOf());
+              }
+            default: return NaN;
           }
         }
+
+        return parse;
       }
     }
   }

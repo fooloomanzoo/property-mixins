@@ -140,9 +140,9 @@
       }
 
       _defaultChanged(def) {
-        if (def === undefined) return;
+        if (isNaN(def)) return;
 
-        if (isNaN(this.valueAsNumber) && !isNaN(def)) {
+        if (isNaN(this.valueAsNumber)) {
           this.valueAsNumber = def;
         }
       }
@@ -158,20 +158,20 @@
           } else if (!isNaN(this.max)) {
             return this.max;
           }
-          return 0;
+          return value;
         }
 
         const saturate = this.saturate,
           min = this.min,
           max = this.max;
 
-        if (min !== undefined && value <= min) {
+        if (!isNaN(min) && value <= min) {
           if (saturate || value === min || max === undefined || oldValue !== min) {
             return min;
           }
           return max;
         }
-        if (max !== undefined && value >= max) {
+        if (!isNaN(max) && value >= max) {
           if (saturate || value === max || min === undefined || max !== oldValue) {
             return max;
           }
@@ -184,7 +184,7 @@
       }
 
       _updateValue() {
-        if (this.valueAsNumber !== undefined) {
+        if (!isNaN(this.valueAsNumber)) {
           this._valueAsNumberChanged(this.valueAsNumber, this.valueAsNumber);
         }
       }
