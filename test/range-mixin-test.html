@@ -60,13 +60,13 @@
 
     <test-fixture id="clamp">
       <template>
-        <basic-range-element step="0.5" value-as-number="1.24"></basic-range-element>
+        <basic-range-element step="5" value-as-number="122"></basic-range-element>
       </template>
     </test-fixture>
 
     <test-fixture id="no clamp">
       <template>
-        <basic-range-element step="0.5" value-as-number="1.25" no-clamp></basic-range-element>
+        <basic-range-element step="5" value-as-number="122" no-clamp></basic-range-element>
       </template>
     </test-fixture>
 
@@ -108,14 +108,8 @@
         });
 
         test('default properties', done => {
-          assert.isUndefined(element.min, 'min is not defined');
-          assert.isUndefined(element.max, 'max is not defined');
-          assert.isUndefined(element.step, 'step is not defined');
-          assert.isUndefined(element.valueAsNumber, 'valueAsNumber is not defined');
-          assert.isUndefined(element.default, 'default is not defined');
           assert.isUndefined(element.saturate, 'saturate is not defined');
           assert.isUndefined(element.noClamp, 'noClamp is not defined');
-          assert.isUndefined(element.startAt, 'startAt is not defined');
           done();
         });
 
@@ -356,11 +350,7 @@
         });
 
         test('clamp value', done => {
-          assert.equal(element.valueAsNumber, 1, 'value should clamp');
-          done();
-        });
-        test('clamp value', done => {
-          assert.equal(element.valueAsNumber, 1, 'value should clamp');
+          assert.equal(element.valueAsNumber, 120, 'value should clamp');
           done();
         });
       });
@@ -376,7 +366,7 @@
         });
 
         test('clamp value', done => {
-          assert.equal(element.valueAsNumber, 1.25, 'value should not clamp');
+          assert.equal(element.valueAsNumber, 122, 'value should not clamp');
           done();
         });
       });

@@ -82,23 +82,31 @@
         });
 
         test('minimumFractionDigits', done => {
-          element.setProperties({locale: 'en', minimumFractionDigits: 4}, true);
-          assert.equal(element.formatNumber(123987654321.456), '123987654321.4560', 'format number');
-          assert.equal(element.formatNumber(0.123456), '0.123456', 'format number ' + JSON.stringify(element._numberOptions));
+          if (element.__numberParser !== parseInt) {
+            element.setProperties({locale: 'en', minimumFractionDigits: 4}, true);
+            assert.equal(element.formatNumber(123987654321.456), '123987654321.4560', 'format number');
+            assert.equal(element.formatNumber(0.123456), '0.123456', 'format number');
+          }
           done();
         });
 
         test('maximumFractionDigits', done => {
-          element.setProperties({locale: 'en', maximumFractionDigits: 4}, true);
-          assert.equal(element.formatNumber(1.00006), '1.0001', 'format number');
-          assert.equal(element.formatNumber(0.1), '0.1', 'format number');
+          if (element.__numberParser !== parseInt) {
+            element.setProperties({locale: 'en', maximumFractionDigits: 4}, true);
+            assert.equal(element.formatNumber(1.00006), '1.0001', 'format number');
+            assert.equal(element.formatNumber(0.1), '0.1', 'format number');
+          }
           done();
         });
 
         test('minimumIntegerDigits', done => {
           element.setProperties({locale: 'en', minimumIntegerDigits: 4}, true);
           assert.equal(element.formatNumber(1), '0001', 'format number');
-          assert.equal(element.formatNumber(1.2), '0001.2', 'format number');
+          if (element.maximumFractionDigits === 0) {
+            assert.equal(element.formatNumber(1.2), '0001', 'format number');
+          } else {
+            assert.equal(element.formatNumber(1.2), '0001.2', 'format number');
+          }
           done();
         });
 
@@ -121,27 +129,41 @@
 
         test('grouping (english style)', done => {
           element.setProperties({locale: 'en', useGrouping: true}, true);
-          assert.equal(element.formatNumber(1000.1), '1,000.1', 'use grouping');
-          assert.equal(element.parseNumber('1,000.1'), 1000.1, 'parse grouped number');
+          if (element.maximumFractionDigits === 0) {
+            assert.equal(element.formatNumber(1000), '1,000', 'use grouping');
+            assert.equal(element.parseNumber('1,000'), 1000, 'parse grouped number'+ '   ' + element.groupingSeparator);
+          } else {
+            assert.equal(element.formatNumber(1000.1), '1,000.1', 'use grouping');
+            assert.equal(element.parseNumber('1,000.1'), 1000.1, 'parse grouped number');
+          }
           done();
         });
 
         test('grouping (german style)', done => {
           element.setProperties({locale: 'de', useGrouping: true}, true);
-          assert.equal(element.formatNumber(1000.1), '1.000,1', 'use grouping');
-          assert.equal(element.parseNumber('1.000,1'), 1000.1, 'parse grouped number');
+          if (element.maximumFractionDigits === 0) {
+            assert.equal(element.formatNumber(1000), '1.000', 'use grouping');
+            assert.equal(element.parseNumber('1.000'), 1000, 'parse grouped number');
+          } else {
+            assert.equal(element.formatNumber(1000.1), '1.000,1', 'use grouping');
+            assert.equal(element.parseNumber('1.000,1'), 1000.1, 'parse grouped number');
+          }
           done();
         });
 
         test('percent', done => {
           element.setProperties({locale: 'de', numberStyle: 'percent'}, true);
           assert.equal(element.formatNumber(10.01), '1001 %', 'default');
-          assert.equal(element.parseNumber('1000,1 %'), 10.001, 'parse percent');
           element.setProperties({useGrouping: true}, true);
           assert.equal(element.formatNumber(10.01), '1.001 %', 'use grouping');
-          assert.equal(element.parseNumber('1.000,1 %'), 10.001, 'parse percent with grouping');
-          element.setProperties({minimumFractionDigits: 1, useGrouping: false}, true);
-          assert.equal(element.formatNumber(10.001), '1000,1 %', 'minimal fraction digits');
+          if (element.maximumFractionDigits === 0) {
+            assert.equal(element.parseNumber('1.000,1 %'), 10, 'parse percent with grouping');
+            assert.equal(element.formatNumber(10.001), '1.000 %', 'format number with grouping');
+          } else {
+            assert.equal(element.parseNumber('1.000,1 %'), 10.001, 'parse percent with grouping');
+            element.setProperties({minimumFractionDigits: 1, useGrouping: false}, true);
+            assert.equal(element.formatNumber(10.001), '1000,1 %', 'minimal fraction digits');
+          }
           done();
         });
 

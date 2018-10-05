@@ -161,7 +161,7 @@
            */
           parseNumber: {
             type: Function,
-            computed: '_computeParseNumber(decimalSeparator, _numberOptions)',
+            computed: '_computeParseNumber(decimalSeparator, groupingSeparator, _numberOptions)',
             notify: true
           },
 
@@ -296,8 +296,8 @@
         }
       }
 
-      _computeParseNumber(decimalSeparator, numberOptions) {
-        const regExpGrouping = new RegExp(`[${(this.groupingSeparator || '')}]`, 'g');
+      _computeParseNumber(decimalSeparator, groupingSeparator, numberOptions) {
+        const regExpGrouping = new RegExp(`[${(groupingSeparator || '')}]`, 'g');
         const regExpNotInNumber = this._regExpNotInNumber;
         const numberparser = this.__numberParser;
         const safeMult = numberUtilities.safeMult;
