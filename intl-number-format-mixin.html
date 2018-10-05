@@ -17,6 +17,11 @@
 
     return class extends superClass {
 
+      constructor() {
+        super();
+        this.__numberParser = parseFloat;
+      }
+
       static get properties() {
         return {
           /**
@@ -294,27 +299,28 @@
       _computeParseNumber(decimalSeparator, numberOptions) {
         const regExpGrouping = new RegExp(`[${(this.groupingSeparator || '')}]`, 'g');
         const regExpNotInNumber = this._regExpNotInNumber;
+        const numberparser = this.__numberParser;
         const safeMult = numberUtilities.safeMult;
 
         let translateInput;
         if (numberOptions.style === 'percent') {
           if (numberOptions.useGrouping) {
             translateInput = function(input) {
-              return safeMult(parseFloat(input.replace(regExpGrouping, '').replace(decimalSeparator, '.')), 0.01);
+              return safeMult(numberparser(input.replace(regExpGrouping, '').replace(decimalSeparator, '.')), 0.01);
             }
           } else {
             translateInput = function(input) {
-              return safeMult(parseFloat(input.replace(decimalSeparator, '.')), 0.01);
+              return safeMult(numberparser(input.replace(decimalSeparator, '.')), 0.01);
             }
           }
         } else {
           if (numberOptions.useGrouping) {
             translateInput = function(input) {
-              return parseFloat(input.replace(regExpGrouping, '').replace(decimalSeparator, '.').replace(regExpNotInNumber, ''));
+              return numberparser(input.replace(regExpGrouping, '').replace(decimalSeparator, '.').replace(regExpNotInNumber, ''));
             }
           } else {
             translateInput = function(input) {
-              return parseFloat(input.replace(decimalSeparator, '.').replace(regExpNotInNumber, ''));
+              return numberparser(input.replace(decimalSeparator, '.').replace(regExpNotInNumber, ''));
             }
           }
         }
