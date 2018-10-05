@@ -121,22 +121,22 @@
         }
       }
 
-      _valueAsNumberChanged(value, oldValue) {
-        if (this.useNegativeZero && value === 0 && oldValue === 0 && (1/value !== 1/oldValue)) { // negative to positive zero switch
+      _valueAsNumberChanged(valueAsNumber, oldValue) {
+        if (this.useNegativeZero && valueAsNumber === 0 && oldValue === 0 && (1/valueAsNumber !== 1/oldValue)) { // negative to positive zero switch
           // intended switch to undefined for data-binding outside this element to be propagated
           // WARNING: might cause unexpected behaviour
           this.valueAsNumber = undefined; // enshure the value is reset so that data-change can take replace
-          this.valueAsNumber = value;
+          this.valueAsNumber = valueAsNumber;
           return;
         }
-        if (isNaN(value)){
+        if (isNaN(valueAsNumber)){
           if (!isNaN(this.default)) {
             this.valueAsNumber = this.default;
           }
           return;
         }
 
-        this.valueAsNumber = this._checkValue(value, oldValue);
+        this.valueAsNumber = this._checkValueAsNumber(valueAsNumber, oldValue);
       }
 
       _defaultChanged(def) {
@@ -147,7 +147,7 @@
         }
       }
 
-      _checkValue(value, oldValue) {
+      _checkValueAsNumber(value, oldValue) {
         if (isNaN(value)) {
           if (!isNaN(oldValue)) {
             return oldValue;
@@ -193,15 +193,17 @@
         if (!step) {
           return value;
         }
+        const safeAdd = this._safeAdd,
+          safeMult = this._safeMult;
         const isNegative0 = (this.useNegativeZero && numberUtilities.isNegative0(value));
         if (this.default !== undefined) {
-          value = this._safeAdd(this._safeMult(Math.round((value - this.default) / step), step), this.default);
+          value = safeAdd(safeMult(Math.round((value - this.default) / step), step), this.default);
         } else if (this.min !== undefined) {
-          value = this._safeAdd(this._safeMult(Math.round((value - this.min) / step), step), this.min);
+          value = safeAdd(safeMult(Math.round((value - this.min) / step), step), this.min);
         } else if (this.max !== undefined) {
-          value = this._safeAdd(this._safeMult(-Math.round((this.max - value) / step), step), this.max);
+          value = safeAdd(safeMult(-Math.round((this.max - value) / step), step), this.max);
         } else {
-          value = this._safeMult(Math.round(value / step), step);
+          value = safeMult(Math.round(value / step), step);
         }
         return (isNegative0 && value === 0) ? -0 : value;
       }
