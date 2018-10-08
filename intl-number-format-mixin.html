@@ -265,16 +265,23 @@
             options.style = 'decimal';
           }
         }
-        if (!isNaN(maximumFractionDigits)) {
-          options.maximumFractionDigits = (maximumFractionDigits < minimumFractionDigits && !isNaN(minimumFractionDigits)) ? minimumFractionDigits : maximumFractionDigits;
-        } else if (!isNaN(minimumFractionDigits)) {
-          options.maximumFractionDigits = 20;
+        if (!isNaN(minimumFractionDigits)) {
+          options.minimumFractionDigits = minimumFractionDigits >= 0 ? minimumFractionDigits : 0;
+          if (!isNaN(maximumFractionDigits)) {
+            options.maximumFractionDigits = Math.max(options.minimumFractionDigits, maximumFractionDigits);
+          } else {
+            options.maximumFractionDigits = 20;
+          }
+        } else if (!isNaN(maximumFractionDigits)) {
+          options.maximumFractionDigits = maximumFractionDigits >= 0 ? maximumFractionDigits : 20;
         }
         if (!isNaN(minimumSignificantDigits)) {
-          options.minimumSignificantDigits = minimumSignificantDigits;
-        }
-        if (!isNaN(maximumSignificantDigits)) {
-          options.maximumSignificantDigits = (maximumSignificantDigits < minimumSignificantDigits && !isNaN(minimumSignificantDigits)) ? minimumSignificantDigits : maximumSignificantDigits;
+          options.minimumSignificantDigits = minimumSignificantDigits >= 1 ? minimumSignificantDigits : 1;
+          if (!isNaN(maximumSignificantDigits)) {
+            options.maximumSignificantDigits = Math.max(options.minimumSignificantDigits, maximumSignificantDigits);
+          }
+        } else if (!isNaN(maximumSignificantDigits)) {
+          options.maximumSignificantDigits = maximumSignificantDigits >= 1 ? maximumSignificantDigits : 21;
         }
         return options;
       }

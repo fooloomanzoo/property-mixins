@@ -61,6 +61,7 @@
           assert.isDefined(element.locale, 'locale is defined');
           assert.isDefined(element.decimalSeparator, 'decimalSeparator is defined');
           assert.isDefined(element.groupingSeparator, 'groupingSeparator is defined');
+          assert.isDefined(element._numberOptions, 'numberOptions is defined');
           assert.isFunction(element.formatNumber, 'timeSeparator is a function');
           assert.isFunction(element.parseNumber, 'parseNumber is a function');
           done();
@@ -82,10 +83,18 @@
         });
 
         test('minimumFractionDigits', done => {
-          if (element.__numberParser !== parseInt) {
-            element.setProperties({locale: 'en', minimumFractionDigits: 4}, true);
+          element.setProperties({locale: 'en', minimumFractionDigits: 4}, true);
+          assert.equal(element._numberOptions.minimumFractionDigits, 4);
+          assert.isDefined(element._numberOptions.maximumFractionDigits);
+          if (element._numberOptions.maximumFractionDigits > 0) {
             assert.equal(element.formatNumber(123987654321.456), '123987654321.4560', 'format number');
+          } else {
+            assert.equal(element.formatNumber(123987654321.456), '123987654321', 'format number');
+          }
+          if (element._numberOptions.maximumFractionDigits > 4) {
             assert.equal(element.formatNumber(0.123456), '0.123456', 'format number');
+          } else {
+            assert.equal(element.formatNumber(0.123456), '0.1235', 'format number');
           }
           done();
         });
@@ -93,16 +102,22 @@
         test('maximumFractionDigits', done => {
           if (element.__numberParser !== parseInt) {
             element.setProperties({locale: 'en', maximumFractionDigits: 4}, true);
-            assert.equal(element.formatNumber(1.00006), '1.0001', 'format number');
-            assert.equal(element.formatNumber(0.1), '0.1', 'format number');
+            if (!(!isNaN(element._numberOptions.minimumFractionDigits) && element._numberOptions.minimumFractionDigits > 4)) {
+              assert.equal(element._numberOptions.maximumFractionDigits, 4);
+              assert.equal(element.formatNumber(1.00006), '1.0001', 'format number');
+              assert.equal(element.formatNumber(0.1), '0.1', 'format number');
+            } else {
+              assert.equal(element._numberOptions.maximumFractionDigits, element._numberOptions.minimumFractionDigits);
+            }
           }
           done();
         });
 
         test('minimumIntegerDigits', done => {
           element.setProperties({locale: 'en', minimumIntegerDigits: 4}, true);
+          assert.equal(element._numberOptions.minimumIntegerDigits, 4);
           assert.equal(element.formatNumber(1), '0001', 'format number');
-          if (element.maximumFractionDigits === 0) {
+          if (!isNaN(element._numberOptions.maximumFractionDigits) && element._numberOptions.maximumFractionDigits === 0) {
             assert.equal(element.formatNumber(1.2), '0001', 'format number');
           } else {
             assert.equal(element.formatNumber(1.2), '0001.2', 'format number');
@@ -112,6 +127,7 @@
 
         test('minimumSignificantDigits', done => {
           element.setProperties({locale: 'en', minimumSignificantDigits: 4}, true);
+          assert.equal(element._numberOptions.minimumSignificantDigits, 4);
           assert.equal(element.formatNumber(123), '123.0', 'format number');
           assert.equal(element.formatNumber(123.45), '123.45', 'format number');
           assert.equal(element.formatNumber(1.23), '1.230', 'format number');

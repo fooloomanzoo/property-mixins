@@ -122,10 +122,13 @@
       }
 
       _valueAsNumberChanged(valueAsNumber, oldValue) {
+        if (this.__resettingValueAsNumber === true) return;
         if (this.useNegativeZero && valueAsNumber === 0 && oldValue === 0 && (1/valueAsNumber !== 1/oldValue)) { // negative to positive zero switch
           // intended switch to undefined for data-binding outside this element to be propagated
           // WARNING: might cause unexpected behaviour
+          this.__resettingValueAsNumber = true;
           this.valueAsNumber = undefined; // enshure the value is reset so that data-change can take replace
+          this.__resettingValueAsNumber = false;
           this.valueAsNumber = valueAsNumber;
           return;
         }
