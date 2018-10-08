@@ -19,7 +19,6 @@
 
       constructor() {
         super();
-        this.__numberParser = parseFloat;
       }
 
       static get properties() {
@@ -260,7 +259,10 @@
             if (currencyDisplay && ['symbol', 'code', 'name'].indexOf(this.currencyDisplay) !== -1) {
               options.currencyDisplay = currencyDisplay;
             } else {
-              options.currencyDisplay = new Intl.NumberFormat(this.locale, {style: 'currency', currency: this.currency}).resolvedOptions().currencyDisplay || 'symbol';;
+              options.currencyDisplay = new Intl.NumberFormat(this.locale, {
+                style: 'currency',
+                currency: this.currency
+              }).resolvedOptions().currencyDisplay || 'symbol';;
             }
           } else {
             console.warn('No currency is given. Using number style: \'decimal\'.');
@@ -299,41 +301,86 @@
       _computeParseNumber(decimalSeparator, groupingSeparator, numberOptions) {
         const regExpGrouping = new RegExp(`[${(groupingSeparator || '')}]`, 'g');
         const regExpNotInNumber = this._regExpNotInNumber;
-        const numberparser = this.__numberParser;
-        const safeMult = numberUtilities.safeMult;
 
         let translateInput;
-        if (numberOptions.style === 'percent') {
-          if (numberOptions.useGrouping) {
-            translateInput = function(input) {
-              return safeMult(numberparser(input.replace(regExpGrouping, '').replace(decimalSeparator, '.')), 0.01);
+        if (numberOptions.maximumFractionDigits === 0) {
+          if (numberOptions.style === 'currency') {
+            if (numberOptions.useGrouping) {
+              translateInput = function(input) {
+                return parseInt(input.replace(regExpGrouping, '').replace(regExpNotInNumber, ''));
+              }
+            } else {
+              translateInput = function(input) {
+                return parseInt(input.replace(regExpNotInNumber, ''));
+              }
+            }
+          } else if (numberOptions.style === 'percent') {
+            if (numberOptions.useGrouping) {
+              translateInput = function(input) {
+                return numberUtilities.safeMult(parseInt(input.replace(regExpGrouping, '')), 0.01);
+              }
+            } else {
+              translateInput = function(input) {
+                return numberUtilities.safeMult(parseInt(input), 0.01);
+              }
             }
           } else {
-            translateInput = function(input) {
-              return safeMult(numberparser(input.replace(decimalSeparator, '.')), 0.01);
+            if (numberOptions.useGrouping) {
+              translateInput = function(input) {
+                return parseInt(input.replace(regExpGrouping, ''));
+              }
+            } else {
+              translateInput = function(input) {
+                return parseInt(input);
+              }
             }
           }
         } else {
-          if (numberOptions.useGrouping) {
-            translateInput = function(input) {
-              return numberparser(input.replace(regExpGrouping, '').replace(decimalSeparator, '.').replace(regExpNotInNumber, ''));
+          if (numberOptions.style === 'currency') {
+            if (numberOptions.useGrouping) {
+              translateInput = function(input) {
+                return parseFloat(input.replace(regExpGrouping, '').replace(decimalSeparator, '.').replace(regExpNotInNumber, ''));
+              }
+            } else {
+              translateInput = function(input) {
+                return parseFloat(input.replace(decimalSeparator, '.').replace(regExpNotInNumber, ''));
+              }
+            }
+          } else if (numberOptions.style === 'percent') {
+            if (numberOptions.useGrouping) {
+              translateInput = function(input) {
+                return numberUtilities.safeMult(parseFloat(input.replace(regExpGrouping, '').replace(decimalSeparator, '.')), 0.01);
+              }
+            } else {
+              translateInput = function(input) {
+                return numberUtilities.safeMult(parseFloat(input.replace(decimalSeparator, '.')), 0.01);
+              }
             }
           } else {
-            translateInput = function(input) {
-              return numberparser(input.replace(decimalSeparator, '.').replace(regExpNotInNumber, ''));
+            if (numberOptions.useGrouping) {
+              translateInput = function(input) {
+                return parseFloat(input.replace(regExpGrouping, '').replace(decimalSeparator, '.'));
+              }
+            } else {
+              translateInput = function(input) {
+                return parseFloat(input.replace(decimalSeparator, '.'));
+              }
             }
           }
         }
 
         const parse = function(input) {
           switch (typeof input) {
-            case 'number': return input;
-            case 'string': return translateInput(input);
+            case 'number':
+              return input;
+            case 'string':
+              return translateInput(input);
             case 'object':
               if (input !== null && input.valueOf) {
                 return parse(input.valueOf());
               }
-            default: return NaN;
+            default:
+              return NaN;
           }
         }
 
