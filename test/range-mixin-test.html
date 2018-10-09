@@ -27,7 +27,7 @@
       </template>
     </test-fixture>
 
-    <dom-bind id="domBind1">
+    <dom-bind id="bind">
       <template>
         <basic-range-element id="range1" value-as-number="{{value}}" use-negative-zero></basic-range-element>
         <basic-range-element id="range2" value-as-number="{{value}}" use-negative-zero></basic-range-element>
@@ -60,13 +60,13 @@
 
     <test-fixture id="clamp">
       <template>
-        <basic-range-element step="5" value-as-number="122"></basic-range-element>
+        <basic-range-element value-as-number="122" step="5"></basic-range-element>
       </template>
     </test-fixture>
 
     <test-fixture id="no clamp">
       <template>
-        <basic-range-element step="5" value-as-number="122" no-clamp></basic-range-element>
+        <basic-range-element value-as-number="122" step="5" no-clamp></basic-range-element>
       </template>
     </test-fixture>
 
@@ -252,7 +252,7 @@
           if (specifier) {
             replace('basic-range-element').with(specifier)
           }
-          dombind = document.querySelector('#domBind1');
+          dombind = document.querySelector('#bind');
           el1 = dombind.$.range1;
           el2 = dombind.$.range2;
           dombind.value = undefined;

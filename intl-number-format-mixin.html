@@ -147,7 +147,7 @@
            */
           formatNumber: {
             type: Function,
-            computed: '_computeFormatNumber(locale, _numberOptions, unit)',
+            computed: '_computeFormatNumber(locale, _numberOptions, unit, unitSeparator, alwaysSign)',
             notify: true
           },
 
@@ -286,18 +286,32 @@
         return options;
       }
 
-      _computeFormatNumber(locale, numberOptions, unit) {
+      _computeFormatNumber(locale, numberOptions, unit, unitSeparator, alwaysSign) {
         if (numberOptions && numberOptions.style !== 'decimal') {
           unit = '';
         }
         const format = new Intl.NumberFormat(locale, numberOptions).format;
         if (unit) {
-          return (n) => {
-            return (numberUtilities.isNegative0(n) ? '-' : ((this.alwaysSign && n >= 0) ? '+' : '')) + format(n) + this.unitSeparator + unit;
+          if (alwaysSign) {
+            return function(n) {
+              if (isNaN(n)) return '';
+              return `${n >= 0 ? '+' : (numberUtilities.isNegative0(n) ? '-' : '')}${format(n)}${unitSeparator}${unit}`;
+            }
+          }
+          return function(n) {
+            if (isNaN(n)) return '';
+            return `${numberUtilities.isNegative0(n) ? '-' : ''}${format(n)}${unitSeparator}${unit}`;
           }
         }
-        return (n) => {
-          return (numberUtilities.isNegative0(n) ? '-' : ((this.alwaysSign && n >= 0) ? '+' : '')) + format(n);
+        if (alwaysSign) {
+          return function(n) {
+            if (isNaN(n)) return '';
+            return `${n >= 0 ? '+' : (numberUtilities.isNegative0(n) ? '-' : '')}${format(n)}`;
+          }
+        }
+        return function(n) {
+          if (isNaN(n)) return '';
+          return `${numberUtilities.isNegative0(n) ? '-' : ''}${format(n)}`;
         }
       }
 
@@ -383,7 +397,7 @@
                 return parse(input.valueOf());
               }
             default:
-              return NaN;
+              return undefined;
           }
         }
 
