@@ -153,6 +153,11 @@
             type: Object
           },
 
+          _defaultValue: {
+            type: Number,
+            computed: '_computeDefaultValue(default)'
+          },
+
           /**
            * The minimal date, could be a number, a date-object or an iso-string in time, date or datetime-notation
            */
@@ -257,7 +262,7 @@
           '_datetimeChanged(datetime)',
           '_dateTimeChanged(date, time)',
           '_timeZoneHoursMinutesChanged(_timeZoneHours, _timeZoneMinutes)',
-          '_defaultChanged(default)'
+          '_defaultValueChanged(_defaultValue)'
         ]
       }
 
@@ -337,10 +342,8 @@
           }
           this.setProperties(toSet);
 
-        } else if (!isNaN(d = new Date(this.default))) {
-          this.setDate(d);
-        } else if (!isNaN(this.valueAsNumber)) {
-          this._valueAsNumberChanged(this.valueAsNumber);
+        } else if (!isNaN(this._defaultValue)) {
+          this.resetDate();
         }
       }
 
@@ -373,22 +376,31 @@
           _timeZoneMinutes: undefined,
           _recentLocalTimezoneOffset: undefined
         });
-        if (this.default !== undefined) {
-          const d = this._fromDatetime(this.default);
-          if (!isNaN(d)) {
-            this.setDate(d);
+        if (!isNaN(this._defaultValue)) {
+          if (typeof this.default === 'string') {
+            // using the timezone of default
+            const match = this.regexpDatetime.exec(this.default);
+            if (match[3]) {
+              this.__updatingTimezoneOffset = true;
+              this.setProperties(this._computeTimezoneOffset(match[3]));
+              this.__updatingTimezoneOffset = false;
+            }
           }
+          this.setDate(new Date(this._defaultValue));
         }
       }
 
-      _defaultChanged(def) {
-        super._defaultChanged && super._defaultChanged(def);
-        if (!def) {
+      _defaultValueChanged(def) {
+        if (isNaN(def)) {
           return;
         }
-        if (this.valueAsDate === undefined || this.valueAsNumber === undefined) {
+        if (isNaN(this.valueAsDate) || isNaN(this.valueAsNumber)) {
           this.resetDate();
         }
+      }
+
+      _computeDefaultValue(def) {
+        return +this._fromDatetime(def);
       }
 
       /**
@@ -407,7 +419,6 @@
         if (this.__updatingTimezoneOffset) {
           return;
         }
-
         if (isNaN(year) && isNaN(month) && isNaN(day) && isNaN(hour) && isNaN(minute) && isNaN(second) && isNaN(millisecond)) {
           if (this.valueAsDate !== undefined) {
             this.resetDate();
@@ -423,9 +434,9 @@
             if (this._timeOnly) {
               // setting timezone to GMT if the date is not set
               if (!this.timezone || !this.date) {
-                this.__updatingTimezoneOffset = true;
-                this.offsetMinutes = 0;
-                this.__updatingTimezoneOffset = false;
+                // this.__updatingTimezoneOffset = true;
+                // this.offsetMinutes = 0;
+                // this.__updatingTimezoneOffset = false;
                 if (this.time) {
                   d = new Date('1970-01-01T' + this.time + 'Z');
                 } else {
@@ -483,7 +494,6 @@
 
         // shift back from UTC to timezone
         d.setMinutes(d.getMinutes() + offsetMinutes);
-
         this.__updatingTimezoneOffset = true;
         this.setProperties({valueAsDate: d, offsetMinutes: offsetMinutes});
         this.__updatingTimezoneOffset = false;
@@ -567,23 +577,20 @@
         if (isNaN(value)) {
           return;
         }
-        if (value !== +this.valueAsDate) {
-          this.setDate(new Date(value));
-        }
+        const d = new Date(value);
+        this._checkDefaultTimezone(d);
+        this.setDate(d);
       }
 
       _valueAsDateChanged(d) {
         if (typeof d === 'string') {
           d = new Date(d);
         }
-        d = +d;
         if (isNaN(d)) {
           return;
         }
-
-        if (d !== this.valueAsNumber) {
-          this.setDate(new Date(d));
-        }
+        this._checkDefaultTimezone(d);
+        this.setDate(new Date(d));
       }
 
       _fromDatetime(datetime) {
@@ -597,8 +604,8 @@
         }
         const match = this.regexpDatetime.exec(datetime);
         if (match) {
-          if (match[3] !== undefined) {
-            if (match[1] === undefined) {
+          if (match[3]) {
+            if (!match[1]) {
               match[0] = '1970-01-01T' + match[2] + match[3];
             }
             const d = new Date(match[0]);
@@ -764,7 +771,7 @@
       }
 
       _checkDefaultTimezone(d) {
-        if (this.offsetMinutes === undefined || this.timezone === undefined) {
+        if (isNaN(this.offsetMinutes) || this.timezone === undefined) {
           this.__updatingTimezoneOffset = true;
           if (this.timezone) {
             this.setProperties(this._computeTimezoneOffset(this.timezone));
@@ -773,7 +780,7 @@
           }
           this.__updatingTimezoneOffset = false;
         }
-        if (this._recentLocalTimezoneOffset === undefined) {
+        if (isNaN(this._recentLocalTimezoneOffset)) {
           this._recentLocalTimezoneOffset = (d !== undefined ? d : new Date()).getTimezoneOffset();
         }
       }
@@ -807,11 +814,11 @@
             this.setProperties(this._computeTimezoneOffset(oldValue));
             return;
           }
-          this.setProperties(this._computeTimezone((this.valueAsDate === undefined ? new Date() : this.valueAsDate.getTimezoneOffset())));
+          this.setProperties(this._computeTimezone((isNaN(this.valueAsDate) ? new Date() : this.valueAsDate.getTimezoneOffset())));
           return;
         }
         const toSet = this._computeTimezoneOffset(timezone);
-        if (toSet.offsetMinutes !== this.offsetMinutes) {
+        if (toSet.offsetMinutes !== this.offsetMinutes || toSet.timezone !== timezone) {
           this.__updatingTimezoneOffset = true;
           this.setProperties(toSet);
           this.__updatingTimezoneOffset = false;
@@ -819,7 +826,7 @@
       }
 
       _offsetMinutesChanged(offsetMinutes) {
-        if (offsetMinutes === undefined) {
+        if (isNaN(offsetMinutes)) {
           return;
         }
         this.setProperties(this._computeTimezone(offsetMinutes));
@@ -829,7 +836,7 @@
       }
 
       _timeZoneHoursMinutesChanged(hour, minute) {
-        if (hour === undefined || minute === undefined) {
+        if (isNaN(hour) || isNaN(minute)) {
           return;
         }
         const hourIsNegative = numberUtilities.isNegative(hour)
@@ -850,7 +857,7 @@
       }
 
       _computeTimezone(offsetMinutes) { // offset in minute
-        if (offsetMinutes === undefined) {
+        if (isNaN(offsetMinutes)) {
           return {};
         }
         const offsetIsNegative = numberUtilities.isNegative(offsetMinutes);
@@ -883,11 +890,22 @@
         const match = this.regexpTimezone.exec(timezone);
         if (match) {
           const hour = +match[1],
-            minute = +match[2];
+            minute = +match[2],
+            hourIsNegative = numberUtilities.isNegative(hour),
+            offsetMinutes = (hourIsNegative ? 1 : -1) * (Math.abs(hour) * 60 + minute);
+          if (offsetMinutes === 0) {
+            return {
+              _timeZoneHours: hourIsNegative ? -0 : 0,
+              _timeZoneMinutes: 0,
+              offsetMinutes: offsetMinutes,
+              timezone: '+00:00'
+            };
+          }
           return {
-            offsetMinutes: (numberUtilities.isNegative(hour) ? 1 : -1) * (Math.abs(hour) * 60 + minute),
+            offsetMinutes: offsetMinutes,
             _timeZoneHours: hour,
-            _timeZoneMinutes: minute
+            _timeZoneMinutes: minute,
+            timezone: timezone
           };
         }
       }

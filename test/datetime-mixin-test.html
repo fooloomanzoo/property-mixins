@@ -24,7 +24,7 @@
 
     <test-fixture id="setting properties">
       <template>
-        <basic-datetime-element datetime="1980-02-01T02:03:04.567-07:15"></basic-datetime-element>
+        <basic-datetime-element datetime="1980-02-01T02:03:04.567-07:15" clamp=""></basic-datetime-element>
       </template>
     </test-fixture>
 
@@ -36,13 +36,13 @@
 
     <test-fixture id="min">
       <template>
-        <basic-datetime-element min="1980-02-01T02:03:04.567-07:15"></basic-datetime-element>
+        <basic-datetime-element min="1980-02-01T02:03:04.567-07:15" clamp=""></basic-datetime-element>
       </template>
     </test-fixture>
 
     <test-fixture id="max">
       <template>
-        <basic-datetime-element max="1980-02-01T02:03:04.567-07:15"></basic-datetime-element>
+        <basic-datetime-element max="1980-02-01T02:03:04.567-07:15" clamp=""></basic-datetime-element>
       </template>
     </test-fixture>
 
@@ -54,19 +54,19 @@
 
     <test-fixture id="form-element and set value">
       <template>
-        <form-datetime-element value="318244684567"></form-datetime-element>
+        <form-datetime-element value="318244684567" clamp=""></form-datetime-element>
       </template>
     </test-fixture>
 
     <test-fixture id="form-element and set value and timezone">
       <template>
-        <form-datetime-element value="318244684567" timezone="-01:30"></form-datetime-element>
+        <form-datetime-element value="318244684567" timezone="-01:30" clamp=""></form-datetime-element>
       </template>
     </test-fixture>
 
     <test-fixture id="form-element and date for value-property">
       <template>
-        <form-datetime-element value="1980-02-01" property-for-value="date"></form-datetime-element>
+        <form-datetime-element value="1980-02-01" property-for-value="date" clamp=""></form-datetime-element>
       </template>
     </test-fixture>
 
@@ -90,9 +90,10 @@
 
         setup(function() {
           if (specifier) {
-            replace('form-datetime-element').with(specifier)
+            replace('basic-datetime-element').with(specifier)
           }
           element = fixture('basic');
+          element.clamp = '';
         });
 
         test('instantiating the element with default properties should work', done => {
@@ -291,6 +292,8 @@
           element.setAttribute('value-as-number', 318244684567);
           const d = new Date(318244684567);
 
+          assert.isDefined(element.valueAsNumber, 318244684567, 'valueAsNumber does not change');
+          assert.equal(+element.valueAsDate, 318244684567, 'valueAsDate should be set');
           assert.isDefined(element.date, 'date is defined');
           assert.isDefined(element.time, 'time is defined');
           assert.isDefined(element.datetime, 'datetime is defined');
@@ -306,7 +309,6 @@
           assert.equal(element.offsetMinutes, d.getTimezoneOffset(), 'timezone-offset is local');
           assert.isDefined(element._timeZoneHours, 'timezone-hours is defined');
           assert.isDefined(element._timeZoneMinutes, 'timezone-minutes is defined');
-          assert.equal(element.valueAsDate.toISOString(), '1980-02-01T09:18:04.567Z', 'valueAsDate should be set');
           done();
         });
 
@@ -314,6 +316,8 @@
           element.setAttribute('value-as-date', '1980-02-01T09:18:04.567Z');
           const d = new Date('1980-02-01T09:18:04.567Z');
 
+          assert.equal(+element.valueAsDate, 318244684567, 'valueAsDate should be set');
+          assert.equal(element.valueAsNumber, 318244684567, 'valueAsNumber should be set');
           assert.isDefined(element.date, 'date is defined');
           assert.isDefined(element.time, 'time is defined');
           assert.isDefined(element.datetime, 'datetime is defined');
@@ -328,14 +332,13 @@
           assert.equal(element.offsetMinutes, d.getTimezoneOffset(), 'timezone-offset is local');
           assert.isDefined(element._timeZoneHours, 'timezone-hours is defined');
           assert.isDefined(element._timeZoneMinutes, 'timezone-minutes is defined');
-          assert.equal(+element.valueAsDate, 318244684567, 'valueAsDate should be set' + new Date(318244684567).toISOString()+ element.valueAsDate.toISOString());
-          assert.equal(element.valueAsNumber, 318244684567, 'valueAsNumber should be set');
           done();
         });
 
-        test('setting value-as-date', done => {
+        test('setting default', done => {
           element.setAttribute('default', new Date(318244684567).toISOString());
-
+          assert.equal(element.default, '1980-02-01T09:18:04.567Z', 'default is set');
+          assert.equal(element._defaultValue, 318244684567, 'default is set');
           assert.isDefined(element.date, 'date is defined');
           assert.isDefined(element.time, 'time is defined');
           assert.isDefined(element.datetime, 'datetime is defined');
@@ -360,7 +363,6 @@
 
         test('setting year', done => {
           element.setAttribute('year', '1980');
-
           assert.equal(element.year, 1980, 'year should be set');
           assert.equal(element.month, 1, 'month should be set');
           assert.equal(element.day, 1, 'day should be set');
@@ -380,8 +382,12 @@
         test('setting month', done => {
           element.setAttribute('month', '2');
 
-          const d = new Date();
-          assert.equal(element.year, d.getFullYear(), 'year should be set');
+          if (element._timeOnly) {
+            assert.equal(element.year, 1970, 'year should be set');
+          } else {
+            const d = new Date();
+            assert.equal(element.year, d.getFullYear(), 'year should be set');
+          }
           assert.equal(element.month, 2, 'month should be set');
           assert.equal(element.day, 1, 'day should be set');
           assert.equal(element.hour, 0, 'hour should be set');
@@ -401,8 +407,12 @@
         test('setting day', done => {
           element.setAttribute('day', '1');
 
-          const d = new Date();
-          assert.equal(element.year, d.getFullYear(), 'year should be set');
+          if (element._timeOnly) {
+            assert.equal(element.year, 1970, 'year should be set');
+          } else {
+            const d = new Date();
+            assert.equal(element.year, d.getFullYear(), 'year should be set');
+          }
           assert.equal(element.month, 1, 'month should be set');
           assert.equal(element.day, 1, 'day should be set');
           assert.equal(element.hour, 0, 'hour should be set');
@@ -421,8 +431,12 @@
         test('setting hour', done => {
           element.setAttribute('hour', '2');
 
-          const d = new Date();
-          assert.equal(element.year, d.getFullYear(), 'year should be set');
+          if (element._timeOnly) {
+            assert.equal(element.year, 1970, 'year should be set');
+          } else {
+            const d = new Date();
+            assert.equal(element.year, d.getFullYear(), 'year should be set');
+          }
           assert.equal(element.month, 1, 'month should be set');
           assert.equal(element.day, 1, 'day should be set');
           assert.equal(element.hour, 2, 'hour should be set');
@@ -442,8 +456,12 @@
         test('setting minute', done => {
           element.setAttribute('minute', '3');
 
-          const d = new Date();
-          assert.equal(element.year, d.getFullYear(), 'year should be set');
+          if (element._timeOnly) {
+            assert.equal(element.year, 1970, 'year should be set');
+          } else {
+            const d = new Date();
+            assert.equal(element.year, d.getFullYear(), 'year should be set');
+          }
           assert.equal(element.month, 1, 'month should be set');
           assert.equal(element.day, 1, 'day should be set');
           assert.equal(element.hour, 0, 'hour should be set');
@@ -462,8 +480,12 @@
         test('setting second', done => {
           element.setAttribute('second', '4');
 
-          const d = new Date();
-          assert.equal(element.year, d.getFullYear(), 'year should be set');
+          if (element._timeOnly) {
+            assert.equal(element.year, 1970, 'year should be set');
+          } else {
+            const d = new Date();
+            assert.equal(element.year, d.getFullYear(), 'year should be set');
+          }
           assert.equal(element.month, 1, 'month should be set');
           assert.equal(element.day, 1, 'day should be set');
           assert.equal(element.hour, 0, 'hour should be set');
@@ -482,8 +504,12 @@
         test('setting millisecond', done => {
           element.setAttribute('millisecond', '567');
 
-          const d = new Date();
-          assert.equal(element.year, d.getFullYear(), 'year should be set');
+          if (element._timeOnly) {
+            assert.equal(element.year, 1970, 'year should be set');
+          } else {
+            const d = new Date();
+            assert.equal(element.year, d.getFullYear(), 'year should be set');
+          }
           assert.equal(element.month, 1, 'month should be set');
           assert.equal(element.day, 1, 'day should be set');
           assert.equal(element.hour, 0, 'hour should be set');
@@ -543,13 +569,13 @@
           assert.isTrue(!numberUtilities.isNegative0(element.offsetMinutes) && element.offsetMinutes === 0, '1: timezone-offset should be +0');
           assert.isTrue(numberUtilities.isNegative0(element._timeZoneHours), '1: timezone-hours should be -0');
           assert.equal(element._timeZoneMinutes, 0, '1: timezone-minutes should be 0');
-          assert.equal(element.timezone, '+00:00', '1: timezone should be change to +00:00');
+          assert.equal(element.timezone, '+00:00', '1: timezone should change to +00:00');
 
           element._timeZoneHours = +0;
           assert.isTrue(numberUtilities.isNegative0(element.offsetMinutes), '1.1: timezone-offset should be +0');
           assert.isTrue(!numberUtilities.isNegative0(element._timeZoneHours) && element.offsetMinutes === 0, '1.1: timezone-hours should be +0');
           assert.equal(element._timeZoneMinutes, 0, '1.1: timezone-minutes should be 0');
-          assert.equal(element.timezone, '+00:00', '1.1: timezone should be change to +00:00');
+          assert.equal(element.timezone, '+00:00', '1.1: timezone should stay +00:00');
 
           element.setAttribute('timezone', '-00:15');
           assert.equal(element.offsetMinutes, 15, '2: timezone-offset should be 15');
@@ -605,7 +631,7 @@
 
         setup(function() {
           if (specifier) {
-            replace('form-datetime-element').with(specifier)
+            replace('basic-datetime-element').with(specifier)
           }
           element = fixture('setting properties');
         });
@@ -635,7 +661,7 @@
 
         setup(function() {
           if (specifier) {
-            replace('form-datetime-element').with(specifier)
+            replace('basic-datetime-element').with(specifier)
           }
           element = fixture('clamp');
         });
@@ -657,9 +683,10 @@
 
         setup(function() {
           if (specifier) {
-            replace('form-datetime-element').with(specifier)
+            replace('basic-datetime-element').with(specifier)
           }
           element = fixture('min');
+          element.clamp = '';
         });
 
         test('setting "min"', done => {
@@ -685,9 +712,10 @@
 
         setup(function() {
           if (specifier) {
-            replace('form-datetime-element').with(specifier)
+            replace('basic-datetime-element').with(specifier)
           }
           element = fixture('max');
+          element.clamp = '';
         });
 
         test('setting "max"', done => {
@@ -732,6 +760,7 @@
         });
 
         test('changing "propertyForValue" should invoke the actual selected preperty', done => {
+          element.clamp = '';
           element.now();
           let day = element.day;
 
@@ -798,6 +827,7 @@
             replace('form-datetime-element').with(specifier)
           }
           element = fixture('form-element and date for value-property');
+          element.clamp = '';
         });
 
         test('timezone', done => {
