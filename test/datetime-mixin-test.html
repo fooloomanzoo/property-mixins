@@ -9,6 +9,7 @@
     <script src="../../webcomponentsjs/webcomponents-loader.js"></script>
     <script src="../../web-component-tester/browser.js"></script>
     <script src="../../iron-test-helpers/test-helpers.js"></script>
+    <script src="../../input-picker-pattern/utils/wct-mixin-test-helper.js"></script>
 
     <link rel="import" href="../demo/elements/basic-datetime-element.html">
     <link rel="import" href="../demo/elements/form-datetime-element.html">
@@ -24,7 +25,7 @@
 
     <test-fixture id="setting properties">
       <template>
-        <basic-datetime-element datetime="1980-02-01T02:03:04.567-07:15" clamp=""></basic-datetime-element>
+        <basic-datetime-element datetime="1980-02-01T02:03:04.567-07:15"></basic-datetime-element>
       </template>
     </test-fixture>
 
@@ -36,13 +37,13 @@
 
     <test-fixture id="min">
       <template>
-        <basic-datetime-element min="1980-02-01T02:03:04.567-07:15" clamp=""></basic-datetime-element>
+        <basic-datetime-element min="1980-02-01T02:03:04.567-07:15"></basic-datetime-element>
       </template>
     </test-fixture>
 
     <test-fixture id="max">
       <template>
-        <basic-datetime-element max="1980-02-01T02:03:04.567-07:15" clamp=""></basic-datetime-element>
+        <basic-datetime-element max="1980-02-01T02:03:04.567-07:15"></basic-datetime-element>
       </template>
     </test-fixture>
 
@@ -54,46 +55,30 @@
 
     <test-fixture id="form-element and set value">
       <template>
-        <form-datetime-element value="318244684567" clamp=""></form-datetime-element>
+        <form-datetime-element value="318244684567"></form-datetime-element>
       </template>
     </test-fixture>
 
     <test-fixture id="form-element and set value and timezone">
       <template>
-        <form-datetime-element value="318244684567" timezone="-01:30" clamp=""></form-datetime-element>
+        <form-datetime-element value="318244684567" timezone="-01:30"></form-datetime-element>
       </template>
     </test-fixture>
 
     <test-fixture id="form-element and date for value-property">
       <template>
-        <form-datetime-element value="1980-02-01" property-for-value="date" clamp=""></form-datetime-element>
+        <form-datetime-element value="1980-02-01" property-for-value="date"></form-datetime-element>
       </template>
     </test-fixture>
 
     <script>
-      const specifier = new URLSearchParams(window.location.search).get('specifier');
-      const url = new URLSearchParams(window.location.search).get('url');
-
-      // applying suites to another element (e.g. when another element depends on the the same mixin)
-      if (specifier) {
-        suite(`Suite for ${specifier.toUpperCase()}`, function() {
-          test('loading dependencies', done => {
-            Polymer.importHref(window.location.origin + '/components/' + url, e => done(), e => {
-              console.warn(`failed to load: ${url}`)
-            })
-          })
-        })
-      }
+      WCT.helpers.mixinSuite(['basic-datetime-element', 'form-datetime-element']);
 
       suite('basic', () => {
         let element;
 
         setup(function() {
-          if (specifier) {
-            replace('basic-datetime-element').with(specifier)
-          }
           element = fixture('basic');
-          element.clamp = '';
         });
 
         test('instantiating the element with default properties should work', done => {
@@ -630,9 +615,6 @@
         let element;
 
         setup(function() {
-          if (specifier) {
-            replace('basic-datetime-element').with(specifier)
-          }
           element = fixture('setting properties');
         });
 
@@ -660,9 +642,6 @@
         let element;
 
         setup(function() {
-          if (specifier) {
-            replace('basic-datetime-element').with(specifier)
-          }
           element = fixture('clamp');
         });
 
@@ -682,11 +661,7 @@
         let element;
 
         setup(function() {
-          if (specifier) {
-            replace('basic-datetime-element').with(specifier)
-          }
           element = fixture('min');
-          element.clamp = '';
         });
 
         test('setting "min"', done => {
@@ -711,11 +686,7 @@
         let element;
 
         setup(function() {
-          if (specifier) {
-            replace('basic-datetime-element').with(specifier)
-          }
           element = fixture('max');
-          element.clamp = '';
         });
 
         test('setting "max"', done => {
@@ -741,9 +712,6 @@
         let element;
 
         setup(function() {
-          if (specifier) {
-            replace('form-datetime-element').with(specifier)
-          }
           element = fixture('form-element');
         });
 
@@ -760,7 +728,6 @@
         });
 
         test('changing "propertyForValue" should invoke the actual selected preperty', done => {
-          element.clamp = '';
           element.now();
           let day = element.day;
 
@@ -780,9 +747,6 @@
         let element;
 
         setup(function() {
-          if (specifier) {
-            replace('form-datetime-element').with(specifier)
-          }
           element = fixture('form-element and set value');
         });
 
@@ -803,9 +767,6 @@
         let element;
 
         setup(function() {
-          if (specifier) {
-            replace('form-datetime-element').with(specifier)
-          }
           element = fixture('form-element and set value and timezone');
         });
 
@@ -823,11 +784,7 @@
         let element;
 
         setup(function() {
-          if (specifier) {
-            replace('form-datetime-element').with(specifier)
-          }
           element = fixture('form-element and date for value-property');
-          element.clamp = '';
         });
 
         test('timezone', done => {

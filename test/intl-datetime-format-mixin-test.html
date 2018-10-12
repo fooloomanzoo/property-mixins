@@ -9,6 +9,7 @@
     <script src="../../webcomponentsjs/webcomponents-loader.js"></script>
     <script src="../../web-component-tester/browser.js"></script>
     <script src="../../iron-test-helpers/test-helpers.js"></script>
+    <script src="../../input-picker-pattern/utils/wct-mixin-test-helper.js"></script>
 
     <link rel="import" href="../demo/elements/basic-intl-datetime-format-element.html">
   </head>
@@ -33,27 +34,12 @@
     </test-fixture>
 
     <script>
-      const specifier = new URLSearchParams(window.location.search).get('specifier');
-      const url = new URLSearchParams(window.location.search).get('url');
-
-      // applying suites to another element (e.g. when another element depends on the the same mixin)
-      if (specifier) {
-        suite(`Suite for ${specifier.toUpperCase()}`, function() {
-          test('loading dependencies', done => {
-            Polymer.importHref(window.location.origin + '/components/' + url, e => done(), e => {
-              console.warn(`failed to load: ${url}`)
-            })
-          })
-        })
-      }
+      WCT.helpers.mixinSuite('basic-intl-datetime-format-element');
 
       suite('basic', () => {
         let element;
 
         setup(function() {
-          if (specifier) {
-            replace('basic-intl-datetime-format-element').with(specifier)
-          }
           element = fixture('basic');
         });
 
@@ -73,9 +59,6 @@
         let element;
 
         setup(function() {
-          if (specifier) {
-            replace('basic-intl-datetime-format-element').with(specifier)
-          }
           element = fixture('en');
         });
 
@@ -93,9 +76,6 @@
         let element;
 
         setup(function() {
-          if (specifier) {
-            replace('basic-intl-datetime-format-element').with(specifier)
-          }
           element = fixture('de');
         });
 

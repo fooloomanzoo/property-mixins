@@ -296,7 +296,7 @@
           this._correctTimezoneShift(d);
           d = this._checkThreshold(d);
 
-          const toSet = {}, value = +d;
+          let toSet = {}, value = +d;
           if (this.valueAsNumber !== value) {
             toSet.valueAsNumber = value;
           }
@@ -305,10 +305,9 @@
           }
           // shift date, so that date properties are according to timezone
           let transformedDate = new Date(value);
-
           transformedDate.setMinutes(d.getMinutes() - this.offsetMinutes);
 
-          transformedDate = this._clamp(transformedDate, this.clamp);
+          transformedDate = this._clampUTC(transformedDate, this.clamp);
 
           const year = transformedDate.getUTCFullYear(),
             month = transformedDate.getUTCMonth() + 1,
@@ -340,8 +339,8 @@
             toSet.time = time;
             toSet.datetime = datetime;
           }
-          this.setProperties(toSet);
 
+          this.setProperties(toSet);
         } else if (!isNaN(this._defaultValue)) {
           this.resetDate();
         }
@@ -574,27 +573,36 @@
       }
 
       _valueAsNumberChanged(value) {
-        if (isNaN(value)) {
+        if (isNaN(value) || value === '' || typeof value === 'boolean') {
+          this.resetDate();
           return;
         }
-        const d = new Date(value);
+        const d = new Date(+value);
         this._checkDefaultTimezone(d);
         this.setDate(d);
       }
 
       _valueAsDateChanged(d) {
-        if (typeof d === 'string') {
-          d = new Date(d);
+        switch (typeof d) {
+          case 'number': // falls through
+          case 'string': // falls through
+            d = new Date(d);
         }
         if (isNaN(d)) {
+          this.resetDate();
           return;
         }
         this._checkDefaultTimezone(d);
         this.setDate(new Date(d));
       }
 
+      /**
+       * compute a date object
+       * @param  datetime
+       * @return {Date}   date
+       */
       _fromDatetime(datetime) {
-        if (!datetime) {
+        if (typeof datetime === 'boolean' || !datetime) {
           return;
         }
 
@@ -670,6 +678,11 @@
         }
       }
 
+      /**
+       * test date object against thresholds
+       * @param  {Date} d
+       * @return {Date}   ether the threshold when the date is exceeding or the date object itself
+       */
       _checkThreshold(d) {
         if (this._min > d) {
           return new Date(this._min);
@@ -680,6 +693,11 @@
         return d;
       }
 
+      /**
+       * get date string from a date object
+       * @param  {Date} d the Date to serialize
+       * @return {String}   date string
+       */
       _toDate(d) {
         if (typeof d === 'number') {
           d = new Date(d);
@@ -688,6 +706,23 @@
         return this._pad(year, year < 0 ? 6 : 4) + '-' + this._pad(d.getMonth() + 1, 2) + '-' + this._pad(d.getDate(), 2);
       }
 
+      /**
+       * get UTC time string from a date object
+       * @param  {Date} d the Date to serialize
+       * @return {String}   date string
+       */
+      _toTime(d) {
+        if (typeof d === 'number') {
+          d = new Date(d);
+        }
+        return this._pad(d.getHours(), 2) + ':' + this._pad(d.getMinutes(), 2) + ':' + this._pad(d.getSeconds(), 2) + '.' + this._pad(d.getMilliseconds(), 3);
+      }
+
+      /**
+       * get UTC date string from a date object
+       * @param  {Date} d the Date to serialize
+       * @return {String}   date string
+       */
       _toUTCDate(d) {
         if (typeof d === 'number') {
           d = new Date(d);
@@ -696,17 +731,11 @@
         return this._pad(year, year < 0 ? 6 : 4) + '-' + this._pad(d.getUTCMonth() + 1, 2) + '-' + this._pad(d.getUTCDate(), 2);
       }
 
-      __toDate(year, month, day) {
-        return this._pad(year, year < 0 ? 6 : 4) + '-' + this._pad(month, 2) + '-' + this._pad(day, 2);
-      }
-
-      _toTime(d) {
-        if (typeof d === 'number') {
-          d = new Date(d);
-        }
-        return this._pad(d.getHours(), 2) + ':' + this._pad(d.getMinutes(), 2) + ':' + this._pad(d.getSeconds(), 2) + '.' + this._pad(d.getMilliseconds(), 3);
-      }
-
+      /**
+       * get UTC time string from a date object
+       * @param  {Date} d the Date to serialize
+       * @return {String}   time string
+       */
       _toUTCTime(d) {
         if (typeof d === 'number') {
           d = new Date(d);
@@ -714,11 +743,36 @@
         return this._pad(d.getUTCHours(), 2) + ':' + this._pad(d.getUTCMinutes(), 2) + ':' + this._pad(d.getUTCSeconds(), 2) + '.' + this._pad(d.getUTCMilliseconds(), 3);
       }
 
+      /**
+       * get date string from date components
+       * @param  {Number} year
+       * @param  {Number} month
+       * @param  {Number} day
+       * @return {String}       date string
+       */
+      __toDate(year, month, day) {
+        return this._pad(year, year < 0 ? 6 : 4) + '-' + this._pad(month, 2) + '-' + this._pad(day, 2);
+      }
+
+      /**
+       * get time string from date components
+       * @param  {Number} hour
+       * @param  {Number} minute
+       * @param  {Number} second
+       * @param  {Number} millisecond
+       * @return {String}             time string
+       */
       __toTime(hour, minute, second, millisecond) {
         return this._pad(hour || 0, 2) + ':' + this._pad(minute || 0, 2) + (second !== undefined ? (':' + this._pad(second, 2) + (millisecond !== undefined ? ('.' + this._pad(millisecond, 3)) : '')) : '');
       }
 
-      _clamp(d, clamp) {
+      /**
+       * clamp UTC values
+       * @param  {Date} d     the Date to clamp
+       * @param  {String} clamp the date component to clamp
+       * @return {Date}       the clamped date
+       */
+      _clampUTC(d, clamp) {
         switch (clamp) {
           case 'year':
           case 'month':
@@ -737,6 +791,12 @@
         return d;
       }
 
+      /**
+       * pad a string with 0
+       * @param  {Number} n         number to pad
+       * @param  {Number} padLength total length of strings
+       * @return {String}           padded string
+       */
       _pad(n, padLength) {
         const sign = n < 0 ? '-' : '';
         let str = '' + Math.abs(n);
@@ -770,6 +830,10 @@
         return hidden || (pos !== -1 && index !== -1 && pos <= index);
       }
 
+      /**
+       * set the default timezone if needed
+       * @param  {Date} d
+       */
       _checkDefaultTimezone(d) {
         if (isNaN(this.offsetMinutes) || this.timezone === undefined) {
           this.__updatingTimezoneOffset = true;
@@ -785,6 +849,10 @@
         }
       }
 
+      /**
+       * correct a timezone shift when date changes from winter to summertime (locally)
+       * @param  {Date} d
+       */
       _correctTimezoneShift(d) {
         this._checkDefaultTimezone(d);
 
