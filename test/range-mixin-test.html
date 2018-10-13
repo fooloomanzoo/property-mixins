@@ -21,6 +21,12 @@
       </template>
     </test-fixture>
 
+    <test-fixture id="set attribute">
+      <template>
+        <basic-range-element value-as-number="1"></basic-range-element>
+      </template>
+    </test-fixture>
+
     <test-fixture id="negative zero">
       <template>
         <basic-range-element use-negative-zero step="1"></basic-range-element>
@@ -152,6 +158,19 @@
           done();
         });
 
+      });
+
+      suite('set attribute', () => {
+        let element;
+
+        setup(function() {
+          element = fixture('set attribute');
+        });
+
+        test('set value-as-number', done => {
+          assert.equal(element.valueAsNumber, 1, ' value-as-number is set');
+          done();
+        });
       });
 
       suite('negative zero', () => {
@@ -336,13 +355,8 @@
       });
 
       suite('saturation', () => {
-        let element;
-
-        setup(function() {
-          element = fixture('saturate');
-        })
-
         test('saturate value', done => {
+          let element = fixture('saturate');
           element.valueAsNumber = 2;
           element.valueAsNumber = 5;
           assert.equal(element.valueAsNumber, 2, 'value should saturate');

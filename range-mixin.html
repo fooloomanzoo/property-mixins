@@ -54,15 +54,6 @@
             observer: '_valueAsNumberChanged'
           },
           /**
-           * if `true`, valueAsNumber is negative, else it is positive
-           * @type {number}
-           */
-          isNegative: {
-            type: Boolean,
-            notify: true,
-            observer: '_valueAsNumberChanged'
-          },
-          /**
            * default-value of the input
            * @type {number}
            */
@@ -76,7 +67,7 @@
            */
           saturate: {
             type: Boolean,
-            observer: '_updateValue'
+            observer: '_updateValueAsNumber'
           },
           /**
            * if true, the value will break on 0 to -0
@@ -84,7 +75,7 @@
            */
           useNegativeZero: {
             type: Boolean,
-            observer: '_updateValue'
+            observer: '_updateValueAsNumber'
           },
           /**
            * if true, the value does not clamp according to the given step
@@ -92,7 +83,7 @@
            */
           noClamp: {
             type: Boolean,
-            observer: '_updateValue'
+            observer: '_updateValueAsNumber'
           }
         }
       }
@@ -103,13 +94,6 @@
         ]
       }
 
-      connectedCallback() {
-        super.connectedCallback();
-        if (isNaN(this.valueAsNumber) && !isNaN(this.default)) {
-          this.valueAsNumber = this.default;
-        }
-      }
-
       _minMaxChanged(min, max) {
         if (+max < +min) {
           this.setProperties({
@@ -117,7 +101,7 @@
             max: +min
           })
         } else {
-          this._updateValue();
+          this._updateValueAsNumber();
         }
       }
 
@@ -128,17 +112,9 @@
           // WARNING: might cause unexpected behaviour
           this.__resettingValueAsNumber = true;
           this.valueAsNumber = undefined; // enshure the value is reset so that data-change can take replace
-          this.__resettingValueAsNumber = false;
           this.valueAsNumber = valueAsNumber;
-          return;
+          this.__resettingValueAsNumber = false;
         }
-        if (isNaN(valueAsNumber)){
-          if (!isNaN(this.default)) {
-            this.valueAsNumber = this.default;
-          }
-          return;
-        }
-
         this.valueAsNumber = this._checkValueAsNumber(valueAsNumber, oldValue);
       }
 
@@ -150,18 +126,20 @@
         }
       }
 
+      _computeDefaultValue(value) {
+        if (!isNaN(this.default)) {
+          return +this.default;
+        } else if (!isNaN(this.min)) {
+          return +this.min;
+        } else if (!isNaN(this.max)) {
+          return +this.max;
+        }
+        return value;
+      }
+
       _checkValueAsNumber(value, oldValue) {
         if (isNaN(value)) {
-          if (!isNaN(oldValue)) {
-            return oldValue;
-          } else if (!isNaN(this.default)) {
-            return this.default;
-          } else if (!isNaN(this.min)) {
-            return this.min;
-          } else if (!isNaN(this.max)) {
-            return this.max;
-          }
-          return value;
+          return this._computeDefaultValue(value);
         }
 
         const saturate = this.saturate,
@@ -186,10 +164,11 @@
         return this._checkStep(value, this.step);
       }
 
-      _updateValue() {
-        if (!isNaN(this.valueAsNumber)) {
-          this._valueAsNumberChanged(this.valueAsNumber, this.valueAsNumber);
+      _updateValueAsNumber() {
+        if (isNaN(this.valueAsNumber) && isNaN(this.default) && isNaN(this.min) && isNaN(this.max)) {
+          return;
         }
+        this._valueAsNumberChanged(this.valueAsNumber, this.valueAsNumber);
       }
 
       _checkStep(value, step) {
@@ -238,7 +217,7 @@
           this.step = Math.abs(step);
           return;
         }
-        this._updateValue();
+        this._updateValueAsNumber();
       }
 
       /**

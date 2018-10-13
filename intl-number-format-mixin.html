@@ -391,13 +391,12 @@
             case 'number':
               return input;
             case 'string':
+              if (input.length === 0) return;
               return translateInput(input);
             case 'object':
               if (input !== null && input.valueOf) {
                 return parse(input.valueOf());
               }
-            default:
-              return undefined;
           }
         }
 
