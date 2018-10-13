@@ -129,10 +129,6 @@
       _computeDefaultValue(value) {
         if (!isNaN(this.default)) {
           return +this.default;
-        } else if (!isNaN(this.min)) {
-          return +this.min;
-        } else if (!isNaN(this.max)) {
-          return +this.max;
         }
         return value;
       }
