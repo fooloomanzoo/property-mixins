@@ -112,8 +112,9 @@
           // WARNING: might cause unexpected behaviour
           this.__resettingValueAsNumber = true;
           this.valueAsNumber = undefined; // enshure the value is reset so that data-change can take replace
-          this.valueAsNumber = valueAsNumber;
           this.__resettingValueAsNumber = false;
+          this.valueAsNumber = valueAsNumber;
+          return;
         }
         this.valueAsNumber = this._checkValueAsNumber(valueAsNumber, oldValue);
       }

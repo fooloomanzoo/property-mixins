@@ -180,6 +180,19 @@
           element = fixture('negative zero');
         });
 
+        test('setting -0', done => {
+          element.valueAsNumber = -0;
+          assert.isTrue(numberUtilities.isNegative0(element.valueAsNumber), 'valueAsNumber is negative zero');
+          done();
+        });
+
+        test('setting -0 to +0', done => {
+          element.valueAsNumber = -0;
+          element.valueAsNumber = +0;
+          assert.isTrue(!numberUtilities.isNegative0(element.valueAsNumber), 'valueAsNumber is positive zero');
+          done();
+        });
+
         test('from 1 to +0', done => {
           element.valueAsNumber = 1;
           element.decrease();
