@@ -153,6 +153,9 @@
             type: Object
           },
 
+          /**
+           * value of the default date
+           */
           _defaultValue: {
             type: Number,
             computed: '_computeDefaultValue(default)'
@@ -168,12 +171,26 @@
           },
 
           /**
+           * value if the minimum date
+           */
+          _minValue: {
+            type: Number
+          },
+
+          /**
            * The maximal date, could be a number, a date-object or an iso-string in time, date or datetime-notation
            */
           max: {
             type: Object,
             notify: true,
             observer: '_maxChanged'
+          },
+
+          /**
+           * value if the maximum date
+           */
+          _maxValue: {
+            type: Number
           },
 
           /**
@@ -230,7 +247,7 @@
           },
 
           /**
-           * perspective starts at 0 (1970-01-01)
+           * if true perspective starts at 0 (1970-01-01)
            */
           _timeOnly: {
             type: Boolean,
@@ -262,7 +279,8 @@
           '_datetimeChanged(datetime)',
           '_dateTimeChanged(date, time)',
           '_timeZoneHoursMinutesChanged(_timeZoneHours, _timeZoneMinutes)',
-          '_defaultValueChanged(_defaultValue)'
+          '_defaultValueChanged(_defaultValue)',
+          '_minMaxValueChanged(_minValue, _maxValue)'
         ]
       }
 
@@ -293,19 +311,27 @@
        */
       setDate(d) {
         if (!isNaN(d)) {
-          this._correctTimezoneShift(d);
           d = this._checkThreshold(d);
-
+          this._checkDefaultTimezone(d);
           let toSet = {}, value = +d;
-          if (this.valueAsNumber !== value) {
-            toSet.valueAsNumber = value;
+          let offsetMinutes = this._computeTimezoneShift(d);
+
+          if (offsetMinutes !== this.offsetMinutes) {
+            // timezone shift occured
+            toSet = this._computeTimezone(offsetMinutes);
+            toSet.valueAsNumber = value + (offsetMinutes - this.offsetMinutes) * 6e4;
+            toSet.valueAsDate = new Date(toSet.valueAsNumber);
+          } else {
+            if (this.valueAsNumber !== value) {
+              toSet.valueAsNumber = value;
+            }
+            if (+this.valueAsDate !== value) {
+              toSet.valueAsDate = new Date(value);
+            }
           }
-          if (+this.valueAsDate !== value) {
-            toSet.valueAsDate = new Date(value);
-          }
-          // shift date, so that date properties are according to timezone
+          // shift date, so that utc-date-properties are according to timezone
           let transformedDate = new Date(value);
-          transformedDate.setMinutes(d.getMinutes() - this.offsetMinutes);
+          transformedDate.setMinutes(d.getMinutes() - offsetMinutes);
 
           transformedDate = this._clampUTC(transformedDate, this.clamp);
 
@@ -320,7 +346,7 @@
             isAm = hour < 12,
             date = this.__toDate(year, month, day),
             time = this._dateLocked ? '00:00:00.000' : this.__toTime(hour, minute, second, millisecond),
-            datetime = date + 'T' + time + this.timezone;
+            datetime = date + 'T' + time + (toSet.timezone || this.timezone);
 
           if(!(year === this.year && month === this.month && day === this.day && hour === this.hour && hour12 === this.hour12 && isAm === this.isAm && minute === this.minute && second === this.second && millisecond === this.millisecond)) {
             toSet.year = year;
@@ -339,7 +365,6 @@
             toSet.time = time;
             toSet.datetime = datetime;
           }
-
           this.setProperties(toSet);
         } else if (!isNaN(this._defaultValue)) {
           this.resetDate();
@@ -488,14 +513,9 @@
         if (millisecond !== undefined) {
           d.setUTCMilliseconds(millisecond);
         }
-        // correct timezone shift
-        offsetMinutes = offsetMinutes - localTimezoneOffset + d.getTimezoneOffset();
-
-        // shift back from UTC to timezone
-        d.setMinutes(d.getMinutes() + offsetMinutes);
-        this.__updatingTimezoneOffset = true;
-        this.setProperties({valueAsDate: d, offsetMinutes: offsetMinutes});
-        this.__updatingTimezoneOffset = false;
+        // correct timezone shift and shift back from UTC to timezone
+        d.setMinutes(d.getMinutes() + offsetMinutes - localTimezoneOffset + d.getTimezoneOffset());
+        this.setDate(d);
       }
 
       _dateTimeChanged(date, time) {
@@ -578,7 +598,6 @@
           return;
         }
         const d = new Date(+value);
-        this._checkDefaultTimezone(d);
         this.setDate(d);
       }
 
@@ -592,7 +611,6 @@
           this.resetDate();
           return;
         }
-        this._checkDefaultTimezone(d);
         this.setDate(new Date(d));
       }
 
@@ -635,46 +653,52 @@
           return;
         }
 
-        if (this.valueAsDate) {
-          this.setDate(this.valueAsDate);
+        if (!isNaN(this.valueAsNumber)) {
+          this.setDate(new Date(this.valueAsNumber));
         }
       }
 
       _minChanged(min) {
         const d = this._fromDatetime(min);
         if (isNaN(d)) {
+          this._minValue = undefined;
           return;
         }
-        const max = this.max && this._fromDatetime(this.max);
-        if (d > max) {
+        if (!isNaN(this._maxValue) && d > this._maxValue) {
+          // switch min and max
           this.setProperties({
             min: this.max,
-            max: min
+            max: min,
+            _minValue: this._maxValue,
+            _maxValue: +d
           });
           return;
         }
-        this._min = d;
-        if (!isNaN(this.valueAsNumber)) {
-          this.valueAsNumber = +this._checkThreshold(new Date(this.valueAsNumber));
-        }
+        this._minValue = +d;
       }
 
       _maxChanged(max) {
         const d = this._fromDatetime(max);
         if (isNaN(d)) {
+          this._maxValue = undefined;
           return;
         }
-        const min = this.min && this._fromDatetime(this.min);
-        if (min > d) {
+        if (!isNaN(this._minValue) && this._minValue > d) {
+          // switch min and max
           this.setProperties({
             min: max,
-            max: this.min
+            max: this.min,
+            _minValue: +d,
+            _maxValue: this._minValue
           });
           return;
         }
-        this._max = d;
+        this._maxValue = +d;
+      }
+
+      _minMaxValueChanged() {
         if (!isNaN(this.valueAsNumber)) {
-          this.valueAsNumber = +this._checkThreshold(new Date(this.valueAsNumber));
+          this.setDate(new Date(this.valueAsNumber));
         }
       }
 
@@ -684,11 +708,14 @@
        * @return {Date}   ether the threshold when the date is exceeding or the date object itself
        */
       _checkThreshold(d) {
-        if (this._min > d) {
-          return new Date(this._min);
+        if (isNaN(d)) {
+          return;
         }
-        if (this._max < d) {
-          return new Date(this._max);
+        if (this._minValue > d) {
+          return new Date(this._minValue);
+        }
+        if (this._maxValue < d) {
+          return new Date(this._maxValue);
         }
         return d;
       }
@@ -853,22 +880,15 @@
        * correct a timezone shift when date changes from winter to summertime (locally)
        * @param  {Date} d
        */
-      _correctTimezoneShift(d) {
-        this._checkDefaultTimezone(d);
-
-        if (this.__updatingTimezoneOffset === true) {
-          return;
-        }
-
+      _computeTimezoneShift(d) {
         const localTimezoneOffset = d.getTimezoneOffset();
+        let offsetMinutes = this.offsetMinutes;
 
         if (this._recentLocalTimezoneOffset !== localTimezoneOffset) {
-          this.__updatingTimezoneOffset = true;
-          // fixing offset when an inner shift occures (e.g. summer- or wintertime)
-          this.offsetMinutes = this.offsetMinutes - this._recentLocalTimezoneOffset + localTimezoneOffset;
-          this.__updatingTimezoneOffset = false;
+          offsetMinutes = offsetMinutes - this._recentLocalTimezoneOffset + localTimezoneOffset;
         }
         this._recentLocalTimezoneOffset = localTimezoneOffset;
+        return offsetMinutes;
       }
 
       _timezoneChanged(timezone, oldValue) {
@@ -933,7 +953,8 @@
           return {
             _timeZoneHours: offsetIsNegative ? 0 : -0,
             _timeZoneMinutes: 0,
-            timezone: '+00:00'
+            timezone: '+00:00',
+            offsetMinutes: offsetMinutes
           };
         }
         const hour = (offsetIsNegative ? 1 : -1) * Math.floor(Math.abs(offsetMinutes) / 60),
@@ -942,7 +963,8 @@
         return {
           _timeZoneHours: hour,
           _timeZoneMinutes: minute,
-          timezone: (offsetIsNegative ? '+' : '-') + this._pad(Math.abs(hour), 2) + ':' + this._pad(minute, 2)
+          timezone: (offsetIsNegative ? '+' : '-') + this._pad(Math.abs(hour), 2) + ':' + this._pad(minute, 2),
+          offsetMinutes: offsetMinutes
         }
       }
 
@@ -979,11 +1001,11 @@
       }
 
       _computeMaxDayOfMonth(year, month) {
-        const d = new Date(year, month, 0);
-        d.setFullYear(year);
+        const d = new Date(Date.UTC(year, month, 0));
+        d.setUTCFullYear(year);
 
         if (!isNaN(+d)) {
-          return d.getDate();
+          return d.getUTCDate();
         }
         return 31;
       }

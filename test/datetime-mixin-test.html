@@ -273,6 +273,32 @@
           done();
         });
 
+        test('summertime', done => {
+          // only when timezone locally changes
+          let d1 = new Date('2000-01-01T00:00:00Z');
+          let d2 = new Date('2000-07-01T00:00:00Z');
+
+          if (d1.getTimezoneOffset() !== d2.getTimezoneOffset()) {
+            // there is/was a summertime locally
+            element.valueAsNumber = +d1;
+            let timezone1 = element.timezone,
+              offsetMinutes1 = element.offsetMinutes;
+            assert.isDefined(timezone1);
+            assert.isDefined(offsetMinutes1);
+            // timezone shifts
+            element.valueAsNumber = +d2;
+            assert.notEqual(timezone1, element.timezone, 'timezone should shift');
+            assert.notEqual(offsetMinutes1, element.offsetMinutes, 'offsetMinutes should shift');
+            // shifting back
+            element.valueAsNumber = +d1;
+            assert.equal(timezone1, element.timezone, 'timezone should shift back');
+            assert.equal(offsetMinutes1, element.offsetMinutes, 'offsetMinutes should shift back');
+          } else {
+            console.info('There is no summertime locally.');
+          }
+          done();
+        });
+
         test('setting value-as-number', done => {
           element.setAttribute('value-as-number', 318244684567);
           const d = new Date(318244684567);
