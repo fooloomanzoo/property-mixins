@@ -318,7 +318,11 @@
 
           if (offsetMinutes !== this.offsetMinutes) {
             // timezone shift occured
-            toSet = this._computeTimezone(offsetMinutes);
+            // NOTE: timezone and offsetMinutes change before other values, so it is unsave to bind to them
+            // it is not possible to set them with the other values, because setProperties works asnychronically
+            this.__updatingTimezoneOffset = true;
+            this.setProperties(this._computeTimezone(offsetMinutes));
+            this.__updatingTimezoneOffset = false;
             toSet.valueAsNumber = value + (offsetMinutes - this.offsetMinutes) * 6e4;
             toSet.valueAsDate = new Date(toSet.valueAsNumber);
           } else {
@@ -346,7 +350,7 @@
             isAm = hour < 12,
             date = this.__toDate(year, month, day),
             time = this._dateLocked ? '00:00:00.000' : this.__toTime(hour, minute, second, millisecond),
-            datetime = date + 'T' + time + (toSet.timezone || this.timezone);
+            datetime = date + 'T' + time + this.timezone;
 
           if(!(year === this.year && month === this.month && day === this.day && hour === this.hour && hour12 === this.hour12 && isAm === this.isAm && minute === this.minute && second === this.second && millisecond === this.millisecond)) {
             toSet.year = year;
