@@ -17,12 +17,23 @@
         /**
          * Regular Expression for datetime-string
          */
-        this.regexpDatetime = /^([+-]?\d+-?\d\d-?\d\d)?(?:T?(?:(\d\d:?\d\d(?::?\d\d(?:\.?\d\d\d)?)?)([+-]\d\d:?\d\d|Z)?)?)$/;
+        this._regexpDatetime = /^([+-]?\d+-?\d\d-?\d\d)?(?:T?(?:(\d\d:?\d\d(?::?\d\d(?:\.?\d\d\d)?)?)([+-]\d\d:?\d\d|Z)?)?)$/;
 
         /**
          * Regular Expression for timezone-string
          */
-        this.regexpTimezone = /(?:([+-]\d\d):?(\d\d)|Z)$/;
+        this._regexpTimezone = /(?:([+-]\d\d):?(\d\d)|Z)$/;
+      }
+
+      /**
+       * overwritten of polymer to handle -0
+       */
+      _shouldPropertyChange(property, value, old) {
+        if (value === 0 && old === 0) {
+          // differs if sign is different
+          return (1/value !== 1/old)
+        }
+        return super._shouldPropertyChange(property, value, old);
       }
 
       static get properties() {
@@ -407,7 +418,7 @@
         if (!isNaN(this._defaultValue)) {
           if (typeof this.default === 'string') {
             // using the timezone of default
-            const match = this.regexpDatetime.exec(this.default);
+            const match = this._regexpDatetime.exec(this.default);
             if (match[3]) {
               this.__updatingTimezoneOffset = true;
               this.setProperties(this._computeTimezoneOffset(match[3]));
@@ -571,7 +582,7 @@
         }
 
         let d;
-        const match = this.regexpDatetime.exec(datetime);
+        const match = this._regexpDatetime.exec(datetime);
         if (match === null) {
           return;
         }
@@ -632,7 +643,7 @@
           // 'datetime' is a Date Object or Number
           return new Date(datetime);
         }
-        const match = this.regexpDatetime.exec(datetime);
+        const match = this._regexpDatetime.exec(datetime);
         if (match) {
           if (match[3]) {
             if (!match[1]) {
@@ -901,8 +912,8 @@
             this.resetDate();
           }
           return;
-        } else if (!(this.regexpTimezone.exec(timezone))) {
-          if (this.regexpTimezone.exec(oldValue)) {
+        } else if (!(this._regexpTimezone.exec(timezone))) {
+          if (this._regexpTimezone.exec(oldValue)) {
             this.setProperties(this._computeTimezoneOffset(oldValue));
             return;
           }
@@ -981,7 +992,7 @@
             timezone: '+00:00'
           };
         }
-        const match = this.regexpTimezone.exec(timezone);
+        const match = this._regexpTimezone.exec(timezone);
         if (match) {
           const hour = +match[1],
             minute = +match[2],
@@ -1012,17 +1023,6 @@
           return d.getUTCDate();
         }
         return 31;
-      }
-
-      /**
-       * overwritten of polymer to handle -0
-       */
-      _shouldPropertyChange(property, value, old) {
-        if (value === 0 && old === 0) {
-          // differs if sign is different
-          return (1/value !== 1/old)
-        }
-        return super._shouldPropertyChange(property, value, old);
       }
     }
   }
