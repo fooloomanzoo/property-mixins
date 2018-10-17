@@ -295,7 +295,7 @@
           if (alwaysSign) {
             return function(n) {
               if (isNaN(n)) return '';
-              return `${n >= 0 ? '+' : (numberUtilities.isNegative0(n) ? '-' : '')}${format(n)}${unitSeparator}${unit}`;
+              return `${n > 0 ? '+' : (n < 0 ? '' : (numberUtilities.isNegative0(n) ? '-' : '+'))}${format(n)}${unitSeparator}${unit}`;
             }
           }
           return function(n) {
@@ -306,7 +306,7 @@
         if (alwaysSign) {
           return function(n) {
             if (isNaN(n)) return '';
-            return `${n >= 0 ? '+' : (numberUtilities.isNegative0(n) ? '-' : '')}${format(n)}`;
+            return `${n > 0 ? '+' : (n < 0 ? '' : (numberUtilities.isNegative0(n) ? '-' : '+'))}${format(n)}`;
           }
         }
         return function(n) {

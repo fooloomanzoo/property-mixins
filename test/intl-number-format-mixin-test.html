@@ -65,6 +65,12 @@
         test('keep negative zero', done => {
           assert.equal(element.formatNumber(-0), '-0', 'format negative zero');
           assert.isTrue(numberUtilities.isNegative0(element.parseNumber('-0')), 'parse negative zero');
+          element.setProperties({minimumIntegerDigits: 4}, true);
+          assert.equal(element.formatNumber(-0), '-0000', 'format negative zero');
+          element.setProperties({unit: '°', unitSeparator: ' '}, true);
+          assert.equal(element.formatNumber(-0), '-0000 °', 'format negative zero');
+          element.setProperties({minimumIntegerDigits: 0}, true);
+          assert.equal(element.formatNumber(-0), '-0 °', 'format negative zero');
           done();
         });
 
