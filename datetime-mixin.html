@@ -940,6 +940,10 @@
 
       _timeZoneHoursMinutesChanged(hour, minute) {
         if (isNaN(hour) || isNaN(minute)) {
+          this.setProperties({
+            _timeZoneHours: isNaN(hour) ? 0 : hour,
+            _timeZoneMinutes: isNaN(minute) ? 0 : minute
+          });
           return;
         }
         const hourIsNegative = numberUtilities.isNegative(hour)
