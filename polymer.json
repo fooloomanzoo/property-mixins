@@ -1,0 +1,16 @@
+{
+  "sources": [
+    "color-mixin.html",
+    "datetime-mixin.html",
+    "duration-mixin.html",
+    "intl-datetime-format-mixin.html",
+    "intl-number-format-mixin.html",
+    "number-utilities.html",
+    "range-mixin.html"
+  ],
+  "lint": {
+    "rules": [
+      "polymer-2"
+    ]
+  }
+}

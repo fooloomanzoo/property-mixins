@@ -1,4 +1,4 @@
-<link rel="import" href="range-mixin.html">
+<link rel="import" href="../polymer/lib/utils/mixin.html">
 <link rel="import" href="number-utilities.html">
 
 <script>
@@ -13,7 +13,7 @@
    * @param {Object} superClass class to extend
    * @return {Object} extended class
    */
-  const IntlNumberFormatMixin = superClass => { // eslint-disable-line no-unused-vars no-undef
+  const IntlNumberFormatMixin = function(superClass) { // eslint-disable-line no-unused-vars no-undef
 
     return class extends superClass {
 
@@ -405,5 +405,5 @@
     }
   }
 
-  window.IntlNumberFormatMixin = IntlNumberFormatMixin;
+  window.IntlNumberFormatMixin = Polymer.dedupingMixin(IntlNumberFormatMixin);
 </script>

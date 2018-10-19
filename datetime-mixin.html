@@ -1,3 +1,5 @@
+<link rel="import" href="../polymer/lib/utils/mixin.html">
+<link rel="import" href="intl-datetime-format-mixin.html">
 <link rel="import" href="number-utilities.html">
 <script>
   /**
@@ -6,11 +8,13 @@
    * @mixinFunction
    * @polymer
    *
+   * @appliesMixin IntlDatetimeFormatMixin
+   *
    * @demo demo/datetime-demo.html
    */
-  const DatetimeMixin = superClass => { // eslint-disable-line no-unused-vars no-undef
+  const DatetimeMixin = function(superClass) { // eslint-disable-line no-unused-vars no-undef
 
-    return class extends (superClass) { // eslint-disable-line no-undef
+    return class extends IntlDatetimeFormatMixin(superClass) { // eslint-disable-line no-undef
 
       constructor() {
         super();
@@ -940,10 +944,6 @@
 
       _timeZoneHoursMinutesChanged(hour, minute) {
         if (isNaN(hour) || isNaN(minute)) {
-          this.setProperties({
-            _timeZoneHours: isNaN(hour) ? 0 : hour,
-            _timeZoneMinutes: isNaN(minute) ? 0 : minute
-          });
           return;
         }
         const hourIsNegative = numberUtilities.isNegative(hour)
@@ -1023,7 +1023,7 @@
         const d = new Date(Date.UTC(year, month, 0));
         d.setUTCFullYear(year);
 
-        if (!isNaN(+d)) {
+        if (!isNaN(d)) {
           return d.getUTCDate();
         }
         return 31;
@@ -1031,5 +1031,5 @@
     }
   }
 
-  window.DatetimeMixin = DatetimeMixin;
+  window.DatetimeMixin = Polymer.dedupingMixin(DatetimeMixin);
 </script>

@@ -1,3 +1,4 @@
+<link rel="import" href="../polymer/lib/utils/mixin.html">
 <link rel="import" href="number-utilities.html">
 <script>
   /**
@@ -8,7 +9,7 @@
    *
    * @demo demo/color-demo.html
    */
-  const ColorMixin = (superClass) => { // eslint-disable-line no-unused-vars no-undef
+  const ColorMixin = function(superClass) { // eslint-disable-line no-unused-vars no-undef
 
     return class extends superClass {
 
@@ -650,5 +651,5 @@
     }
   }
 
-  window.ColorMixin = ColorMixin;
+  window.ColorMixin = Polymer.dedupingMixin(ColorMixin);
 </script>

@@ -1,3 +1,4 @@
+<link rel="import" href="../polymer/lib/utils/mixin.html">
 <script>
   /**
    * Mixin that extends duration properties of a time period to an element.
@@ -8,7 +9,7 @@
    * @param {Object} superClass class to extend
    * @return {Object} extended class
    */
-  const DurationMixin = superClass => { // eslint-disable-line no-unused-vars no-undef
+  const DurationMixin = function(superClass) { // eslint-disable-line no-unused-vars no-undef
 
     return class extends superClass {
 
@@ -180,5 +181,5 @@
     }
   }
 
-  window.DurationMixin = DurationMixin;
+  window.DurationMixin = Polymer.dedupingMixin(DurationMixin);
 </script>

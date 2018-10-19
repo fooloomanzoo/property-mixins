@@ -24,7 +24,7 @@
     "tests"
   ],
   "dependencies": {
-    "polymer": "Polymer/polymer#^2"
+    "polymer": "Polymer/polymer#2.6.1"
   },
   "devDependencies": {
     "web-component-tester": "^6.5.0",
