@@ -270,16 +270,7 @@
           },
 
           /**
-           * exclusive max day of month
-           * @type {number}
-           */
-          _maxDayOfMonth: {
-            type: Number,
-            computed: '_computeMaxDayOfMonth(year, month)'
-          },
-
-          /**
-           * lock to date and ignore time
+           * if true, time will be `00:00:00.000`
            */
           _dateLocked: {
             type: Boolean,
@@ -357,10 +348,10 @@
           const year = transformedDate.getUTCFullYear(),
             month = transformedDate.getUTCMonth() + 1,
             day = transformedDate.getUTCDate(),
-            hour = transformedDate.getUTCHours(),
-            minute = transformedDate.getUTCMinutes(),
-            second = transformedDate.getUTCSeconds(),
-            millisecond = transformedDate.getUTCMilliseconds(),
+            hour = this._dateLocked ? 0 : transformedDate.getUTCHours(),
+            minute = this._dateLocked ? 0 : transformedDate.getUTCMinutes(),
+            second = this._dateLocked ? 0 : transformedDate.getUTCSeconds(),
+            millisecond = this._dateLocked ? 0 : transformedDate.getUTCMilliseconds(),
             hour12 = (hour === 0) ? 12 : (hour > 12 ? hour - 12 : hour),
             isAm = hour < 12,
             date = this.__toDate(year, month, day),
@@ -473,25 +464,21 @@
         if (isNaN(d)) {
           d = new Date(this.valueAsNumber !== undefined ? this.valueAsNumber : this.datetime);
           if (isNaN(d)) {
-            // when a component is timeOnly
-            if (this._timeOnly) {
+            // when a component is timeOnly and no date is set
+            if (this._timeOnly && !this.date) {
               // setting timezone to GMT if the date is not set
-              if (!this.timezone || !this.date) {
-                // this.__updatingTimezoneOffset = true;
-                // this.offsetMinutes = 0;
-                // this.__updatingTimezoneOffset = false;
-                if (this.time) {
-                  d = new Date('1970-01-01T' + this.time + 'Z');
-                } else {
-                  d = new Date(0);
-                }
+              if (!this.timezone) {
+                this.__updatingTimezoneOffset = true;
+                this.offsetMinutes = 0;
+                this.__updatingTimezoneOffset = false;
+                // d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
               }
-              if (!this.date) {
-                d.setUTCFullYear(1970);
-                d.setUTCMonth(0);
-                d.setUTCDate(1);
+              if (this.time) {
+                d = new Date('1970-01-01T' + this.time + 'Z');
+              } else {
+                d = new Date(0);
               }
-              d.setMinutes(d.getMinutes() + d.getTimezoneOffset());
+              // d.setMinutes(d.getMinutes() + d.getTimezoneOffset());
             } else if (this.date) {
               d = new Date(this.date + 'T' + (this.time || '00:00') + (this.timezone || 'Z'));
               if (!this.timezone) {
@@ -616,8 +603,7 @@
           this.resetDate();
           return;
         }
-        const d = new Date(+value);
-        this.setDate(d);
+        this.setDate(new Date(+value));
       }
 
       _valueAsDateChanged(d) {
@@ -639,85 +625,42 @@
        * @return {Date}   date
        */
       _fromDatetime(datetime) {
-        if (typeof datetime === 'boolean' || !datetime) {
-          return;
-        }
-
-        if ((typeof datetime === 'object' && datetime.getDate) || !isNaN(+datetime)) {
-          // 'datetime' is a Date Object or Number
-          return new Date(datetime);
-        }
-        const match = this._regexpDatetime.exec(datetime);
-        if (match) {
-          if (match[3]) {
-            if (!match[1]) {
-              match[0] = '1970-01-01T' + match[2] + match[3];
+        switch (typeof datetime) {
+          case 'object': // falls through
+            if (Array.isArray(datetime)) {
+              return new (Date.bind.apply(Date, [null].concat(datetime)));
             }
-            const d = new Date(match[0]);
-            return new Date(match[0]);
-          } else {
-            const d = new Date((match[1] || '1970-01-01') + 'T' + (match[2] || '00:00:00.000') + 'Z');
-            if (this.offsetMinutes !== undefined) {
-              d.setMinutes(d.getMinutes() + this.offsetMinutes);
-            } else {
-              d.setMinutes(d.getMinutes() + d.getTimezoneOffset());
+          case 'number':
+            if (isNaN(datetime)) {
+              return;
             }
-            return d;
+            return new Date(datetime);
+          case 'string': {
+            const match = this._regexpDatetime.exec(datetime);
+            if (match) {
+              if (match[3]) {
+                // datetime-string includes a timezone
+                if (match[1] === undefined) {
+                  match[0] = '1970-01-01T' + match[2] + match[3];
+                }
+                return new Date(match[0]);
+              } else {
+                // datetime-string does not include a timezone
+                // setting to GMT
+                const d = new Date((match[1] || '1970-01-01') + 'T' + (match[2] || '00:00:00.000') + 'Z');
+                if (isNaN(this.offsetMinutes)) {
+                  // apply local offset minutes
+                  d.setMinutes(d.getMinutes() + d.getTimezoneOffset());
+                } else {
+                  // apply offset minutes if set
+                  d.setMinutes(d.getMinutes() + this.offsetMinutes);
+                }
+                return d;
+              }
+            }
           }
-        }
-      }
-
-      _clampChanged(clamp) {
-        if (clamp === undefined) {
-          return;
-        }
-
-        if (!isNaN(this.valueAsNumber)) {
-          this.setDate(new Date(this.valueAsNumber));
-        }
-      }
-
-      _minChanged(min) {
-        const d = this._fromDatetime(min);
-        if (isNaN(d)) {
-          this._minValue = undefined;
-          return;
-        }
-        if (!isNaN(this._maxValue) && d > this._maxValue) {
-          // switch min and max
-          this.setProperties({
-            min: this.max,
-            max: min,
-            _minValue: this._maxValue,
-            _maxValue: +d
-          });
-          return;
-        }
-        this._minValue = +d;
-      }
-
-      _maxChanged(max) {
-        const d = this._fromDatetime(max);
-        if (isNaN(d)) {
-          this._maxValue = undefined;
-          return;
-        }
-        if (!isNaN(this._minValue) && this._minValue > d) {
-          // switch min and max
-          this.setProperties({
-            min: max,
-            max: this.min,
-            _minValue: +d,
-            _maxValue: this._minValue
-          });
-          return;
-        }
-        this._maxValue = +d;
-      }
-
-      _minMaxValueChanged() {
-        if (!isNaN(this.valueAsNumber)) {
-          this.setDate(new Date(this.valueAsNumber));
+          default:
+            return;
         }
       }
 
@@ -852,28 +795,18 @@
       }
 
       /**
-       * `hour12` is the hour in hour12-format, that starts is minimal 1 and maximal 12, midnight is at 12am and noon is 12pm
-       */
-      _hour12Changed(hour12, old) {
-        if (hour12 === undefined || hour12 === old) return;
-
-        this.hour = (hour12 === 12) ? (this.isAm ? 0 : 12) : (this.isAm ? hour12 : hour12 + 12);
-      }
-
-      _isAmChanged(isAm, old) {
-        if (isAm === undefined || isAm === old) return;
-
-        this._hour12Changed(this.hour12);
-      }
-
-      /**
        * clamp to date component
        */
       _ifClamped(clamp, comp, hidden) {
         const features = ['month', 'day', 'hour', 'minute', 'second', 'millisecond'];
         const pos = features.indexOf(clamp);
-        const index = features.indexOf(comp);
-        return hidden || (pos !== -1 && index !== -1 && pos <= index);
+        return hidden || (pos !== -1 && pos <= features.indexOf(comp));
+      }
+      /**
+       * clamp to date component
+       */
+      _ifNotClamped(clamp, comp, hidden) {
+        return !this._ifClamped(clamp, comp, hidden);
       }
 
       /**
@@ -908,6 +841,74 @@
         }
         this._recentLocalTimezoneOffset = localTimezoneOffset;
         return offsetMinutes;
+      }
+
+      _clampChanged(clamp) {
+        if (clamp === undefined) {
+          return;
+        }
+
+        if (!isNaN(this.valueAsNumber)) {
+          this.setDate(new Date(this.valueAsNumber));
+        }
+      }
+
+      _minChanged(min) {
+        const d = this._fromDatetime(min);
+        if (isNaN(d)) {
+          this._minValue = undefined;
+          return;
+        }
+        if (!isNaN(this._maxValue) && d > this._maxValue) {
+          // switch min and max
+          this.setProperties({
+            min: this.max,
+            max: min,
+            _minValue: this._maxValue,
+            _maxValue: +d
+          });
+          return;
+        }
+        this._minValue = +d;
+      }
+
+      _maxChanged(max) {
+        const d = this._fromDatetime(max);
+        if (isNaN(d)) {
+          this._maxValue = undefined;
+          return;
+        }
+        if (!isNaN(this._minValue) && this._minValue > d) {
+          // switch min and max
+          this.setProperties({
+            min: max,
+            max: this.min,
+            _minValue: +d,
+            _maxValue: this._minValue
+          });
+          return;
+        }
+        this._maxValue = +d;
+      }
+
+      _minMaxValueChanged() {
+        if (!isNaN(this.valueAsNumber)) {
+          this.setDate(new Date(this.valueAsNumber));
+        }
+      }
+
+      _hour12Changed(hour12, old) {
+        if (hour12 === undefined || hour12 === old) return;
+        /**
+         * `hour12` is the hour in hour12-format, that starts is minimal 1 and maximal 12, midnight is at 12am and noon is 12pm
+         */
+        this.hour = (hour12 === 12) ? (this.isAm ? 0 : 12) : (this.isAm ? hour12 : hour12 + 12);
+      }
+
+      _isAmChanged(isAm, old) {
+        if (isAm === undefined || isAm === old) return;
+
+        this._hour12Changed(this.hour12);
       }
 
       _timezoneChanged(timezone, oldValue) {
@@ -963,6 +964,19 @@
         });
       }
 
+      /**
+       * @typedef {Object} TimeZoneProperties
+       * @property {Number} _timeZoneHours The hours of the timezone
+       * @property {Number} _timeZoneMinutes The minutes of the timezone
+       * @property {String} timezone The timezone-string
+       * @property {Number} offsetMinutes The offset minutes
+       */
+
+       /**
+        * compute the timezone properties from given offset minutes
+        * @param {Number} offsetMinutes The offset minutes
+        * @return {TimeZoneProperties} The timezone properties
+        */
       _computeTimezone(offsetMinutes) { // offset in minute
         if (isNaN(offsetMinutes)) {
           return {};
@@ -987,6 +1001,11 @@
         }
       }
 
+      /**
+       * compute the timezone properties from a given timezone-string
+       * @param {String} timezone The timezone-string
+       * @return {TimeZoneProperties} The timezone properties
+       */
       _computeTimezoneOffset(timezone) {
         if (timezone === 'Z') {
           return {
@@ -1019,11 +1038,17 @@
         }
       }
 
+      /**
+       * compute the last day of a month in a year
+       * @param  {Number} year  the year
+       * @param  {Number} month the month
+       * @return {Number}       the last day of the month
+       */
       _computeMaxDayOfMonth(year, month) {
         const d = new Date(Date.UTC(year, month, 0));
-        d.setUTCFullYear(year);
 
         if (!isNaN(d)) {
+          d.setUTCFullYear(year);
           return d.getUTCDate();
         }
         return 31;

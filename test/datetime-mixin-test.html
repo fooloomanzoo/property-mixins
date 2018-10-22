@@ -277,7 +277,7 @@
           // only when timezone locally changes
           let d = new Date('2000-01-01T00:00:00Z');
           let d2 = new Date('2000-07-01T00:00:00Z');
-          
+
           if (d.getTimezoneOffset() !== d2.getTimezoneOffset()) {
             // there is/was a summertime locally
             element.valueAsNumber = +d;

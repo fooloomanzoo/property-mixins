@@ -199,7 +199,8 @@
           // setting datetime order
           const order = {
             parts: [],
-            timeFirst: occurrence.year > occurrence.hour
+            timeFirst: occurrence.year > occurrence.hour,
+            dateFirst: occurrence.year < occurrence.hour
           };
 
           if (occurrence.year < occurrence.month) {
