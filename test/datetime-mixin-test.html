@@ -273,7 +273,7 @@
           done();
         });
 
-        test('summertime', done => {
+        test('summertime shift', done => {
           // only when timezone locally changes
           let d = new Date('2000-01-01T00:00:00Z');
           let d2 = new Date('2000-07-01T00:00:00Z');
@@ -281,6 +281,7 @@
           if (d.getTimezoneOffset() !== d2.getTimezoneOffset()) {
             // there is/was a summertime locally
             element.valueAsNumber = +d;
+
             let timezone = element.timezone,
               offsetMinutes = element.offsetMinutes,
               hour = element.hour,
@@ -293,7 +294,7 @@
             // timezone shifts
             element.month = 7;
             assert.notEqual(timezone, element.timezone, 'timezone should shift');
-            assert.notEqual(offsetMinutes, element.offsetMinutes, 'offsetMinutes should shift');
+            assert.equal(element.offsetMinutes, d2.getTimezoneOffset(), 'offsetMinutes should shift');
             assert.equal(hour, element.hour, '1: hour should not shift');
             assert.equal(minute, element.minute, 'minute should not shift');
 
