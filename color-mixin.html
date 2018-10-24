@@ -19,7 +19,10 @@
         this._validateRgb = /^\s*rgb(a)?\(\s*(-?\d+)\s*,\s*(-?\d+)\s*,\s*(-?\d+)(?:\s*,\s*(-?\d*(?:\.(?:\d*)?)?))?\s*\)\s*$/;
         this._validateHex = /^\s*(?:(#[A-Fa-f0-9]{6})([A-Fa-f0-9]{2})?|(#[A-Fa-f0-9]{3})([A-Fa-f0-9])?)\s*$/;
         this._validateHsl = /^\s*hsl(a)?\(\s*(-?\d+(?:\.\d*)?)\s*,\s*(-?\d*(?:\.(?:\d*)?)?%?)\s*,\s*(-?\d*(?:\.(?:\d*)?)?%?)(?:\s*,\s*(-?\d*(?:\.(?:\d*)?)?))?\s*\)\s*$/;
+        this._defaultValidateColorString = /[\w().,#\s]*/;
         this._validatePercent = /(-?\d*(?:\.(?:\d*)?)?)%/;
+        this.randomColor = this.randomColor.bind(this);
+        this.resetColor = this.resetColor.bind(this);
       }
 
       static get properties() {
@@ -111,7 +114,7 @@
           /**
            * format is locked and does not switch according to the colorString
            */
-          lockFormat: {
+          fixedFormat: {
             type: Boolean
           },
           /**
@@ -206,7 +209,7 @@
 
       _colorStringChanged(colorString) {
         if (colorString === undefined) {
-          this._resetColor();
+          this.resetColor();
           return;
         }
 
@@ -292,7 +295,7 @@
           toSet = this._testColor(colorString);
           format = 'auto';
         }
-        if (!this.lockFormat && format && this.format !== format) {
+        if (!this.fixedFormat && format && this.format !== format) {
           toSet.format = format;
         }
         this.setProperties(toSet);
@@ -378,7 +381,7 @@
 
       _hexChanged(hex) {
         if (hex === undefined) {
-          this._resetColor();
+          this.resetColor();
           return;
         }
         let toSet = {};
@@ -399,7 +402,7 @@
 
       _rgbChanged(r, g, b) {
         if (isNaN(r) && isNaN(g) && isNaN(b)) {
-          this._resetColor();
+          this.resetColor();
           return;
         }
         if (isNaN(this.r) || isNaN(this.g) || isNaN(this.b)) {
@@ -450,7 +453,7 @@
 
       _hslChanged(h, s, l) {
         if (isNaN(h) && isNaN(s) && isNaN(l)) {
-          this._resetColor();
+          this.resetColor();
           return;
         }
         if (isNaN(this.h) || isNaN(this.s) || isNaN(this.l)) {
@@ -494,7 +497,7 @@
       /**
        * generate random color
        */
-      random() {
+      randomColor() {
         this.setProperties(this.randomRgb());
       }
 
@@ -627,7 +630,7 @@
         };
       }
 
-      _resetColor() {
+      resetColor() {
         this.setProperties({
           colorString: undefined,
           r: undefined,

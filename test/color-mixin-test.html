@@ -189,7 +189,7 @@
 
         test('convert from hex to hsl', done => {
           element.format = 'hsl';
-          element.lockFormat = true;
+          element.fixedFormat = true;
           element.colorString = '#123123';
 
           // assert.match(element.colorString, '', 'colorString should be set');
@@ -202,7 +202,7 @@
 
         test('convert from hex to rgb', done => {
           element.format = 'rgb';
-          element.lockFormat = true;
+          element.fixedFormat = true;
           element.colorString = '#123123';
 
           // assert.match(element.colorString, '', 'colorString should be set');
@@ -215,7 +215,7 @@
 
         test('convert from rgb to hex', done => {
           element.format = 'hex';
-          element.lockFormat = true;
+          element.fixedFormat = true;
           element.colorString = 'rgb(20,40,60)';
 
           // assert.match(element.colorString, '', 'colorString should be set');
@@ -228,7 +228,7 @@
 
         test('convert from rgb to hsl', done => {
           element.format = 'hsl';
-          element.lockFormat = true;
+          element.fixedFormat = true;
           element.colorString = 'rgb(20,40,60)';
 
           // assert.match(element.colorString, '', 'colorString should be set');
@@ -241,7 +241,7 @@
 
         test('convert from hsl to hex', done => {
           element.format = 'hex';
-          element.lockFormat = true;
+          element.fixedFormat = true;
           element.colorString = 'hsl(20,40%,60%)';
 
           // assert.match(element.colorString, '', 'colorString should be set');
@@ -254,7 +254,7 @@
 
         test('convert from hsl to rgb', done => {
           element.format = 'rgb';
-          element.lockFormat = true;
+          element.fixedFormat = true;
           element.colorString = 'hsl(20,40%,60%)';
 
           // assert.match(element.colorString, '', 'colorString should be set');
