@@ -67,8 +67,8 @@
           done();
         });
 
-        test('random', done => {
-          element.random();
+        test('randomColor', done => {
+          element.randomColor();
           // setting  is async, so wait one tick.
           Polymer.Base.async(() => {
             assert.isDefined(element.colorString, 'colorString should be set');
@@ -76,9 +76,9 @@
           }, 1);
         });
 
-        test('random (auto)', done => {
+        test('randomColor (auto)', done => {
           element.format = 'auto';
-          element.random();
+          element.randomColor();
 
           // assert.match(element.colorString, '', 'colorString should be set');
           // setting  is async, so wait one tick.
@@ -89,10 +89,10 @@
           }, 1);
         });
 
-        test('random (auto, alpha)', done => {
+        test('randomColor (auto, alpha)', done => {
           element.format = 'auto';
           element.alpha = 0.5;
-          element.random();
+          element.randomColor();
 
           // assert.match(element.colorString, '', 'colorString should be set');
           // setting  is async, so wait one tick.
@@ -107,9 +107,9 @@
           }, 1);
         });
 
-        test('random (rgb)', done => {
+        test('randomColor (rgb)', done => {
           element.format = 'rgb';
-          element.random();
+          element.randomColor();
 
           // assert.match(element.colorString, '', 'colorString should be set');
           // setting  is async, so wait one tick.
@@ -119,9 +119,9 @@
           }, 1);
         });
 
-        test('random (hsl)', done => {
+        test('randomColor (hsl)', done => {
           element.format = 'hsl';
-          element.random();
+          element.randomColor();
 
           // assert.match(element.colorString, '', 'colorString should be set');
           // setting  is async, so wait one tick.
@@ -133,7 +133,7 @@
 
         test('changing alpha', done => {
           element.format = 'rgb';
-          element.random();
+          element.randomColor();
 
           const r = element.r,
             g = element.g,
