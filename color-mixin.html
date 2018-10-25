@@ -1,5 +1,6 @@
 <link rel="import" href="../polymer/lib/utils/mixin.html">
 <link rel="import" href="number-utilities.html">
+
 <script>
   /**
    * Mixin that provides web-color-properties. Its `color-string` converts automatically beetween different formats (hex, rgb and hsl) and provides an alpha-colorString.
@@ -86,7 +87,6 @@
             value: 1,
             observer: '_alphaChanged'
           },
-
           /**
            * if true, colorString has alpha
            */
@@ -118,6 +118,13 @@
             type: Boolean
           },
           /**
+           * if true, hex alpha is supported by the browser
+           */
+          _hexAlphaSupported: {
+            type: Boolean,
+            readOnly: true
+          },
+          /**
            * value as color-string
            */
           colorString: {
@@ -145,7 +152,7 @@
             g: isNaN(this.g) ? rgb.g : this.g,
             b: isNaN(this.b) ? rgb.b : this.b
           });
-        } else if (!(isNaN(this.h) && isNaN(this.s) && isNaN(this.l)) ){
+        } else if (!(isNaN(this.h) && isNaN(this.s) && isNaN(this.l))) {
           const hsl = this.randomHsl();
           this.setProperties({
             h: isNaN(this.h) ? hsl.h : this.h,
@@ -166,7 +173,7 @@
         this._testCanvasContext = testcanvas.getContext("2d");
         // test if `#rrggbbaa` is supported
         const rgba = this._testColor('#ff000080');
-        this._hexAlphaSupported = (rgba.r === 255 && rgba.g === 0 && rgba.b === 0 && rgba.alpha === 0.5);
+        this._set_hexAlphaSupported(rgba.r === 255 && rgba.g === 0 && rgba.b === 0 && rgba.alpha === 0.5);
       }
 
       _testColor(value) {
@@ -176,7 +183,7 @@
         this._testCanvasContext.clearRect(0, 0, 1, 1);
         this._testCanvasContext.fillStyle = value || 'rgba(0,0,0,1)';
         this._testCanvasContext.fillRect(0, 0, 1, 1);
-        const imgData = this._testCanvasContext.getImageData(0,0,1,1);
+        const imgData = this._testCanvasContext.getImageData(0, 0, 1, 1);
         return {
           r: imgData.data[0],
           g: imgData.data[1],
@@ -204,15 +211,18 @@
           this.format = 'auto';
           return;
         }
-        this._debouncedSetValue();
+
+        const colorString = this._computeColorString(this.hex, this.r, this.g, this.b, this.h, this.s, this.l, this.alpha);
+        if (colorString !== this.colorString) {
+          this.colorString = colorString;
+        }
       }
 
       _colorStringChanged(colorString) {
-        if (colorString === undefined) {
+        if (!colorString) {
           this.resetColor();
           return;
         }
-
         let toSet = {},
           match,
           format;
@@ -246,7 +256,7 @@
             toSet.s = +toSet.s.toFixed((this.hslPrecision || 0) + 2);
             toSet.l = +toSet.l.toFixed((this.hslPrecision || 0) + 2);
           }
-        // rgb-format
+          // rgb-format
         } else if (match = colorString.match(this._validateRgb)) {
           if (match[1] === undefined) { // no alpha
             toSet.alpha = 1;
@@ -266,7 +276,7 @@
             toSet.g = Math.round(toSet.g);
             toSet.b = Math.round(toSet.b);
           }
-        // hex-format
+          // hex-format
         } else if (match = colorString.match(this._validateHex)) {
           if (match[1] !== undefined) { // six hex numbers
             toSet.hex = match[1];
@@ -301,22 +311,14 @@
         this.setProperties(toSet);
       }
 
-      _debouncedSetValue() {
-        if (this._activeSetValueJob) {
-          clearTimeout(this._activeSetValueJob);
-          this._activeSetValueJob = null;
-        }
-        this._activeSetValueJob = setTimeout(this._setValue.bind(this, false), 0)
-      }
-
-      _setValue() {
+      _computeColorString(hex, r, g, b, h, s, l, alpha) {
         switch (this.format) {
           case 'hsl':
-            if (!isNaN(this.h) && !isNaN(this.s) && !isNaN(this.l)) {
-              if (this.alphaMode === true) {
-                this.colorString = `hsla(${this.h.toFixed(this.hslPrecision || 0)}, ${(this.s*100).toFixed(this.hslPrecision || 0)}%, ${(this.l*100).toFixed(this.hslPrecision || 0)}%, ${this.alpha === undefined ? 1 : this.alpha})`;
+            if (!isNaN(h) && !isNaN(s) && !isNaN(l)) {
+              if (this.alphaMode === true || alpha !== 1) {
+                return `hsla(${h.toFixed(this.hslPrecision || 0)}, ${(s*100).toFixed(this.hslPrecision || 0)}%, ${(l*100).toFixed(this.hslPrecision || 0)}%, ${this.alpha === undefined ? 1 : this.alpha})`;
               } else {
-                this.colorString = `hsl(${this.h.toFixed(this.hslPrecision || 0)}, ${(this.s*100).toFixed(this.hslPrecision || 0)}%, ${(this.l*100).toFixed(this.hslPrecision || 0)}%)`;
+                return `hsl(${h.toFixed(this.hslPrecision || 0)}, ${(s*100).toFixed(this.hslPrecision || 0)}%, ${(l*100).toFixed(this.hslPrecision || 0)}%)`;
               }
             }
             break;
@@ -324,29 +326,27 @@
             if (!this.alphaMode) {
               // keeping color string if possible
               const rgba = this._testColor(this.colorString);
-              if (rgba.r === this.r && rgba.b === this.b && rgba.g === this.g) {
-                break;
+              if (rgba.r === r && rgba.b === this.b && rgba.g === this.g) {
+                return this.colorString;
               }
             } // falls through
           case 'hex':
-            if (this.hex !== undefined) {
+            if (hex !== undefined) {
               if (this.alphaMode === true) {
                 if (this._hexAlphaSupported) {
-                  this.colorString = `${this.hex}${this._alphaToHex(this.alpha, this.hex.length === 4 ? 1 : 2)}`;
-                  break;
+                  return `${hex}${this._alphaToHex(this.alpha, hex.length <= 4 ? 1 : 2)}`;
                 }
               } else {
-                this.colorString = this.hex;
-                break;
+                return hex;
               }
             } // falls through
           case 'rgb':
           default:
-            if (!isNaN(this.r) && !isNaN(this.g) && !isNaN(this.b)) {
-              if (this.alphaMode === true) {
-                this.colorString = `rgba(${Math.round(this.r)}, ${Math.round(this.g)}, ${Math.round(this.b)}, ${this.alpha === undefined ? 1 : this.alpha})`;
+            if (!isNaN(r) && !isNaN(g) && !isNaN(b)) {
+              if (this.alphaMode === true || this.alpha !== 1) {
+                return `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)}, ${this.alpha === undefined ? 1 : this.alpha})`;
               } else {
-                this.colorString = `rgb(${Math.round(this.r)}, ${Math.round(this.g)}, ${Math.round(this.b)})`;
+                return `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`;
               }
             }
         }
@@ -376,28 +376,65 @@
         if (alpha !== 1) {
           this.alphaMode = true;
         }
-        this._debouncedSetValue();
+        const colorString = this._computeColorString(this.hex, this.r, this.g, this.b, this.h, this.s, this.l, alpha);
+        if (colorString !== this.colorString) {
+          this.colorString = colorString;
+        }
       }
 
       _hexChanged(hex) {
-        if (hex === undefined) {
+        if (!hex) {
           this.resetColor();
           return;
         }
         let toSet = {};
-        const rgb = this.hexToRgb(hex);
 
-        if (rgb.r !== Math.round(this.r)) {
-          toSet.r = rgb.r;
+        let rgb = this.hexToRgb(hex);
+        let transformedRgb = this._normalizeRgb({
+          r: this.r,
+          g: this.g,
+          b: this.b
+        });
+        if (!(transformedRgb.r === rgb.r && transformedRgb.g === rgb.g && transformedRgb.b === rgb.b)) {
+          this.setProperties(rgb);
         }
-        if (rgb.g !== Math.round(this.g)) {
-          toSet.g = rgb.g;
+
+        // let hsl = this._normalizeHsl(this.rgbToHsl(rgb));
+        // f (!(this.h === hsl.h || this.s === hsl.s || this.l === hsl.l)) {
+        //   toSet.h = hsl.h;
+        //   toSet.s = hsl.s;
+        //   toSet.l = hsl.l;
+        // }
+        //
+        // const colorString = this._computeColorString(hex, rgb.r, rgb.g, rgb.b, hsl.h, hsl.s, hsl.l);
+        // if (colorString !== this.colorString) {
+        //   toSet.colorString = colorString;
+        // }
+        // this.setProperties(toSet);
+      }
+
+      _normalizeRgb(rgb) {
+        if (this.format !== 'hsl') {
+          rgb.r = Math.round(rgb.r);
+          rgb.g = Math.round(rgb.g);
+          rgb.b = Math.round(rgb.b);
         }
-        if (rgb.b !== Math.round(this.b)) {
-          toSet.b = rgb.b;
+        rgb.r = this._mathMod(rgb.r, 256);
+        rgb.g = this._mathMod(rgb.g, 256);
+        rgb.b = this._mathMod(rgb.b, 256);
+        return rgb;
+      }
+
+      _normalizeHsl(hsl) {
+        if (this.format === 'hsl') {
+          hsl.h = +hsl.h.toFixed(this.hslPrecision || 0);
+          hsl.s = +hsl.s.toFixed((this.hslPrecision || 0) + 2);
+          hsl.l = +hsl.l.toFixed((this.hslPrecision || 0) + 2);
         }
-        this.setProperties(toSet);
-        this._debouncedSetValue();
+        hsl.h = this._mathMod(hsl.h, 360);
+        hsl.s = this._normalizedClamp(hsl.s);
+        hsl.l = this._normalizedClamp(hsl.l);
+        return hsl;
       }
 
       _rgbChanged(r, g, b) {
@@ -405,50 +442,34 @@
           this.resetColor();
           return;
         }
-        if (isNaN(this.r) || isNaN(this.g) || isNaN(this.b)) {
+        if (isNaN(r) || isNaN(g) || isNaN(b)) {
+          // single property can be set without triggering property changes
           return;
         }
 
-        r = this._mathMod(this.format === 'hsl' ? +r : Math.round(r), 256);
-        g = this._mathMod(this.format === 'hsl' ? +g : Math.round(g), 256);
-        b = this._mathMod(this.format === 'hsl' ? +b : Math.round(b), 256);
-
-        if (r !== this.r || g !== this.g || b !== this.b) {
-          this.setProperties({
-            r: r,
-            g: g,
-            b: b
-          });
+        let rgb = this._normalizeRgb({r: r, g: g, b: b});
+        if (!(rgb.r === this.r && rgb.g === this.g && rgb.b === this.b)) {
+          // transformed rgb is different than the current rgb, so set the rgb
+          this.setProperties(rgb);
           return;
         }
 
         let toSet = {};
-        let hsl = this.rgbToHsl(r, g, b);
 
-        if (this.format === 'hsl') {
-          if (hsl.h !== undefined) {
-            hsl.h = +hsl.h.toFixed(this.hslPrecision || 0);
-          }
-          hsl.s = +hsl.s.toFixed((this.hslPrecision || 0) + 2);
-          hsl.l = +hsl.l.toFixed((this.hslPrecision || 0) + 2);
-        }
-        if (hsl.h !== undefined && hsl.h !== this.h) {
-          toSet.h = hsl.h;
-        }
-        if (hsl.s !== this.s) {
-          toSet.s = hsl.s;
-        }
-        if (hsl.l !== this.l) {
-          toSet.l = hsl.l;
+        let hsl = this._normalizeHsl(this.rgbToHsl(rgb));
+        if (!(this.h === hsl.h && this.s === hsl.s && this.l === hsl.l)) {
+          toSet = hsl;
         }
 
-        const hex = this.rgbToHex(r, g, b);
+        const hex = this.rgbToHex(rgb);
         if (hex !== this.hex) {
           toSet.hex = hex;
         }
-
+        const colorString = this._computeColorString(hex, rgb.r, rgb.g, rgb.b, hsl.h, hsl.s, hsl.l, this.alpha);
+        if (colorString !== this.colorString) {
+          toSet.colorString = colorString;
+        }
         this.setProperties(toSet);
-        this._debouncedSetValue();
       }
 
       _hslChanged(h, s, l) {
@@ -456,42 +477,33 @@
           this.resetColor();
           return;
         }
-        if (isNaN(this.h) || isNaN(this.s) || isNaN(this.l)) {
+        if (isNaN(h) || isNaN(s) || isNaN(l)) {
+          // single property can be set without triggering property changes
           return;
         }
 
-        h = this._mathMod(this.format !== 'hsl' ? +h : +h.toFixed(this.hslPrecision || 0), 360);
-        s = this._normalizedClamp(this.format !== 'hsl' ? +s : +s.toFixed((this.hslPrecision || 0) + 2));
-        l = this._normalizedClamp(this.format !== 'hsl' ? +l : +l.toFixed((this.hslPrecision || 0) + 2));
-
-        if (h !== this.h || s !== this.s || l !== this.l) {
-          this.setProperties({
-            h: h,
-            s: s,
-            l: l
-          });
+        let hsl = this._normalizeHsl({h: h, s: s, l: l});
+        if (!(this.h === hsl.h && this.s === hsl.s && this.l === hsl.l)) {
+          // transformed hsl is different than the current hsl, so set the hsl
+          this.setProperties(hsl);
           return;
         }
+
         let toSet = {};
-        const rgb = this.hslToRgb(h, s, l);
-
-        if (this.format !== 'hsl') {
-          rgb.r = Math.round(rgb.r);
-          rgb.g = Math.round(rgb.g);
-          rgb.b = Math.round(rgb.b);
-        }
-        if (rgb.r !== this.r) {
-          toSet.r = rgb.r;
-        }
-        if (rgb.g !== this.g) {
-          toSet.g = rgb.g;
-        }
-        if (rgb.b !== this.b) {
-          toSet.b = rgb.b;
+        const rgb = this._normalizeRgb(this.hslToRgb(hsl));
+        if (!(rgb.r === this.r && rgb.g === this.g && rgb.b === this.b)) {
+          toSet = rgb;
         }
 
+        const hex = this.rgbToHex(rgb);
+        if (hex !== this.hex) {
+          toSet.hex = hex;
+        }
+        const colorString = this._computeColorString(hex, rgb.r, rgb.g, rgb.b, hsl.h, hsl.s, hsl.l, this.alpha);
+        if (colorString !== this.colorString) {
+          toSet.colorString = colorString;
+        }
         this.setProperties(toSet);
-        this._debouncedSetValue();
       }
 
       /**
@@ -541,11 +553,11 @@
         };
       }
 
-      rgbToHex(r, g, b) {
-        if (isNaN(r) || isNaN(g) || isNaN(b)) {
+      rgbToHex(rgb) {
+        if (isNaN(rgb.r) || isNaN(rgb.g) || isNaN(rgb.b)) {
           return;
         }
-        return '#' + this._componentToHex(Math.round(r)) + this._componentToHex(Math.round(g)) + this._componentToHex(Math.round(b));
+        return '#' + this._componentToHex(Math.round(rgb.r)) + this._componentToHex(Math.round(rgb.g)) + this._componentToHex(Math.round(rgb.b));
       }
 
       _componentToHex(component) {
@@ -571,16 +583,16 @@
         return Math.round(100 * (parseInt(hex, 16) / base)) / 100;
       }
 
-      hslToRgb(h, s, l) { // not rounded yet
-        if (isNaN(h) || isNaN(s) || isNaN(l)) {
+      hslToRgb(hsl) { // not rounded yet
+        if (isNaN(hsl.h) || isNaN(hsl.s) || isNaN(hsl.l)) {
           return;
         }
-        const t2 = ((l <= 0.5) ? l * (s + 1) : l + s - (l * s)) * 255,
-          t1 = l * 2 * 255 - t2;
+        const t2 = ((hsl.l <= 0.5) ? hsl.l * (hsl.s + 1) : hsl.l + hsl.s - (hsl.l * hsl.s)) * 255,
+          t1 = hsl.l * 2 * 255 - t2;
         return {
-          r: this._mathMod(this.hueToComponent(t1, t2, h + 120), 256),
-          g: this._mathMod(this.hueToComponent(t1, t2, h), 256),
-          b: this._mathMod(this.hueToComponent(t1, t2, h - 120), 256)
+          r: this._mathMod(this.hueToComponent(t1, t2, hsl.h + 120), 256),
+          g: this._mathMod(this.hueToComponent(t1, t2, hsl.h), 256),
+          b: this._mathMod(this.hueToComponent(t1, t2, hsl.h - 120), 256)
         };
       }
 
@@ -593,12 +605,12 @@
         else return t1;
       }
 
-      rgbToHsl(r, g, b) {
-        if (isNaN(r) || isNaN(g) || isNaN(b)) {
+      rgbToHsl(rgb) {
+        if (isNaN(rgb.r) || isNaN(rgb.g) || isNaN(rgb.b)) {
           return;
         }
-        const max = Math.max(r, g, b),
-          min = Math.min(r, g, b);
+        const max = Math.max(rgb.r, rgb.g, rgb.b),
+          min = Math.min(rgb.r, rgb.g, rgb.b);
 
         const l = (max + min) / (2 * 255);
         const _c = max - min; // not-normalized chroma (for precision)
@@ -613,14 +625,14 @@
         const s = _c / (255 - Math.abs(max + min - 255));
         let h;
         switch (max) {
-          case r:
-            h = ((g - b) * 60) / _c;
+          case rgb.r:
+            h = ((rgb.g - rgb.b) * 60) / _c;
             break;
-          case g:
-            h = (((b - r) * 60) / _c) + 120;
+          case rgb.g:
+            h = (((rgb.b - rgb.r) * 60) / _c) + 120;
             break;
-          case b:
-            h = (((r - g) * 60) / _c) + 240;
+          case rgb.b:
+            h = (((rgb.r - rgb.g) * 60) / _c) + 240;
             break;
         }
         return {
