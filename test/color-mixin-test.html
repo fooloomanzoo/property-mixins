@@ -55,9 +55,11 @@
         assert.isDefined(element._validateHex.exec('#123123'), 'recognize 6-char hex');
         assert.isDefined(element._validateHex.exec('#12312388'), 'recognize 8-char hex');
         assert.isNull(element._validateHex.exec('#18'), 'should not recognize 2-char hex');
-        assert.isNull(element._validateHex.exec('#18234'), 'should not recognize 5-char hex');
-        assert.isNull(element._validateHex.exec('#1812121'), 'should not recognize 7-char hex');
-        assert.isNull(element._validateHex.exec('#181212122'), 'should not recognize 9-char hex');
+        // use unmatching hexes in favour of not a random color bahavior by testColor
+        // original _validateHex /^\s*(?:(#[A-Fa-f0-9]{6})([A-Fa-f0-9]{2})?|(#[A-Fa-f0-9]{3})([A-Fa-f0-9])?)\s*$/
+        // assert.isNull(element._validateHex.exec('#18234'), 'should not recognize 5-char hex');
+        // assert.isNull(element._validateHex.exec('#1812121'), 'should not recognize 7-char hex');
+        // assert.isNull(element._validateHex.exec('#181212122'), 'should not recognize 9-char hex');
         // rgb
         assert.isDefined(element._validateRgb.exec('rgb(22,255,66)'), 'recognize rgb');
         assert.isDefined(element._validateRgb.exec('rgba(22,255,66,0.3)'), 'recognize rgba');
@@ -143,14 +145,14 @@
       test('convert named colors', done => {
         element.format = 'auto';
         element.colorString = 'coral';
-        assert.equal(element.hex, '#ff7f50', 'hex is in set');
-        assert.equal(element.r, 255, 'r is in set');
-        assert.equal(element.g, 127, 'g is in set');
-        assert.equal(element.b, 80, 'b is in set');
-        assert.equal(Math.round(element.h), 16, 'h is in set');
-        assert.equal(+element.s.toFixed(element.hslPrecision + 2), 1, 's is in set');
-        assert.equal(+element.l.toFixed(element.hslPrecision + 2), 0.66, 'l is in set');
-        assert.equal(element.alpha, 1, 'alpha is in set');
+        assert.equal(element.hex, '#ff7f50', 'hex is set');
+        assert.equal(element.r, 255, 'r is set');
+        assert.equal(element.g, 127, 'g is set');
+        assert.equal(element.b, 80, 'b is set');
+        assert.equal(Math.round(element.h), 16, 'h is set');
+        assert.equal(+element.s.toFixed(element.hslPrecision + 2), 1, 's is set');
+        assert.equal(+element.l.toFixed(element.hslPrecision + 2), 0.66, 'l is set');
+        assert.equal(element.alpha, 1, 'alpha is set');
         done();
       });
 
@@ -199,6 +201,87 @@
         element.fixedFormat = true;
         element.colorString = 'hsl(20,40%,60%)';
         assert.match(element.colorString, element._validateRgb, 'colorString is in rgb')
+        done();
+      });
+    });
+
+    suite('reachability', () => {
+      let element;
+
+      setup(function() {
+        element = fixture('basic');
+      });
+
+      test('walk through red', done => {
+        element.format = 'rgb';
+        let g = element.g = Math.round(255 * Math.random());
+        let b = element.b = Math.round(255 * Math.random());
+
+        for (let r = 0; r < 256; r++) {
+          element.r = r;
+          assert.equal(element.r, r, `r does not change (r : ${r}, g : ${g}, b : ${b})`);
+          assert.equal(element.g, g, `g does not change (r : ${r}, g : ${g}, b : ${b})`);
+          assert.equal(element.b, b, `b does not change (r : ${r}, g : ${g}, b : ${b})`);
+        }
+        done();
+      });
+
+      test('walk through green', done => {
+        element.format = 'rgb';
+        let r = element.r = Math.round(255 * Math.random());
+        let b = element.b = Math.round(255 * Math.random());
+
+        for (let g = 0; g < 256; g++) {
+          element.g = g;
+          assert.equal(element.r, r, `r does not change (r : ${r}, g : ${g}, b : ${b})`);
+          assert.equal(element.g, g, `g does not change (r : ${r}, g : ${g}, b : ${b})`);
+          assert.equal(element.b, b, `b does not change (r : ${r}, g : ${g}, b : ${b})`);
+        }
+        done();
+      });
+
+      test('walk through blue', done => {
+        element.format = 'rgb';
+        let r = element.r = Math.round(255 * Math.random());
+        let g = element.g = Math.round(255 * Math.random());
+
+        for (let b = 0; b < 256; b++) {
+          element.b = b;
+          assert.equal(element.r, r, `r does not change (r : ${r}, g : ${g}, b : ${b})`);
+          assert.equal(element.g, g, `g does not change (r : ${r}, g : ${g}, b : ${b})`);
+          assert.equal(element.b, b, `b does not change (r : ${r}, g : ${g}, b : ${b})`);
+        }
+        done();
+      });
+
+      test('walk through hue', done => {
+        element.format = 'hsl';
+        let precision = element.hslPrecision || 0;
+        let s = element.s = +Math.round().toFixed(precision + 2);
+        let l = element.l = +Math.random().toFixed(precision + 2);
+        for (let h = 0; s < 360; h++) {
+          element.h = h;
+          assert.equal(element.h, h, `h does not change (h : ${h}, s : ${s}, l : ${l})`);
+          assert.equal(element.s, s, `s does not change (h : ${h}, s : ${s}, l : ${l})`);
+          assert.equal(element.l, l, `l does not change (h : ${h}, s : ${s}, l : ${l})`);
+        }
+        done();
+      });
+
+      test('walk through saturation and lightness', done => {
+        element.format = 'hsl';
+        let h = element.h = Math.round(359 * Math.random());
+        let precision = element.hslPrecision || 0;
+        for (let s = 0; s <= 1; s+=0.01) {
+          s = element.s = +s.toFixed(precision + 2);
+          for (let l = 0; l <= 1; l+=0.01) {
+            l = element.l = +l.toFixed(precision + 2);
+            element.setProperties({s: s, l: +l});
+            assert.equal(element.h, h, `h does not change (h : ${h}, s : ${s}, l : ${l})`);
+            assert.equal(element.s, s, `s does not change (h : ${h}, s : ${s}, l : ${l})`);
+            assert.equal(element.l, l, `l does not change (h : ${h}, s : ${s}, l : ${l})`);
+          }
+        }
         done();
       });
     });
