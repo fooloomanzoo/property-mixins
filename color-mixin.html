@@ -3,6 +3,20 @@
 
 <script>
   /**
+   * @typedef {Object} rgbObject rgb object
+   * @property {Number} r - The red part of the rgb color
+   * @property {Number} g - The green part of the rgb color
+   * @property {Number} b - The blue part of the rgb color
+   */
+
+  /**
+   * @typedef {Object} hslObject hsl object
+   * @property {Number} h The hue part of the hsl color
+   * @property {Number} s The saturation part of the hsl color
+   * @property {Number} l The lightness part of the hsl color
+   */
+
+  /**
    * Mixin that provides web-color-properties. Its `color-string` converts automatically beetween different formats (hex, rgb and hsl) and provides an alpha-colorString.
    *
    * @mixinFunction
@@ -142,24 +156,9 @@
         ];
       }
 
-      connectedCallback() {
-        super.connectedCallback();
+      ready() {
+        super.ready();
         this._createTestCanvas();
-        if (!(isNaN(this.r) && isNaN(this.g) && isNaN(this.b))) {
-          const rgb = this.randomRgb();
-          this.setProperties({
-            r: isNaN(this.r) ? rgb.r : this.r,
-            g: isNaN(this.g) ? rgb.g : this.g,
-            b: isNaN(this.b) ? rgb.b : this.b
-          });
-        } else if (!(isNaN(this.h) && isNaN(this.s) && isNaN(this.l))) {
-          const hsl = this.randomHsl();
-          this.setProperties({
-            h: isNaN(this.h) ? hsl.h : this.h,
-            s: isNaN(this.s) ? hsl.s : this.s,
-            l: isNaN(this.l) ? hsl.l : this.l
-          });
-        }
       }
 
       /**
@@ -167,31 +166,7 @@
        */
       randomColor() {
         this.__internalForcedUpdate = true;
-        this.setProperties(this.randomRgb());
-      }
-
-      /**
-       * generate random rgb-color
-       * @return {object} rgb-color object
-       */
-      randomRgb() {
-        return {
-          r: Math.round(255 * Math.random()),
-          g: Math.round(255 * Math.random()),
-          b: Math.round(255 * Math.random())
-        };
-      }
-
-      /**
-       * generate random hsl-color
-       * @return {object} rgb-color object
-       */
-      randomHsl() {
-        return {
-          h: Math.round(359 * Math.random()),
-          s: Math.random(),
-          l: Math.random()
-        };
+        this.setProperties(this._randomRgb());
       }
 
       /**
@@ -211,6 +186,9 @@
         })
       }
 
+      /**
+       * creates a canvas for testing a color string and browser capabilities
+       */
       _createTestCanvas() {
         const testcanvas = document.createElement('canvas');
         testcanvas.width = 1;
@@ -225,12 +203,15 @@
         this._set_hexAlphaSupported(rgba.r === 255 && rgba.g === 0 && rgba.b === 0 && rgba.alpha === 0.5);
       }
 
+      /**
+       * test a color string in local browser environment
+       */
       _testColor(value) {
         if (!this._testCanvasContext) {
           this._createTestCanvas();
         }
         this._testCanvasContext.clearRect(0, 0, 1, 1);
-        this._testCanvasContext.fillStyle = value || 'rgba(0,0,0,1)';
+        this._testCanvasContext.fillStyle = value || '#000';
         this._testCanvasContext.fillRect(0, 0, 1, 1);
         const imgData = this._testCanvasContext.getImageData(0, 0, 1, 1);
         return {
@@ -239,31 +220,6 @@
           b: imgData.data[2],
           alpha: this._hexToAlpha(imgData.data[3].toString(16), 2),
           alphaMode: imgData.data[3] !== 255
-        }
-      }
-
-      _alphaModeChanged(alphaMode) {
-        if (alphaMode !== true) {
-          this.alpha = 1;
-        }
-      }
-
-      _formatChanged(format, oldFormat) {
-        if (format === undefined || this.___internalForcedUpdate) {
-          return;
-        }
-        if (this._validFormats.indexOf(format) === -1) {
-          if (oldFormat && this._validFormats.indexOf(oldFormat) !== -1) {
-            this.format = oldFormat;
-            return;
-          }
-          this.format = 'auto';
-          return;
-        }
-
-        const colorString = this._computeColorString(this.hex, this.r, this.g, this.b, this.h, this.s, this.l);
-        if (colorString !== this.colorString) {
-          this.colorString = colorString;
         }
       }
 
@@ -338,34 +294,53 @@
           format = 'auto';
           toSet = this._testColor(colorString);
         }
+
         if (this.format !== format && !this.fixedFormat) {
           toSet.format = format;
         }
+
         this.__internalForcedUpdate = true;
         this.setProperties(toSet);
       }
 
-      _computeColorString(hex, r, g, b, h, s, l) {
+      /**
+       * compute color string
+       * @param  {rgbObject} rgb   The rgb object
+       * @param  {hslObject} hsl   The hsl object
+       * @param  {String} hex      The hex string
+       * @param  {String} oldColor The old color string before setting
+       * @return {[type]}          The computed color string
+       */
+      _computeColorString(rgb, hsl, hex, oldColor) {
         switch (this.format) {
           case 'hsl':
-            if (!isNaN(h) && !isNaN(s) && !isNaN(l)) {
+            if (hsl && !isNaN(hsl.h) && !isNaN(hsl.s) && !isNaN(hsl.l)) {
               if (this.alphaMode === true || this.alpha !== 1) {
-                return `hsla(${h.toFixed(this.hslPrecision || 0)}, ${(s*100).toFixed(this.hslPrecision || 0)}%, ${(l*100).toFixed(this.hslPrecision || 0)}%, ${this.alpha === undefined ? 1 : this.alpha})`;
+                return `hsla(${hsl.h}, ${hsl.s*100}%, ${hsl.l*100}%, ${this.alpha === undefined ? 1 : this.alpha})`;
               } else {
-                return `hsl(${h.toFixed(this.hslPrecision || 0)}, ${(s*100).toFixed(this.hslPrecision || 0)}%, ${(l*100).toFixed(this.hslPrecision || 0)}%)`;
+                return `hsl(${hsl.h}, ${hsl.s*100}%, ${hsl.l*100}%)`;
               }
             }
-            break;
           case 'auto':
-            if (!this.alphaMode) {
-              // keeping color string if possible
-              const rgba = this._testColor(this.colorString);
-              if (rgba.r === r && rgba.b === this.b && rgba.g === this.g) {
-                return this.colorString;
+            if (oldColor) {
+              const testRgb = this._testColor(oldColor);
+              const rgbIsNotSet = !rgb || isNaN(rgb.r) || isNaN(rgb.g) || isNaN(rgb.b);
+              if (!this.alphaMode && (rgbIsNotSet || (rgb.r === testRgb.r && rgb.b === testRgb.b && rgb.g === testRgb.g))) {
+                // keeping color string if possible
+                return oldColor;
               }
-            } // falls through
+              if (rgbIsNotSet) {
+                // rgb might not been set yet
+                rgb = testRgb;
+              }
+              if (!hex || oldColor.split('#').length > 1) {
+                // oldColor is in hex format and hex might not be set yet
+                hex = this.rgbToHex(rgb);
+              }
+            }
+            // falls through
           case 'hex':
-            if (hex !== undefined) {
+            if (hex) {
               if (this.alphaMode === true) {
                 if (this._hexAlphaSupported) {
                   return `${hex}${this._alphaToHex(this.alpha, hex.length <= 4 ? 1 : 2)}`;
@@ -376,13 +351,34 @@
             } // falls through
           case 'rgb':
           default:
-            if (!isNaN(r) && !isNaN(g) && !isNaN(b)) {
+            if (rgb && !(isNaN(rgb.r) || isNaN(rgb.g) || isNaN(rgb.b))) {
               if (this.alphaMode === true || this.alpha !== 1) {
-                return `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)}, ${this.alpha === undefined ? 1 : this.alpha})`;
+                return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${this.alpha === undefined ? 1 : this.alpha})`;
               } else {
-                return `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`;
+                return `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
               }
             }
+        }
+      }
+
+      _formatChanged(format, oldFormat) {
+        if (format === undefined || this.___internalForcedUpdate) {
+          return;
+        }
+        if (this._validFormats.indexOf(format) === -1) {
+          if (oldFormat && this._validFormats.indexOf(oldFormat) !== -1) {
+            this.format = oldFormat;
+            return;
+          }
+          this.format = 'auto';
+          return;
+        }
+
+        if (this.colorString) {
+          const colorString = this._computeColorString({r: this.r, g: this.g, b: this.b}, {h: this.h, s: this.s, l: this.l}, this.hex, this.colorString);
+          if (colorString !== this.colorString) {
+            this.colorString = colorString;
+          }
         }
       }
 
@@ -394,38 +390,30 @@
           this.alpha = 1;
           return;
         }
-        if (alpha > 1) {
-          if (oldAlpha !== undefined) {
-            this.alpha = oldAlpha;
-            return;
-          }
-          this.alpha = 1;
-          return;
-        }
-        if (alpha < 0) {
-          if (oldAlpha !== undefined) {
-            this.alpha = oldAlpha;
-            return;
-          }
-          this.alpha = 0;
+        alpha = this._normalizedClamp(alpha);
+        if (alpha !== this.alpha) {
+          this.alpha = alpha;
           return;
         }
         if (alpha !== 1) {
           this.alphaMode = true;
         }
-        const colorString = this._computeColorString(this.hex, this.r, this.g, this.b, this.h, this.s, this.l);
-        if (colorString !== this.colorString) {
-          this.colorString = colorString;
+        if (this.colorString) {
+          const colorString = this._computeColorString({r: this.r, g: this.g, b: this.b}, {h: this.h, s: this.s, l: this.l}, this.hex, this.colorString);
+          if (colorString !== this.colorString) {
+            this.colorString = colorString;
+          }
+        }
+      }
+
+      _alphaModeChanged(alphaMode) {
+        if (alphaMode !== true) {
+          this.alpha = 1;
         }
       }
 
       _hexChanged(hex) {
-        if (!hex) {
-          this.resetColor();
-          return;
-        }
-        if (this.format !== 'hex' && !this.__internalForcedUpdate) {
-          this._rgbChanged(this.r, this.g, this.b);
+        if (hex === undefined) {
           return;
         }
         let toSet = {};
@@ -437,7 +425,7 @@
       }
 
       _rgbChanged(r, g, b) {
-        if (this.format === 'hsl' && !this.__internalForcedUpdate) {
+        if (this.colorString && this.format === 'hsl' && !this.__internalForcedUpdate) {
           // hsl and rgb are not inversable
           this._hslChanged(this.h, this.s, this.l);
           return;
@@ -465,7 +453,7 @@
         if (hex !== this.hex) {
           toSet.hex = hex;
         }
-        const colorString = this._computeColorString(hex, rgb.r, rgb.g, rgb.b, hsl.h, hsl.s, hsl.l);
+        const colorString = this._computeColorString(rgb, hsl, hex, this.colorString);
         if (colorString !== this.colorString) {
           toSet.colorString = colorString;
         }
@@ -473,7 +461,7 @@
       }
 
       _hslChanged(h, s, l) {
-        if (this.format !== 'hsl' && !this.__internalForcedUpdate) {
+        if (this.colorString && this.format !== 'hsl' && !this.__internalForcedUpdate) {
           // hsl and rgb are not inversable
           this._rgbChanged(this.r, this.g, this.b);
           return;
@@ -501,26 +489,12 @@
         if (hex !== this.hex) {
           toSet.hex = hex;
         }
-        const colorString = this._computeColorString(hex, rgb.r, rgb.g, rgb.b, hsl.h, hsl.s, hsl.l);
+        const colorString = this._computeColorString(rgb, hsl, hex, this.colorString);
         if (colorString !== this.colorString) {
           toSet.colorString = colorString;
         }
         this.setProperties(toSet);
       }
-
-      /**
-       * @typedef {Object} rgbObject rgb object
-       * @property {Number} r - The red part of the rgb color
-       * @property {Number} g - The green part of the rgb color
-       * @property {Number} b - The blue part of the rgb color
-       */
-
-      /**
-       * @typedef {Object} hslObject hsl object
-       * @property {Number} h The hue part of the hsl color
-       * @property {Number} s The saturation part of the hsl color
-       * @property {Number} l The lightness part of the hsl color
-       */
 
       /**
        * convert hex to rgb
@@ -670,6 +644,30 @@
        hsl.s = this._normalizedClamp(+hsl.s.toFixed((this.hslPrecision || 0) + 2));
        hsl.l = this._normalizedClamp(+hsl.l.toFixed((this.hslPrecision || 0) + 2));
        return hsl;
+     }
+
+     /**
+      * generate random rgb-color
+      * @return {rgbObject} rgb-color object
+      */
+     _randomRgb() {
+       return {
+         r: Math.round(255 * Math.random()),
+         g: Math.round(255 * Math.random()),
+         b: Math.round(255 * Math.random())
+       };
+     }
+
+     /**
+      * generate random hsl-color
+      * @return {hslObject} hsl-color object
+      */
+     _randomHsl() {
+       return {
+         h: Math.round(359 * Math.random()),
+         s: Math.random(),
+         l: Math.random()
+       };
      }
 
       _mathMod(dividend, divisor) {

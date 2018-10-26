@@ -23,6 +23,21 @@
     </template>
   </test-fixture>
 
+  <test-fixture id="ChangingProperties">
+    <template>
+      <div>
+        <basic-color-element id="hex-color-string" color-string="#0f0"></basic-color-element>
+        <basic-color-element id="rgb-color-string" color-string="rgb(0,255,0)"></basic-color-element>
+        <basic-color-element id="hsl-color-string" color-string="hsl(120,100%,50%)"></basic-color-element>
+        <basic-color-element id="named-color-string" color-string="lime"></basic-color-element>
+        <basic-color-element id="named-color-string-format-auto" color-string="lime" format="auto"></basic-color-element>
+        <basic-color-element id="hex-property" hex="#0f0"></basic-color-element>
+        <basic-color-element id="rgb-properties" r="0" g="255" b="0"></basic-color-element>
+        <basic-color-element id="hsl-properties" h="120" s="1" l="0.5"></basic-color-element>
+      </div>
+    </template>
+  </test-fixture>
+
   <script>
     WCT.helpers.mixinSuite('basic-color-element');
 
@@ -80,58 +95,73 @@
       test('randomColor (auto)', done => {
         element.format = 'auto';
         element.randomColor();
-        assert.isDefined(element.colorString, 'colorString should be set');
-        assert.match(element.colorString, element._validateHex, 'colorString is in hex format')
-        done();
+        // wait a tick for possible template stamping
+        Polymer.Base.async(() => {
+          assert.isDefined(element.colorString, 'colorString should be set');
+          assert.match(element.colorString, element._validateHex, 'colorString is in hex format');
+          done();
+        })
       });
 
       test('randomColor (auto, alpha)', done => {
         element.format = 'auto';
         element.alpha = 0.5;
         element.randomColor();
-        assert.isDefined(element.colorString, 'colorString should be set');
-        if (element._hexAlphaSupported) {
-          assert.match(element.colorString, element._validateHex, 'colorString is in hex format')
-        } else {
-          assert.match(element.colorString, element._validateRgb, 'colorString is in rgb')
-        }
-        done();
+        // wait a tick for possible template stamping
+        Polymer.Base.async(() => {
+          assert.isDefined(element.colorString, 'colorString should be set');
+          if (element._hexAlphaSupported) {
+            assert.match(element.colorString, element._validateHex, 'colorString is in hex format')
+          } else {
+            assert.match(element.colorString, element._validateRgb, 'colorString is in rgb')
+          }
+          done();
+        });
       });
 
       test('randomColor (rgb)', done => {
         element.format = 'rgb';
         element.randomColor();
-        assert.match(element.colorString, element._validateRgb, 'colorString is in rgb')
-        done();
+        // wait a tick for possible template stamping
+        Polymer.Base.async(() => {
+          assert.match(element.colorString, element._validateRgb, 'colorString is in rgb')
+          done();
+        });
       });
 
       test('randomColor (hsl)', done => {
         element.format = 'hsl';
         element.randomColor();
-        assert.match(element.colorString, element._validateHsl, 'colorString is in hsl')
-        done();
+        // wait a tick for possible template stamping
+        Polymer.Base.async(() => {
+          assert.match(element.colorString, element._validateHsl, 'colorString is in hsl')
+          done();
+        });
       });
 
       test('changing alpha', done => {
         element.format = 'rgb';
         element.randomColor();
-        const r = element.r,
-          g = element.g,
-          b = element.b,
-          hex = element.hex,
-          h = element.h,
-          s = element.s,
-          l = element.l;
-        element.alpha = 0.1;
-        assert.equal(element.alpha, 0.1, 'alpha does not change');
-        assert.equal(element.r, r, 'r does not change');
-        assert.equal(element.g, g, 'g does not change');
-        assert.equal(element.b, b, 'b does not change');
-        assert.equal(element.hex, hex, 'hex does not change');
-        assert.equal(element.h, h, 'h does not change');
-        assert.equal(element.s, s, 's does not change');
-        assert.equal(element.l, l, 'l does not change');
-        done();
+        // wait a tick for possible template stamping
+        Polymer.Base.async(() => {
+          const r = element.r,
+            g = element.g,
+            b = element.b,
+            hex = element.hex,
+            h = element.h,
+            s = element.s,
+            l = element.l;
+          element.alpha = 0.1;
+          assert.equal(element.alpha, 0.1, 'alpha does not change');
+          assert.equal(element.r, r, 'r does not change');
+          assert.equal(element.g, g, 'g does not change');
+          assert.equal(element.b, b, 'b does not change');
+          assert.equal(element.hex, hex, 'hex does not change');
+          assert.equal(element.h, h, 'h does not change');
+          assert.equal(element.s, s, 's does not change');
+          assert.equal(element.l, l, 'l does not change');
+          done();
+        });
       });
 
       test('use hex alpha', done => {
@@ -144,67 +174,220 @@
 
       test('convert named colors', done => {
         element.format = 'auto';
+        element.fixedFormat = false;
         element.colorString = 'coral';
-        assert.equal(element.hex, '#ff7f50', 'hex is set');
-        assert.equal(element.r, 255, 'r is set');
-        assert.equal(element.g, 127, 'g is set');
-        assert.equal(element.b, 80, 'b is set');
-        assert.equal(Math.round(element.h), 16, 'h is set');
-        assert.equal(+element.s.toFixed(element.hslPrecision + 2), 1, 's is set');
-        assert.equal(+element.l.toFixed(element.hslPrecision + 2), 0.66, 'l is set');
-        assert.equal(element.alpha, 1, 'alpha is set');
-        done();
+        // wait a tick for possible template stamping
+        Polymer.Base.async(() => {
+          assert.equal(element.hex, '#ff7f50', 'hex is set');
+          assert.equal(element.r, 255, 'r is set');
+          assert.equal(element.g, 127, 'g is set');
+          assert.equal(element.b, 80, 'b is set');
+          assert.equal(Math.round(element.h), 16, 'h is set');
+          assert.equal(+element.s.toFixed(element.hslPrecision + 2), 1, 's is set');
+          assert.equal(+element.l.toFixed(element.hslPrecision + 2), 0.66, 'l is set');
+          assert.equal(element.alpha, 1, 'alpha is set');
+          assert.equal(element.format, 'auto', 'format does not change');
+          assert.equal(element.colorString, 'coral', 'colorString does not change');
+          done();
+        });
       });
 
       test('convert from hex to hsl', done => {
         element.format = 'hsl';
         element.fixedFormat = true;
         element.colorString = '#123123';
-        assert.match(element.colorString, element._validateHsl, 'colorString is in hsl')
-        done();
+        // wait a tick for possible template stamping
+        Polymer.Base.async(() => {
+          assert.match(element.colorString, element._validateHsl, 'colorString is in hsl')
+          done();
+        });
       });
 
       test('convert from hex to rgb', done => {
         element.format = 'rgb';
         element.fixedFormat = true;
         element.colorString = '#123123';
-        assert.match(element.colorString, element._validateRgb, 'colorString is in rgb')
-        done();
+        // wait a tick for possible template stamping
+        Polymer.Base.async(() => {
+          assert.match(element.colorString, element._validateRgb, 'colorString is in rgb')
+          done();
+        });
       });
 
       test('convert from rgb to hex', done => {
         element.format = 'hex';
         element.fixedFormat = true;
         element.colorString = 'rgb(20,40,60)';
-        assert.match(element.colorString, element._validateHex, 'colorString is in hex')
-        done();
+        // wait a tick for possible template stamping
+        Polymer.Base.async(() => {
+          assert.match(element.colorString, element._validateHex, 'colorString is in hex')
+          done();
+        });
       });
 
       test('convert from rgb to hsl', done => {
         element.format = 'hsl';
         element.fixedFormat = true;
         element.colorString = 'rgb(20,40,60)';
-        assert.match(element.colorString, element._validateHsl, 'colorString is in hsl')
-        done();
+        // wait a tick for possible template stamping
+        Polymer.Base.async(() => {
+          assert.match(element.colorString, element._validateHsl, 'colorString is in hsl')
+          done();
+        });
       });
 
       test('convert from hsl to hex', done => {
         element.format = 'hex';
         element.fixedFormat = true;
         element.colorString = 'hsl(20,40%,60%)';
-        assert.match(element.colorString, element._validateHex, 'colorString is in hex')
-        done();
+        // wait a tick for possible template stamping
+        Polymer.Base.async(() => {
+          assert.match(element.colorString, element._validateHex, 'colorString is in hex')
+          done();
+        });
       });
 
       test('convert from hsl to rgb', done => {
         element.format = 'rgb';
         element.fixedFormat = true;
         element.colorString = 'hsl(20,40%,60%)';
-        assert.match(element.colorString, element._validateRgb, 'colorString is in rgb')
-        done();
+        // wait a tick for possible template stamping
+        Polymer.Base.async(() => {
+          assert.match(element.colorString, element._validateRgb, 'colorString is in rgb')
+          done();
+        });
       });
     });
 
+    suite('setting properties', () => {
+      let f;
+
+      setup(function() {
+        f = fixture('ChangingProperties');
+      });
+
+      test('hex color-string', done => {
+        let element = f.querySelector('#hex-color-string');
+        Polymer.Base.async(() => {
+          assert.equal(element.r, 0, 'r should be set');
+          assert.equal(element.g, 255, 'g should be set');
+          assert.equal(element.b, 0, 'b should be set');
+          assert.equal(element.h, 120, 'h should be set');
+          assert.equal(element.s, 1, 's should be set');
+          assert.equal(element.l, 0.5, 'l should be set');
+          assert.equal(element.alpha, 1, 'alpha should be set');
+          assert.equal(element.hex, '#00ff00', 'hex should be set');
+          assert.isDefined(element.colorString, 'colorString is defined');
+          done();
+        });
+      });
+
+      test('rgb color-string', done => {
+        let element = f.querySelector('#rgb-color-string');
+        Polymer.Base.async(() => {
+          assert.equal(element.r, 0, 'r should be set');
+          assert.equal(element.g, 255, 'g should be set');
+          assert.equal(element.b, 0, 'b should be set');
+          assert.equal(element.h, 120, 'h should be set');
+          assert.equal(element.s, 1, 's should be set');
+          assert.equal(element.l, 0.5, 'l should be set');
+          assert.equal(element.alpha, 1, 'alpha should be set');
+          assert.equal(element.hex, '#00ff00', 'hex should be set');
+          assert.isDefined(element.colorString, 'colorString is defined');
+          done();
+        });
+      });
+
+      test('hsl color-string', done => {
+        let element = f.querySelector('#hsl-color-string');
+        Polymer.Base.async(() => {
+          assert.equal(element.r, 0, 'r should be set');
+          assert.equal(element.g, 255, 'g should be set');
+          assert.equal(element.b, 0, 'b should be set');
+          assert.equal(element.h, 120, 'h should be set');
+          assert.equal(element.s, 1, 's should be set');
+          assert.equal(element.l, 0.5, 'l should be set');
+          assert.equal(element.alpha, 1, 'alpha should be set');
+          assert.equal(element.hex, '#00ff00', 'hex should be set');
+          assert.isDefined(element.colorString, 'colorString is defined');
+          done();
+        });
+      });
+
+      test('named color-string', done => {
+        let element = f.querySelector('#named-color-string');
+        Polymer.Base.async(() => {
+          assert.equal(element.r, 0, 'r should be set');
+          assert.equal(element.g, 255, 'g should be set');
+          assert.equal(element.b, 0, 'b should be set');
+          assert.equal(element.h, 120, 'h should be set');
+          assert.equal(element.s, 1, 's should be set');
+          assert.equal(element.l, 0.5, 'l should be set');
+          assert.equal(element.alpha, 1, 'alpha should be set');
+          assert.equal(element.hex, '#00ff00', 'hex should be set');
+          assert.isDefined(element.colorString, 'colorString is defined');
+          done();
+        });
+      });
+
+      test('named color-string format="auto"', done => {
+        let element = f.querySelector('#named-color-string-format-auto');
+        Polymer.Base.async(() => {
+          assert.equal(element.format, 'auto', 'format does not change');
+          assert.equal(element.colorString, 'lime', 'colorString does not change');
+          done();
+        });
+      });
+
+      test('hex', done => {
+        let element = f.querySelector('#hex-property');
+        Polymer.Base.async(() => {
+          assert.equal(element.r, 0, 'r should be set');
+          assert.equal(element.g, 255, 'g should be set');
+          assert.equal(element.b, 0, 'b should be set');
+          assert.equal(element.h, 120, 'h should be set');
+          assert.equal(element.s, 1, 's should be set');
+          assert.equal(element.l, 0.5, 'l should be set');
+          assert.equal(element.alpha, 1, 'alpha should be set');
+          assert.equal(element.hex, '#00ff00', 'hex should be set');
+          assert.isDefined(element.colorString, 'colorString is defined');
+          done();
+        });
+      });
+
+      test('rgb properties', done => {
+        let element = f.querySelector('#rgb-properties');
+        Polymer.Base.async(() => {
+          assert.equal(element.r, 0, 'r should be set');
+          assert.equal(element.g, 255, 'g should be set');
+          assert.equal(element.b, 0, 'b should be set');
+          assert.equal(element.h, 120, 'h should be set');
+          assert.equal(element.s, 1, 's should be set');
+          assert.equal(element.l, 0.5, 'l should be set');
+          assert.equal(element.alpha, 1, 'alpha should be set');
+          assert.equal(element.hex, '#00ff00', 'hex should be set');
+          assert.isDefined(element.colorString, 'colorString is defined');
+          done();
+        });
+      });
+
+      test('hsl properties', done => {
+        let element = f.querySelector('#hsl-properties');
+        Polymer.Base.async(() => {
+          assert.equal(element.r, 0, 'r should be set');
+          assert.equal(element.g, 255, 'g should be set');
+          assert.equal(element.b, 0, 'b should be set');
+          assert.equal(element.h, 120, 'h should be set');
+          assert.equal(element.s, 1, 's should be set');
+          assert.equal(element.l, 0.5, 'l should be set');
+          assert.equal(element.alpha, 1, 'alpha should be set');
+          assert.equal(element.hex, '#00ff00', 'hex should be set');
+          assert.isDefined(element.colorString, 'colorString is defined');
+          done();
+        });
+      });
+    });
+    
     suite('reachability', () => {
       let element;
 
@@ -214,75 +397,93 @@
 
       test('walk through red', done => {
         element.format = 'rgb';
-        let g = element.g = Math.round(255 * Math.random());
-        let b = element.b = Math.round(255 * Math.random());
+        // wait a tick for possible template stamping
+        Polymer.Base.async(() => {
+          let g = element.g = Math.round(255 * Math.random());
+          let b = element.b = Math.round(255 * Math.random());
 
-        for (let r = 0; r < 256; r++) {
-          element.r = r;
-          assert.equal(element.r, r, `r does not change (r : ${r}, g : ${g}, b : ${b})`);
-          assert.equal(element.g, g, `g does not change (r : ${r}, g : ${g}, b : ${b})`);
-          assert.equal(element.b, b, `b does not change (r : ${r}, g : ${g}, b : ${b})`);
-        }
-        done();
+          for (let r = 0; r < 256; r++) {
+            element.r = r;
+            assert.equal(element.r, r, `r does not change (r : ${r}, g : ${g}, b : ${b})`);
+            assert.equal(element.g, g, `g does not change (r : ${r}, g : ${g}, b : ${b})`);
+            assert.equal(element.b, b, `b does not change (r : ${r}, g : ${g}, b : ${b})`);
+          }
+          done();
+        });
       });
 
       test('walk through green', done => {
         element.format = 'rgb';
-        let r = element.r = Math.round(255 * Math.random());
-        let b = element.b = Math.round(255 * Math.random());
+        // wait a tick for possible template stamping
+        Polymer.Base.async(() => {
+          let r = element.r = Math.round(255 * Math.random());
+          let b = element.b = Math.round(255 * Math.random());
 
-        for (let g = 0; g < 256; g++) {
-          element.g = g;
-          assert.equal(element.r, r, `r does not change (r : ${r}, g : ${g}, b : ${b})`);
-          assert.equal(element.g, g, `g does not change (r : ${r}, g : ${g}, b : ${b})`);
-          assert.equal(element.b, b, `b does not change (r : ${r}, g : ${g}, b : ${b})`);
-        }
-        done();
+          for (let g = 0; g < 256; g++) {
+            element.g = g;
+            assert.equal(element.r, r, `r does not change (r : ${r}, g : ${g}, b : ${b})`);
+            assert.equal(element.g, g, `g does not change (r : ${r}, g : ${g}, b : ${b})`);
+            assert.equal(element.b, b, `b does not change (r : ${r}, g : ${g}, b : ${b})`);
+          }
+          done();
+        });
       });
 
       test('walk through blue', done => {
         element.format = 'rgb';
-        let r = element.r = Math.round(255 * Math.random());
-        let g = element.g = Math.round(255 * Math.random());
+        // wait a tick for possible template stamping
+        Polymer.Base.async(() => {
+          let r = element.r = Math.round(255 * Math.random());
+          let g = element.g = Math.round(255 * Math.random());
 
-        for (let b = 0; b < 256; b++) {
-          element.b = b;
-          assert.equal(element.r, r, `r does not change (r : ${r}, g : ${g}, b : ${b})`);
-          assert.equal(element.g, g, `g does not change (r : ${r}, g : ${g}, b : ${b})`);
-          assert.equal(element.b, b, `b does not change (r : ${r}, g : ${g}, b : ${b})`);
-        }
-        done();
+          for (let b = 0; b < 256; b++) {
+            element.b = b;
+            assert.equal(element.r, r, `r does not change (r : ${r}, g : ${g}, b : ${b})`);
+            assert.equal(element.g, g, `g does not change (r : ${r}, g : ${g}, b : ${b})`);
+            assert.equal(element.b, b, `b does not change (r : ${r}, g : ${g}, b : ${b})`);
+          }
+          done();
+        });
       });
 
       test('walk through hue', done => {
         element.format = 'hsl';
-        let precision = element.hslPrecision || 0;
-        let s = element.s = +Math.round().toFixed(precision + 2);
-        let l = element.l = +Math.random().toFixed(precision + 2);
-        for (let h = 0; s < 360; h++) {
-          element.h = h;
-          assert.equal(element.h, h, `h does not change (h : ${h}, s : ${s}, l : ${l})`);
-          assert.equal(element.s, s, `s does not change (h : ${h}, s : ${s}, l : ${l})`);
-          assert.equal(element.l, l, `l does not change (h : ${h}, s : ${s}, l : ${l})`);
-        }
-        done();
-      });
-
-      test('walk through saturation and lightness', done => {
-        element.format = 'hsl';
-        let h = element.h = Math.round(359 * Math.random());
-        let precision = element.hslPrecision || 0;
-        for (let s = 0; s <= 1; s+=0.01) {
-          s = element.s = +s.toFixed(precision + 2);
-          for (let l = 0; l <= 1; l+=0.01) {
-            l = element.l = +l.toFixed(precision + 2);
-            element.setProperties({s: s, l: +l});
+        // wait a tick for possible template stamping
+        Polymer.Base.async(() => {
+          let precision = element.hslPrecision || 0;
+          let s = element.s = +Math.round().toFixed(precision + 2);
+          let l = element.l = +Math.random().toFixed(precision + 2);
+          for (let h = 0; s < 360; h++) {
+            element.h = h;
             assert.equal(element.h, h, `h does not change (h : ${h}, s : ${s}, l : ${l})`);
             assert.equal(element.s, s, `s does not change (h : ${h}, s : ${s}, l : ${l})`);
             assert.equal(element.l, l, `l does not change (h : ${h}, s : ${s}, l : ${l})`);
           }
-        }
-        done();
+          done();
+        });
+      });
+
+      test('walk through saturation and lightness', done => {
+        element.format = 'hsl';
+        // wait a tick for possible template stamping
+        Polymer.Base.async(() => {
+          let h = element.h = Math.round(359 * Math.random());
+          let precision = element.hslPrecision || 0;
+          for (let s = 0; s <= 1; s += 0.01) {
+            s = element.s = +s.toFixed(precision + 2);
+            for (let l = 0; l <= 1; l += 0.01) {
+              l = element.l = +l.toFixed(precision + 2);
+              element.setProperties({
+                s: s,
+                l: +l
+              });
+              assert.equal(element.h, h, `h does not change (h : ${h}, s : ${s}, l : ${l})`);
+              assert.equal(element.s, s, `s does not change (h : ${h}, s : ${s}, l : ${l})`);
+              assert.equal(element.l, l, `l does not change (h : ${h}, s : ${s}, l : ${l})`);
+            }
+          }
+          done();
+        });
       });
     });
   </script>
