@@ -182,7 +182,7 @@
           s: undefined,
           l: undefined,
           hex: undefined,
-          alpha: 1
+          alpha: undefined
         })
       }
 
@@ -224,7 +224,7 @@
       }
 
       _colorStringChanged(colorString) {
-        if (!colorString) {
+        if (!colorString || typeof colorString !== 'string') {
           this.resetColor();
           return;
         }
@@ -312,11 +312,12 @@
        * @return {[type]}          The computed color string
        */
       _computeColorString(rgb, hsl, hex, oldColor) {
+        const alpha = isNaN(this.alpha) ? 1 : this.alpha;
         switch (this.format) {
           case 'hsl':
             if (hsl && !isNaN(hsl.h) && !isNaN(hsl.s) && !isNaN(hsl.l)) {
-              if (this.alphaMode === true || this.alpha !== 1) {
-                return `hsla(${hsl.h}, ${hsl.s*100}%, ${hsl.l*100}%, ${this.alpha === undefined ? 1 : this.alpha})`;
+              if (this.alphaMode === true || alpha !== 1) {
+                return `hsla(${hsl.h}, ${hsl.s*100}%, ${hsl.l*100}%, ${alpha})`;
               } else {
                 return `hsl(${hsl.h}, ${hsl.s*100}%, ${hsl.l*100}%)`;
               }
@@ -352,8 +353,8 @@
           case 'rgb':
           default:
             if (rgb && !(isNaN(rgb.r) || isNaN(rgb.g) || isNaN(rgb.b))) {
-              if (this.alphaMode === true || this.alpha !== 1) {
-                return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${this.alpha === undefined ? 1 : this.alpha})`;
+              if (this.alphaMode === true || alpha !== 1) {
+                return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})`;
               } else {
                 return `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
               }
@@ -387,7 +388,6 @@
           return;
         }
         if (isNaN(alpha)) {
-          this.alpha = 1;
           return;
         }
         alpha = this._normalizedClamp(alpha);
