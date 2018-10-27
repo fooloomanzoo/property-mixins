@@ -240,7 +240,7 @@
             toSet.alpha = 1;
             toSet.alphaMode = false;
           } else { // with alpha
-            toSet.alpha = this._normalizedClamp(+match[5]);
+            toSet.alpha = numberUtilities.normalizedClamp(+match[5]);
             toSet.alphaMode = true;
           }
           toSet.h = +match[2];
@@ -263,7 +263,7 @@
             toSet.alpha = 1;
             toSet.alphaMode = false;
           } else { // with alpha
-            toSet.alpha = this._normalizedClamp(+match[5]);
+            toSet.alpha = numberUtilities.normalizedClamp(+match[5]);
             toSet.alphaMode = true;
           }
           Object.assign(toSet, this._normalizeRgb({r: +match[2], g: +match[3], b: +match[4]}));
@@ -295,8 +295,10 @@
           toSet = this._testColor(colorString);
         }
 
-        if (this.format !== format && !this.fixedFormat) {
-          toSet.format = format;
+        if (this.format !== format) {
+          if (!this.fixedFormat) {
+            toSet.format = format;
+          }
         }
 
         this.__internalForcedUpdate = true;
@@ -317,9 +319,9 @@
           case 'hsl':
             if (hsl && !isNaN(hsl.h) && !isNaN(hsl.s) && !isNaN(hsl.l)) {
               if (this.alphaMode === true || alpha !== 1) {
-                return `hsla(${hsl.h}, ${hsl.s*100}%, ${hsl.l*100}%, ${alpha})`;
+                return `hsla(${hsl.h.toFixed(this.hslPrecision || 0)}, ${numberUtilities.safeMult(hsl.s,100)}%, ${numberUtilities.safeMult(hsl.l,100)}%, ${alpha})`;
               } else {
-                return `hsl(${hsl.h}, ${hsl.s*100}%, ${hsl.l*100}%)`;
+                return `hsl(${hsl.h.toFixed(this.hslPrecision || 0)}, ${numberUtilities.safeMult(hsl.s,100)}%, ${numberUtilities.safeMult(hsl.l,100)}%)`;
               }
             }
           case 'auto':
@@ -390,7 +392,7 @@
         if (isNaN(alpha)) {
           return;
         }
-        alpha = this._normalizedClamp(alpha);
+        alpha = numberUtilities.normalizedClamp(alpha);
         if (alpha !== this.alpha) {
           this.alpha = alpha;
           return;
@@ -548,7 +550,7 @@
           return {
             h: defaultH || 0,
             s: 0,
-            l: this._normalizedClamp(l)
+            l: numberUtilities.normalizedClamp(l)
           };
         }
 
@@ -566,9 +568,9 @@
             break;
         }
         return {
-          h: this._mathMod(h, 360),
-          s: this._normalizedClamp(s),
-          l: this._normalizedClamp(l)
+          h: numberUtilities.mathMod(h, 360),
+          s: numberUtilities.normalizedClamp(s),
+          l: numberUtilities.normalizedClamp(l)
         };
       }
 
@@ -584,9 +586,9 @@
         const t2 = ((hsl.l <= 0.5) ? hsl.l * (hsl.s + 1) : hsl.l + hsl.s - (hsl.l * hsl.s)) * 255,
           t1 = hsl.l * 2 * 255 - t2;
         return {
-          r: this._mathMod(this._hueToComponent(t1, t2, hsl.h + 120), 256),
-          g: this._mathMod(this._hueToComponent(t1, t2, hsl.h), 256),
-          b: this._mathMod(this._hueToComponent(t1, t2, hsl.h - 120), 256)
+          r: numberUtilities.mathMod(this._hueToComponent(t1, t2, hsl.h + 120), 256),
+          g: numberUtilities.mathMod(this._hueToComponent(t1, t2, hsl.h), 256),
+          b: numberUtilities.mathMod(this._hueToComponent(t1, t2, hsl.h - 120), 256)
         };
       }
 
@@ -628,9 +630,9 @@
        * @return {rgbObject}     The normalized rgb-object.
        */
      _normalizeRgb(rgb) {
-       rgb.r = this._mathMod(Math.round(rgb.r), 256);
-       rgb.g = this._mathMod(Math.round(rgb.g), 256);
-       rgb.b = this._mathMod(Math.round(rgb.b), 256);
+       rgb.r = numberUtilities.mathMod(Math.round(rgb.r), 256);
+       rgb.g = numberUtilities.mathMod(Math.round(rgb.g), 256);
+       rgb.b = numberUtilities.mathMod(Math.round(rgb.b), 256);
        return rgb;
      }
 
@@ -640,9 +642,9 @@
       * @return {hslObject}     The normalized hsl-object.
       */
      _normalizeHsl(hsl) {
-       hsl.h = this._mathMod(+hsl.h.toFixed(this.hslPrecision || 0), 360);
-       hsl.s = this._normalizedClamp(+hsl.s.toFixed((this.hslPrecision || 0) + 2));
-       hsl.l = this._normalizedClamp(+hsl.l.toFixed((this.hslPrecision || 0) + 2));
+       hsl.h = numberUtilities.mathMod(+hsl.h.toFixed(this.hslPrecision || 0), 360);
+       hsl.s = numberUtilities.normalizedClamp(+hsl.s.toFixed((this.hslPrecision || 0) + 2));
+       hsl.l = numberUtilities.normalizedClamp(+hsl.l.toFixed((this.hslPrecision || 0) + 2));
        return hsl;
      }
 
@@ -669,14 +671,6 @@
          l: Math.random()
        };
      }
-
-      _mathMod(dividend, divisor) {
-        return numberUtilities.mathMod(dividend, divisor);
-      }
-
-      _normalizedClamp(n) {
-        return numberUtilities.normalizedClamp(n);
-      }
     }
   }
   window.ColorMixin = Polymer.dedupingMixin(ColorMixin);
