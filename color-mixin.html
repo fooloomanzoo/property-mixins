@@ -31,10 +31,10 @@
       constructor() {
         super();
         this._validFormats = ['rgb', 'hex', 'hsl', 'auto'];
-        this._validateRgb = /rgb(a)?\(\s*(-?\d+)\s*,\s*(-?\d+)\s*,\s*(-?\d+)(?:\s*,\s*(-?\d*(?:\.(?:\d*)?)?))?\s*\)/;
-        this._validateHex = /(?:(#[A-Fa-f0-9]{6})([A-Fa-f0-9]{2})?|(#[A-Fa-f0-9]{3})([A-Fa-f0-9])?)/;
-        this._validateHsl = /hsl(a)?\(\s*(-?\d+(?:\.\d*)?)\s*,\s*(-?\d*(?:\.(?:\d*)?)?%?)\s*,\s*(-?\d*(?:\.(?:\d*)?)?%?)(?:\s*,\s*(-?\d*(?:\.(?:\d*)?)?))?\s*\)/;
-        this._defaultValidateColorString = /[\w().,#\s]*/;
+        this._validateRgb = /^\s*rgb(a)?\(\s*(-?\d+)\s*,\s*(-?\d+)\s*,\s*(-?\d+)(?:\s*,\s*(-?\d*(?:\.(?:\d*)?)?))?\s*\)\s*$/;
+        this._validateHex = /^\s*(?:(#[A-Fa-f0-9]{6})([A-Fa-f0-9]{2})?|(#[A-Fa-f0-9]{3})([A-Fa-f0-9])?)\s*$/;
+        this._validateHsl = /^\s*hsl(a)?\(\s*(-?\d+(?:\.\d*)?)\s*,\s*(-?\d*(?:\.(?:\d*)?)?%?)\s*,\s*(-?\d*(?:\.(?:\d*)?)?%?)(?:\s*,\s*(-?\d*(?:\.(?:\d*)?)?))?\s*\)\s*$/;
+        this._validateAutoColorString = /^\s*(?:[\w]*|#[A-Fa-f0-9]{3,8}|rgba?\([\d,.\s]+\)|hsla?\([\d,.%\s]+\))\s*$/;
         this._validatePercent = /(-?\d*(?:\.(?:\d*)?)?)%/;
         this.randomColor = this.randomColor.bind(this);
         this.resetColor = this.resetColor.bind(this);
@@ -50,6 +50,7 @@
             notify: true,
             observer: '_hexChanged'
           },
+
           /**
            * Red
            */
@@ -57,6 +58,7 @@
             type: Number,
             notify: true
           },
+
           /**
            * Green
            */
@@ -64,6 +66,7 @@
             type: Number,
             notify: true
           },
+
           /**
            * Blue
            */
@@ -71,6 +74,7 @@
             type: Number,
             notify: true
           },
+
           /**
            * Hue
            */
@@ -78,6 +82,7 @@
             type: Number,
             notify: true
           },
+
           /**
            * Saturation (hsl)
            */
@@ -85,6 +90,7 @@
             type: Number,
             notify: true
           },
+
           /**
            * Lightness
            */
@@ -92,6 +98,7 @@
             type: Number,
             notify: true
           },
+
           /**
            * Alpha
            */
@@ -101,6 +108,7 @@
             value: 1,
             observer: '_alphaChanged'
           },
+
           /**
            * if true, colorString has alpha
            */
@@ -116,6 +124,7 @@
             type: Number,
             value: 0
           },
+
           /**
            * format of the colorString (possible colorStrings: 'rgb', 'hex', 'hsl', 'auto')
            */
@@ -125,12 +134,14 @@
             value: 'auto',
             observer: '_formatChanged'
           },
+
           /**
            * format is locked and does not switch according to the colorString
            */
           fixedFormat: {
             type: Boolean
           },
+
           /**
            * if true, hex alpha is supported by the browser
            */
@@ -138,6 +149,7 @@
             type: Boolean,
             readOnly: true
           },
+
           /**
            * value as color-string
            */
@@ -165,7 +177,7 @@
        * generate random color
        */
       randomColor() {
-        this.__internalForcedUpdate = true;
+        this.__updateByColorString = this.__updateByColorProperties = false;
         this.setProperties(this._randomRgb());
       }
 
@@ -173,6 +185,7 @@
        * reset all color properties
        */
       resetColor() {
+        this.__updateByColorString = this.__updateByColorProperties = false;
         this.setProperties({
           colorString: undefined,
           r: undefined,
@@ -199,21 +212,24 @@
         this.appendChild(testcanvas);
         this._testCanvasContext = testcanvas.getContext("2d");
         // test if `#rrggbbaa` is supported
-        const rgba = this._testColor('#ff000080');
-        this._set_hexAlphaSupported(rgba.r === 255 && rgba.g === 0 && rgba.b === 0 && rgba.alpha === 0.5);
+        const rgba = this._testColor('#00000000');
+        this._set_hexAlphaSupported(rgba.r === 0 && rgba.g === 0 && rgba.b === 0 && rgba.alpha === 0);
       }
 
       /**
        * test a color string in local browser environment
        */
-      _testColor(value) {
+      _testColor(colorString) {
         if (!this._testCanvasContext) {
           this._createTestCanvas();
         }
+        // NOTE: if the color string is not valid, the fill of the canvas might not change
+        this._testCanvasContext.beginPath();
         this._testCanvasContext.clearRect(0, 0, 1, 1);
-        this._testCanvasContext.fillStyle = value || '#000';
+        this._testCanvasContext.fillStyle = colorString || '#000';
         this._testCanvasContext.fillRect(0, 0, 1, 1);
         const imgData = this._testCanvasContext.getImageData(0, 0, 1, 1);
+        this._testCanvasContext.clearRect(0, 0, 1, 1);
         return {
           r: imgData.data[0],
           g: imgData.data[1],
@@ -246,12 +262,12 @@
           toSet.h = +match[2];
           let matchPercent;
           if (matchPercent = match[3].match(this._validatePercent)) { // s in percentage colorString
-            toSet.s = +matchPercent[1] * 0.01;
+            toSet.s = numberUtilities.safeMult(+matchPercent[1], 0.01);
           } else {
             toSet.s = +match[3];
           }
           if (matchPercent = match[4].match(this._validatePercent)) { // l in percentage colorString
-            toSet.l = +matchPercent[1] * 0.01;
+            toSet.l = numberUtilities.safeMult(+matchPercent[1], 0.01);
           } else {
             toSet.l = +match[4];
           }
@@ -295,13 +311,15 @@
           toSet = this._testColor(colorString);
         }
 
-        if (this.format !== format) {
+        if (this.format !== format && this.format !== 'auto') {
+          // don't automatically change the format, if the format is `auto` or `fixedFormat` is set
           if (!this.fixedFormat) {
             toSet.format = format;
           }
         }
+        this.__updateByColorString = true;
+        this.__updateByColorProperties = false;
 
-        this.__internalForcedUpdate = true;
         this.setProperties(toSet);
       }
 
@@ -315,45 +333,70 @@
        */
       _computeColorString(rgb, hsl, hex, oldColor) {
         const alpha = isNaN(this.alpha) ? 1 : this.alpha;
-        switch (this.format) {
+        let format = this.format;
+
+        if (format === 'auto') {
+          // define output format from oldColorstring or if a named color is set
+          if (oldColor) {
+            const testRgb = this._testColor(oldColor);
+            const rgbIsNotSet = !rgb || isNaN(rgb.r) || isNaN(rgb.g) || isNaN(rgb.b);
+
+            // test old color string if it changes in comparisson to the given color properties
+            if (!this.alphaMode && (rgbIsNotSet || (rgb.r === testRgb.r && rgb.b === testRgb.b && rgb.g === testRgb.g))) {
+              // keeping color string if possible
+              return oldColor;
+            }
+            if (rgbIsNotSet) {
+              // rgb might not been set yet
+              rgb = testRgb;
+            }
+            if (oldColor.split('hsl').length > 1) {
+              // oldColor is in hsl format
+              format = 'hsl';
+            } else if (oldColor.split('rgb').length > 1) {
+              // oldColor is in rgb format
+              format = 'rgb';
+            } else {
+              // fallback is hex format
+              format = 'hex';
+            }
+          } else {
+            // fallback is hex format
+            format = 'hex';
+          }
+        }
+
+        switch (format) {
           case 'hsl':
+            if (!hsl && rgb) {
+              hsl = this._normalizeHsl(this.rgbToHsl(rgb));
+            }
             if (hsl && !isNaN(hsl.h) && !isNaN(hsl.s) && !isNaN(hsl.l)) {
               if (this.alphaMode === true || alpha !== 1) {
                 return `hsla(${hsl.h.toFixed(this.hslPrecision || 0)}, ${numberUtilities.safeMult(hsl.s,100)}%, ${numberUtilities.safeMult(hsl.l,100)}%, ${alpha})`;
               } else {
                 return `hsl(${hsl.h.toFixed(this.hslPrecision || 0)}, ${numberUtilities.safeMult(hsl.s,100)}%, ${numberUtilities.safeMult(hsl.l,100)}%)`;
               }
-            }
-          case 'auto':
-            if (oldColor) {
-              const testRgb = this._testColor(oldColor);
-              const rgbIsNotSet = !rgb || isNaN(rgb.r) || isNaN(rgb.g) || isNaN(rgb.b);
-              if (!this.alphaMode && (rgbIsNotSet || (rgb.r === testRgb.r && rgb.b === testRgb.b && rgb.g === testRgb.g))) {
-                // keeping color string if possible
-                return oldColor;
-              }
-              if (rgbIsNotSet) {
-                // rgb might not been set yet
-                rgb = testRgb;
-              }
-              if (!hex || oldColor.split('#').length > 1) {
-                // oldColor is in hex format and hex might not be set yet
-                hex = this.rgbToHex(rgb);
-              }
-            }
-            // falls through
+            } // falls through
           case 'hex':
+            if (!hex && rgb) {
+              hex = this.rgbToHex(rgb);
+            }
             if (hex) {
               if (this.alphaMode === true) {
                 if (this._hexAlphaSupported) {
                   return `${hex}${this._alphaToHex(this.alpha, hex.length <= 4 ? 1 : 2)}`;
                 }
+                // if hexAlphaSupported is not supported, fall through to rgb
               } else {
                 return hex;
               }
             } // falls through
-          case 'rgb':
           default:
+            // fallback is rgb
+            if (!rgb && hsl) {
+              rgb = this._normalizeRgb(this.hslToRgb(hsl));
+            }
             if (rgb && !(isNaN(rgb.r) || isNaN(rgb.g) || isNaN(rgb.b))) {
               if (this.alphaMode === true || alpha !== 1) {
                 return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})`;
@@ -364,10 +407,121 @@
         }
       }
 
-      _formatChanged(format, oldFormat) {
-        if (format === undefined || this.___internalForcedUpdate) {
+      _hexChanged(hex) {
+        if (!hex) {
+          this.resetColor();
           return;
         }
+
+        const rgb = this.hexToRgb(hex);
+        hex = this.rgbToHex(rgb);
+
+        // only set hsl values by rgb to avoid conflicting changes
+        if (hex !== this.hex) {
+          this.hex = hex;
+          return;
+        }
+
+        this.__updateByColorString = false;
+
+        if (!(this.r === rgb.r && this.g === rgb.g && this.b === rgb.b)) {
+          this.setProperties(rgb);
+        }
+      }
+
+      _rgbChanged(r, g, b) {
+        if (isNaN(r) && isNaN(g) && isNaN(b)) {
+          this.resetColor();
+          return;
+        }
+        if (isNaN(r) || isNaN(g) || isNaN(b)) {
+          // single property can be set without triggering property changes
+          return;
+        }
+
+        const rgb = this._normalizeRgb({r: r, g: g, b: b});
+        const hex = this.rgbToHex(rgb);
+
+        // set rgb values again if they don't match their normalized version
+        if (!(rgb.r === this.r && rgb.g === this.g && rgb.b === this.b)) {
+          // transformed rgb is different than the current rgb, so set the rgb
+          this.setProperties(rgb);
+          return;
+        }
+
+        // avoid computed setting properties again when in '_hslChanged' properties where computed
+        if (this.__updateByColorProperties === true) {
+          this.__updateByColorProperties = false;
+          return;
+        }
+
+        let toSet = {};
+        const hsl = this._normalizeHsl(this.rgbToHsl(rgb, this.h));
+        const colorString = this._computeColorString(rgb, hsl, hex, this.colorString);
+
+        if (!(this.h === hsl.h && this.s === hsl.s && this.l === hsl.l)) {
+          toSet = hsl;
+        }
+        if (hex !== this.hex) {
+          toSet.hex = hex;
+        }
+        if (colorString !== this.colorString) {
+          toSet.colorString = colorString;
+        }
+
+        this.__updateByColorString = false;
+        this.__updateByColorProperties = true;
+
+        this.setProperties(toSet);
+      }
+
+      _hslChanged(h, s, l) {
+        if (isNaN(h) && isNaN(s) && isNaN(l)) {
+          this.resetColor();
+          return;
+        }
+        if (isNaN(h) || isNaN(s) || isNaN(l)) {
+          // single property can be set without triggering property changes
+          return;
+        }
+
+        const hsl = this._normalizeHsl({h: h, s: s, l: l});
+
+        // set hsl values again if they don't match their normalized version
+        if (!(this.h === hsl.h && this.s === hsl.s && this.l === hsl.l)) {
+          // transformed hsl is different than the current hsl, so set the hsl
+          this.setProperties(hsl);
+          return;
+        }
+
+        // avoid computed setting properties again when in '_hslChanged' properties where computed
+        if (this.__updateByColorProperties === true) {
+          this.__updateByColorProperties = false;
+          return;
+        }
+
+        let toSet = {};
+        const rgb = this._normalizeRgb(this.hslToRgb(hsl));
+        const hex = this.rgbToHex(rgb);
+        const colorString = this._computeColorString(rgb, hsl, hex, this.colorString);
+
+        if (!(rgb.r === this.r && rgb.g === this.g && rgb.b === this.b)) {
+          toSet = rgb;
+        }
+        if (hex !== this.hex) {
+          toSet.hex = hex;
+        }
+        if (colorString !== this.colorString) {
+          toSet.colorString = colorString;
+        }
+
+        this.__updateByColorString = false;
+        this.__updateByColorProperties = true;
+
+        this.setProperties(toSet);
+      }
+
+      _formatChanged(format, oldFormat) {
         if (this._validFormats.indexOf(format) === -1) {
           if (oldFormat && this._validFormats.indexOf(oldFormat) !== -1) {
             this.format = oldFormat;
@@ -386,9 +540,6 @@
       }
 
       _alphaChanged(alpha, oldAlpha) {
-        if (this.___internalForcedUpdate) {
-          return;
-        }
         if (isNaN(alpha)) {
           return;
         }
@@ -412,90 +563,6 @@
         if (alphaMode !== true) {
           this.alpha = 1;
         }
-      }
-
-      _hexChanged(hex) {
-        if (hex === undefined) {
-          return;
-        }
-        let toSet = {};
-
-        let rgb = this.hexToRgb(hex);
-        if (!(this.r === rgb.r && this.g === rgb.g && this.b === rgb.b)) {
-          this.setProperties(rgb);
-        }
-      }
-
-      _rgbChanged(r, g, b) {
-        if (this.colorString && this.format === 'hsl' && !this.__internalForcedUpdate) {
-          // hsl and rgb are not inversable
-          this._hslChanged(this.h, this.s, this.l);
-          return;
-        }
-        if (isNaN(r) || isNaN(g) || isNaN(b)) {
-          // single property can be set without triggering property changes
-          return;
-        }
-
-        let rgb = this._normalizeRgb({r: r, g: g, b: b});
-        if (!(rgb.r === this.r && rgb.g === this.g && rgb.b === this.b)) {
-          // transformed rgb is different than the current rgb, so set the rgb
-          this.setProperties(rgb);
-          return;
-        }
-        this.__internalForcedUpdate = false;
-
-        let toSet = {};
-        let hsl = this._normalizeHsl(this.rgbToHsl(rgb, this.h));
-        if (!(this.h === hsl.h && this.s === hsl.s && this.l === hsl.l)) {
-          toSet = hsl;
-        }
-
-        const hex = this.rgbToHex(rgb);
-        if (hex !== this.hex) {
-          toSet.hex = hex;
-        }
-        const colorString = this._computeColorString(rgb, hsl, hex, this.colorString);
-        if (colorString !== this.colorString) {
-          toSet.colorString = colorString;
-        }
-        this.setProperties(toSet);
-      }
-
-      _hslChanged(h, s, l) {
-        if (this.colorString && this.format !== 'hsl' && !this.__internalForcedUpdate) {
-          // hsl and rgb are not inversable
-          this._rgbChanged(this.r, this.g, this.b);
-          return;
-        }
-        if (isNaN(h) || isNaN(s) || isNaN(l)) {
-          // single property can be set without triggering property changes
-          return;
-        }
-
-        let hsl = this._normalizeHsl({h: h, s: s, l: l});
-        if (!(this.h === hsl.h && this.s === hsl.s && this.l === hsl.l)) {
-          // transformed hsl is different than the current hsl, so set the hsl
-          this.setProperties(hsl);
-          return;
-        }
-        this.__internalForcedUpdate = false;
-
-        let toSet = {};
-        const rgb = this._normalizeRgb(this.hslToRgb(hsl));
-        if (!(rgb.r === this.r && rgb.g === this.g && rgb.b === this.b)) {
-          toSet = rgb;
-        }
-
-        const hex = this.rgbToHex(rgb);
-        if (hex !== this.hex) {
-          toSet.hex = hex;
-        }
-        const colorString = this._computeColorString(rgb, hsl, hex, this.colorString);
-        if (colorString !== this.colorString) {
-          toSet.colorString = colorString;
-        }
-        this.setProperties(toSet);
       }
 
       /**
@@ -642,9 +709,9 @@
       * @return {hslObject}     The normalized hsl-object.
       */
      _normalizeHsl(hsl) {
-       hsl.h = numberUtilities.mathMod(+hsl.h.toFixed(this.hslPrecision || 0), 360);
-       hsl.s = numberUtilities.normalizedClamp(+hsl.s.toFixed((this.hslPrecision || 0) + 2));
-       hsl.l = numberUtilities.normalizedClamp(+hsl.l.toFixed((this.hslPrecision || 0) + 2));
+       hsl.h = numberUtilities.mathMod(+(+hsl.h).toFixed(this.hslPrecision || 0), 360);
+       hsl.s = numberUtilities.normalizedClamp(+(+hsl.s).toFixed((this.hslPrecision || 0) + 2));
+       hsl.l = numberUtilities.normalizedClamp(+(+hsl.l).toFixed((this.hslPrecision || 0) + 2));
        return hsl;
      }
 

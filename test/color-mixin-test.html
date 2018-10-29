@@ -66,15 +66,14 @@
       test('RegExp tests', done => {
         // hex
         assert.isDefined(element._validateHex.exec('#128'), 'recognize 3-char hex');
+        assert.isDefined(element._validateHex.exec('#128'), 'recognize 3-char hex');
         assert.isDefined(element._validateHex.exec('#1288'), 'recognize 4-char hex');
         assert.isDefined(element._validateHex.exec('#123123'), 'recognize 6-char hex');
         assert.isDefined(element._validateHex.exec('#12312388'), 'recognize 8-char hex');
         assert.isNull(element._validateHex.exec('#18'), 'should not recognize 2-char hex');
-        // use unmatching hexes in favour of not a random color bahavior by testColor
-        // original _validateHex /^\s*(?:(#[A-Fa-f0-9]{6})([A-Fa-f0-9]{2})?|(#[A-Fa-f0-9]{3})([A-Fa-f0-9])?)\s*$/
-        // assert.isNull(element._validateHex.exec('#18234'), 'should not recognize 5-char hex');
-        // assert.isNull(element._validateHex.exec('#1812121'), 'should not recognize 7-char hex');
-        // assert.isNull(element._validateHex.exec('#181212122'), 'should not recognize 9-char hex');
+        assert.isNull(element._validateHex.exec('#18234'), 'should not recognize 5-char hex');
+        assert.isNull(element._validateHex.exec('#1812121'), 'should not recognize 7-char hex');
+        assert.isNull(element._validateHex.exec('#181212122'), 'should not recognize 9-char hex');
         // rgb
         assert.isDefined(element._validateRgb.exec('rgb(22,255,66)'), 'recognize rgb');
         assert.isDefined(element._validateRgb.exec('rgba(22,255,66,0.3)'), 'recognize rgba');
@@ -83,6 +82,18 @@
         assert.isDefined(element._validateHsl.exec('hsl(22,26%,66%)'), 'recognize hsl');
         assert.isDefined(element._validateHsl.exec('hsla(22,26%,66%,0.3)'), 'recognize hsla');
         assert.isNull(element._validateHsl.exec('hsl(22,26%)'), 'should not recognize hsl with too little arguments');
+        // auto
+        assert.isDefined(element._validateAutoColorString.exec('#128'), 'auto recognize 3-char hex');
+        assert.isDefined(element._validateAutoColorString.exec('#128'), 'auto recognize 3-char hex');
+        assert.isDefined(element._validateAutoColorString.exec('#1288'), 'auto recognize 4-char hex');
+        assert.isDefined(element._validateAutoColorString.exec('#123123'), 'auto recognize 6-char hex');
+        assert.isDefined(element._validateAutoColorString.exec('#12312388'), 'auto recognize 8-char hex');
+        assert.isDefined(element._validateAutoColorString.exec('rgb(22,255,66)'), 'auto recognize rgb');
+        assert.isDefined(element._validateAutoColorString.exec('rgba(22,255,66,0.3)'), 'auto recognize rgba');
+        assert.isDefined(element._validateAutoColorString.exec('hsl(22,26%,66%)'), 'auto recognize hsl');
+        assert.isDefined(element._validateAutoColorString.exec('hsla(22,26%,66%,0.3)'), 'auto recognize hsla');
+        assert.isNull(element._validateAutoColorString.exec('#18'), 'auto should not recognize 2-char hex');
+        assert.isNull(element._validateAutoColorString.exec('#181212122'), 'auto should not recognize 9-char hex');
         done();
       });
 
@@ -139,6 +150,105 @@
         });
       });
 
+      test('change format from auto to hex', done => {
+        element.format = 'auto';
+        element.randomColor();
+        element.format = 'hex';
+        // wait a tick for possible template stamping
+        Polymer.Base.async(() => {
+          assert.match(element.colorString, element._validateHex, 'colorString is in hex format')
+          done();
+        });
+      });
+
+      test('change format from rgb to hex', done => {
+        element.format = 'rgb';
+        element.randomColor();
+        element.format = 'hex';
+        // wait a tick for possible template stamping
+        Polymer.Base.async(() => {
+          assert.match(element.colorString, element._validateHex, 'colorString is in hex format')
+          done();
+        });
+      });
+
+      test('change format from hsl to hex', done => {
+        element.format = 'hsl';
+        element.randomColor();
+        element.format = 'hex';
+        // wait a tick for possible template stamping
+        Polymer.Base.async(() => {
+          assert.match(element.colorString, element._validateHex, 'colorString is in hex format')
+          done();
+        });
+      });
+
+      test('change format from auto to hsl', done => {
+        element.format = 'auto';
+        element.randomColor();
+        element.format = 'hsl';
+        // wait a tick for possible template stamping
+        Polymer.Base.async(() => {
+          assert.match(element.colorString, element._validateHsl, 'colorString is in hsl')
+          done();
+        });
+      });
+
+      test('change format from hex to hsl', done => {
+        element.format = 'hex';
+        element.randomColor();
+        element.format = 'hsl';
+        // wait a tick for possible template stamping
+        Polymer.Base.async(() => {
+          assert.match(element.colorString, element._validateHsl, 'colorString is in hsl')
+          done();
+        });
+      });
+
+      test('change format from rgb to hsl', done => {
+        element.format = 'rgb';
+        element.randomColor();
+        element.format = 'hsl';
+        // wait a tick for possible template stamping
+        Polymer.Base.async(() => {
+          assert.match(element.colorString, element._validateHsl, 'colorString is in hsl')
+          done();
+        });
+      });
+
+      test('change format from auto to rgb', done => {
+        element.format = 'auto';
+        element.randomColor();
+        element.format = 'rgb';
+        // wait a tick for possible template stamping
+        Polymer.Base.async(() => {
+          assert.match(element.colorString, element._validateRgb, 'colorString is in rgb')
+          done();
+        });
+      });
+
+      test('change format from hex to rgb', done => {
+        element.format = 'hex';
+        element.randomColor();
+        element.format = 'rgb';
+        // wait a tick for possible template stamping
+        Polymer.Base.async(() => {
+          assert.match(element.colorString, element._validateRgb, 'colorString is in rgb')
+          done();
+        });
+      });
+
+      test('change format from hsl to rgb', done => {
+        element.format = 'hsl';
+        element.randomColor();
+        element.format = 'rgb';
+        // wait a tick for possible template stamping
+        Polymer.Base.async(() => {
+          assert.match(element.colorString, element._validateRgb, 'colorString is in rgb')
+          done();
+        });
+      });
+
       test('changing alpha', done => {
         element.format = 'rgb';
         element.randomColor();
@@ -170,6 +280,105 @@
         element.colorString = '#123c';
         assert.equal(element.alpha, 0.8, 'alpha should be 0.8')
         done();
+      });
+
+      test('auto format does not change by setting color string', done => {
+        element.format = 'auto';
+        element.randomColor();
+        // wait a tick for possible template stamping
+        Polymer.Base.async(() => {
+          assert.equal(element.format, 'auto', 'format should not change');
+          element.colorString = 'red';
+          assert.equal(element.format, 'auto', 'format should not change');
+          element.colorString = '#000';
+          assert.equal(element.format, 'auto', 'format should not change');
+          element.colorString = 'rgb(122,12,0)';
+          assert.equal(element.format, 'auto', 'format should not change');
+          element.colorString = 'hsl(122,12%,50%)';
+          assert.equal(element.format, 'auto', 'format should not change');
+          done();
+        });
+      });
+
+      test('format does change by setting color string', done => {
+        element.format = 'hex';
+        element.randomColor();
+        // wait a tick for possible template stamping
+        Polymer.Base.async(() => {
+          assert.equal(element.format, 'hex', 'format should not change');
+          assert.match(element.colorString, element._validateHex, 'colorString is in hex');
+          element.colorString = 'rgb(122,12,0)';
+          assert.equal(element.format, 'rgb', 'format should change');
+          assert.match(element.colorString, element._validateRgb, 'colorString is in rgb');
+          element.colorString = 'hsl(122,12%,50%)';
+          assert.equal(element.format, 'hsl', 'format should change');
+          assert.match(element.colorString, element._validateHsl, 'colorString is in hsl');
+          element.colorString = 'red';
+          assert.equal(element.format, 'auto', 'format should change');
+          assert.match(element.colorString, element._validateAutoColorString, 'colorString is in auto format');
+          assert.equal(element.colorString, 'red', 'colorString should not change');
+          done();
+        });
+      });
+
+      test('format does not change by setting color string with fixed format', done => {
+        element.fixedFormat = true;
+        element.format = 'hex';
+        element.randomColor();
+        // wait a tick for possible template stamping
+        Polymer.Base.async(() => {
+          // hex
+          assert.equal(element.format, 'hex', 'format should not change');
+          assert.match(element.colorString, element._validateHex, 'colorString is in hex');
+          element.colorString = 'rgb(122,12,0)';
+          assert.equal(element.format, 'hex', 'format should not change');
+          assert.match(element.colorString, element._validateHex, 'colorString is in hex');
+          element.colorString = 'hsl(122,12%,50%)';
+          assert.equal(element.format, 'hex', 'format should not change');
+          assert.match(element.colorString, element._validateHex, 'colorString is in hex');
+          element.colorString = 'red';
+          assert.equal(element.format, 'hex', 'format should not change');
+          assert.match(element.colorString, element._validateHex, 'colorString is in hex');
+          assert.equal(element.colorString, '#ff0000', 'colorString should change');
+          // rgb
+          element.format = 'rgb';
+          assert.equal(element.format, 'rgb', 'format should not change');
+          assert.match(element.colorString, element._validateRgb, 'colorString is in rgb');
+          element.colorString = '#000';
+          assert.equal(element.format, 'rgb', 'format should not change');
+          assert.match(element.colorString, element._validateRgb, 'colorString is in rgb');
+          element.colorString = 'hsl(122,12%,50%)';
+          assert.equal(element.format, 'rgb', 'format should not change');
+          assert.match(element.colorString, element._validateRgb, 'colorString is in rgb');
+          element.colorString = 'red';
+          assert.equal(element.format, 'rgb', 'format should not change');
+          assert.match(element.colorString, element._validateRgb, 'colorString is in rgb');
+          // hsl
+          element.format = 'hsl';
+          assert.equal(element.format, 'hsl', 'format should not change');
+          assert.match(element.colorString, element._validateHsl, 'colorString is in hsl');
+          element.colorString = '#000';
+          assert.equal(element.format, 'hsl', 'format should not change');
+          assert.match(element.colorString, element._validateHsl, 'colorString is in hsl');
+          element.colorString = 'rgb(122,12,0)';
+          assert.equal(element.format, 'hsl', 'format should not change');
+          assert.match(element.colorString, element._validateHsl, 'colorString is in hsl');
+          element.colorString = 'red';
+          assert.equal(element.format, 'hsl', 'format should not change');
+          assert.match(element.colorString, element._validateHsl, 'colorString is in hsl');
+          // auto
+          element.format = 'auto';  
+          assert.equal(element.format, 'auto', 'format should not change');
+          element.colorString = 'red';
+          assert.equal(element.format, 'auto', 'format should not change');
+          element.colorString = '#000';
+          assert.equal(element.format, 'auto', 'format should not change');
+          element.colorString = 'rgb(122,12,0)';
+          assert.equal(element.format, 'auto', 'format should not change');
+          element.colorString = 'hsl(122,12%,50%)';
+          assert.equal(element.format, 'auto', 'format should not change');
+          done();
+        });
       });
 
       test('convert named colors', done => {
