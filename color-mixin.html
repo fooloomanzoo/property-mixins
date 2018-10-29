@@ -246,7 +246,8 @@
         }
         let toSet = {},
           match,
-          format;
+          format,
+          fixedFormat = this.fixedFormat;
         // input-format detection
 
         // hsl-format
@@ -291,6 +292,10 @@
             if (match[2] !== undefined) { // alpha channel has two hex numbers
               toSet.alpha = this._hexToAlpha(match[2], 2);
               toSet.alphaMode = true;
+              if (!this._hexAlphaSupported) {
+                format = 'rgb';
+                fixedFormat = false;
+              }
             } else { // no alpha channel
               toSet.alpha = 1;
               toSet.alphaMode = false;
@@ -300,6 +305,10 @@
             if (match[4] !== undefined) { // alpha channel has one hex number
               toSet.alpha = this._hexToAlpha(match[4], 1);
               toSet.alphaMode = true;
+              if (!this._hexAlphaSupported) {
+                format = 'rgb';
+                fixedFormat = false;
+              }
             } else { // no alpha channel
               toSet.alpha = 1;
               toSet.alphaMode = false;
@@ -313,7 +322,7 @@
 
         if (this.format !== format && this.format !== 'auto') {
           // don't automatically change the format, if the format is `auto` or `fixedFormat` is set
-          if (!this.fixedFormat) {
+          if (!fixedFormat) {
             toSet.format = format;
           }
         }
