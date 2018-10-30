@@ -394,7 +394,7 @@
             if (hex) {
               if (this.alphaMode === true) {
                 if (this._hexAlphaSupported) {
-                  return `${hex}${this._alphaToHex(this.alpha, hex.length <= 4 ? 1 : 2)}`;
+                  return `${hex}${this._alphaToHex(alpha, hex.length <= 4 ? 1 : 2)}`;
                 }
                 // if hexAlphaSupported is not supported, fall through to rgb
               } else {
@@ -523,7 +523,6 @@
         if (colorString !== this.colorString) {
           toSet.colorString = colorString;
         }
-
         this.__updateByColorString = false;
         this.__updateByColorProperties = true;
 
@@ -549,7 +548,11 @@
       }
 
       _alphaChanged(alpha, oldAlpha) {
+        if (alpha === undefined) {
+          return;
+        }
         if (isNaN(alpha)) {
+          this.alpha = 1;
           return;
         }
         alpha = numberUtilities.normalizedClamp(alpha);
