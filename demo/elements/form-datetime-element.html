@@ -8,7 +8,6 @@
       static get is() {
         return 'form-datetime-element';
       }
-
       static get properties() {
         return {
           propertyForValue: {
@@ -16,6 +15,9 @@
             value: 'valueAsNumber'
           }
         }
+      }
+      static get template() {
+        return '<div>[[value]]</div>'
       }
     }
     window.customElements.define(FormDatetimeElement.is, FormDatetimeElement);

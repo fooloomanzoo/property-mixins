@@ -7,6 +7,9 @@
       static get is() {
         return 'basic-range-element';
       }
+      static get template() {
+        return '<div>[[valueAsNumber]]</div>'
+      }
     }
     window.customElements.define(BasicRangeElement.is, BasicRangeElement);
   </script>

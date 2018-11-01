@@ -7,6 +7,9 @@
       static get is() {
         return 'basic-color-element';
       }
+      static get template() {
+        return '<div style="background:[[colorString]]">[[colorString]]</div>'
+      }
     }
     window.customElements.define(BasicColorElement.is, BasicColorElement);
   </script>
