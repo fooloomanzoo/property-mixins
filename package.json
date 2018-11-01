@@ -27,5 +27,17 @@
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/fooloomanzoo/property-mixins/issues"
+  },
+  "dependencies": {
+    "@polymer/polymer": "^2.6.1"
+  },
+  "devDependencies": {
+    "web-component-tester": "^6.5.0",
+    "@webcomponents/webcomponentsjs": "^1",
+    "@polymer/iron-component-page": "^3",
+    "@polymer/iron-flex-layout": "^2",
+    "@polymer/iron-demo-helpers": "^2",
+    "@polymer/iron-form": "^2",
+    "@fooloomanzoo/input-picker-pattern": "^2"
   }
 }
