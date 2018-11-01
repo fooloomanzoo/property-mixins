@@ -1043,11 +1043,11 @@
        * @return {Number}       the last day of the month
        */
       _computeMaxDayOfMonth(year, month) {
-        const d = new Date(Date.UTC(year, month, 0));
+        const d = new Date(year, month, 0);
 
         if (!isNaN(d)) {
-          d.setUTCFullYear(year);
-          return d.getUTCDate();
+          d.setFullYear(year);
+          return d.getDate();
         }
         return 31;
       }

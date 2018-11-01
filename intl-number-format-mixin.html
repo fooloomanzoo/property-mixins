@@ -17,6 +17,14 @@
 
     return class extends superClass {
 
+      constructor() {
+        super();
+        /**
+         * Regular Expression for non numeric signs
+         */
+        this._regExpNotInNumber = /[^\d\-+.e]/g;
+      }
+
       static get properties() {
         return {
           /**
@@ -24,7 +32,6 @@
            */
           locale: {
             type: String,
-            notify: true,
             value: window.navigator.language
           },
 
@@ -33,7 +40,6 @@
            */
           decimalSeparator: {
             type: String,
-            notify: true,
             readOnly: true
           },
 
@@ -42,7 +48,6 @@
            */
           groupingSeparator: {
             type: String,
-            notify: true,
             readOnly: true
           },
 
@@ -109,8 +114,7 @@
            */
           numberStyle: {
             type: String,
-            value: 'decimal',
-            notify: true
+            value: 'decimal'
           },
 
           /**
@@ -158,15 +162,6 @@
             type: Function,
             computed: '_computeParseNumber(decimalSeparator, groupingSeparator, _numberOptions)',
             notify: true
-          },
-
-          /**
-           * Regular Expression for non numeric signs
-           */
-          _regExpNotInNumber: {
-            type: RegExp,
-            value: /[^\d\-+.e]/g,
-            readOnly: true
           }
         }
       }
