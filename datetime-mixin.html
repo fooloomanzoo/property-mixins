@@ -321,7 +321,6 @@
           this._checkDefaultTimezone(d);
           let toSet = {}, value = +d;
           let offsetMinutes = this._computeTimezoneShift(d);
-
           if (offsetMinutes !== this.offsetMinutes) {
             // timezone shift occured
             // NOTE: timezone and offsetMinutes change before other values, so it is unsave to bind to them
@@ -382,7 +381,7 @@
       resetDate(e) {
         if (e && e.stopPropagation) {
           e.stopPropagation();
-        }
+        }        
         this.setProperties({
           valueAsDate: undefined,
           valueAsNumber: undefined,
@@ -405,16 +404,24 @@
           _recentLocalTimezoneOffset: undefined
         });
         if (!isNaN(this._defaultValue)) {
+          const d = new Date(this._defaultValue);
+          this.__updatingTimezoneOffset = true;
+          let toSet;
           if (typeof this.default === 'string') {
-            // using the timezone of default
             const match = this._regexpDatetime.exec(this.default);
             if (match[3]) {
-              this.__updatingTimezoneOffset = true;
-              this.setProperties(this._computeTimezoneOffset(match[3]));
-              this.__updatingTimezoneOffset = false;
+              // using the timezone of default
+              toSet = this._computeTimezoneOffset(match[3]);
+            } else if (this._timeOnly && !match[1]) {
+              toSet = this._computeTimezone(0);
             }
           }
-          this.setDate(new Date(this._defaultValue));
+          if (!toSet) {
+            toSet = this._computeTimezone(d.getTimezoneOffset());
+          }
+          this.setProperties(toSet);
+          this.__updatingTimezoneOffset = false;
+          this.setDate(d);
         }
       }
 
@@ -432,7 +439,7 @@
       }
 
       /**
-       * modify date components of a date-object. it needs to be applied or called on a date object
+       * compute date by date properties
        * @param  {number} year
        * @param  {number} month
        * @param  {number} day
@@ -440,8 +447,6 @@
        * @param  {number} minute
        * @param  {number} second
        * @param  {number} millisecond
-       * @param  {number} offsetMinutes
-       * @return {object} the changed object and the new offset-minutes
        */
       _computeDatetime(year, month, day, hour, minute, second, millisecond) {
         if (this.__updatingTimezoneOffset) {
@@ -465,7 +470,7 @@
               } else {
                 d = new Date(0);
               }
-              // d.setMinutes(d.getMinutes() + d.getTimezoneOffset());
+              d.setMinutes(d.getMinutes() + d.getTimezoneOffset());
             } else if (this.date) {
               d = new Date(this.date + 'T' + (this.time || '00:00') + (this.timezone || 'Z'));
               if (!this.timezone) {
@@ -615,6 +620,8 @@
           case 'object': // falls through
             if (Array.isArray(datetime)) {
               return new (Date.bind.apply(Date, [null].concat(datetime)));
+            } else if (datetime === null) {
+              return;
             }
           case 'number':
             if (isNaN(datetime)) {
@@ -635,8 +642,10 @@
                 // setting to GMT
                 const d = new Date((match[1] || '1970-01-01') + 'T' + (match[2] || '00:00:00.000') + 'Z');
                 if (isNaN(this.offsetMinutes)) {
-                  // apply local offset minutes
-                  d.setMinutes(d.getMinutes() + d.getTimezoneOffset());
+                  if (!this._timeOnly || match[1]) {
+                    // apply local offset minutes
+                    d.setMinutes(d.getMinutes() + d.getTimezoneOffset());
+                  }
                 } else {
                   // apply offset minutes if set
                   d.setMinutes(d.getMinutes() + this.offsetMinutes);
@@ -805,14 +814,7 @@
           if (this.timezone) {
             this.setProperties(this._computeTimezoneOffset(this.timezone));
           } else {
-            if (d === undefined) {
-              d = new Date();
-            }
-            if (this._timeOnly && !this.date) {
-              this.setProperties(this._computeTimezone(0));
-            } else {
-              this.setProperties(this._computeTimezone(d.getTimezoneOffset()));
-            }
+            this.setProperties(this._computeTimezone((d !== undefined ? d : new Date()).getTimezoneOffset()));
           }
           this.__updatingTimezoneOffset = false;
         }

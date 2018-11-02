@@ -383,6 +383,89 @@
           done();
         });
 
+        test('setting default as number', done => {
+          element.default = 318244684567;
+          assert.equal(element.default, 318244684567, 'default is set');
+          assert.equal(element._defaultValue, 318244684567, 'default is set');
+          assert.isDefined(element.timezone, 'timezone is defined');
+          assert.isDefined(element.offsetMinutes, 'timezone-offset is defined');
+          assert.isDefined(element._timeZoneHours, 'timezone-hours is defined');
+          assert.isDefined(element._timeZoneMinutes, 'timezone-minutes is defined');
+          assert.equal(element.valueAsDate.toISOString(), '1980-02-01T09:18:04.567Z', 'valueAsDate should be set');
+          assert.equal(element.valueAsNumber, 318244684567, 'valueAsNumber should be set');
+          done();
+        });
+
+        test('setting default as datetime with timezone', done => {
+          element.default = '1980-02-01T01:02:03.456+02:30';
+          assert.equal(element._defaultValue, +new Date( '1980-02-01T01:02:03.456+02:30'), 'defaultValue should be set');
+          element.resetDate();
+          assert.equal(element.date, '1980-02-01', 'date should be set');
+          assert.equal(element.time, '01:02:03.456', 'time should be set');
+          assert.equal(element.timezone, '+02:30', 'timezone is defined');
+          assert.equal(element.offsetMinutes, -150, 'timezone-offset is defined');
+          assert.equal(element._timeZoneHours, 2, 'timezone-hours is defined');
+          assert.equal(element._timeZoneMinutes, 30, 'timezone-minutes is defined');
+          done();
+        });
+
+        test('setting default as datetime without timezone', done => {
+          element.default = '1980-02-01T01:02:03.456';
+          element.resetDate();
+          assert.equal(element.date, '1980-02-01', 'date should be set' + element.default);
+          assert.equal(element.time, '01:02:03.456', 'time should be set');
+          assert.isDefined(element.timezone, 'timezone is defined');
+          assert.isDefined(element.offsetMinutes, 'timezone-offset is defined');
+          assert.isDefined(element._timeZoneHours, 'timezone-hours is defined');
+          assert.isDefined(element._timeZoneMinutes, 'timezone-minutes is defined');
+          done();
+        });
+
+        test('setting default as date', done => {
+          element.default = '1980-02-01';
+          element.resetDate();
+          assert.equal(element.date, '1980-02-01', 'date should be set');
+          assert.equal(element.time, '00:00:00.000', 'time should be set');
+          assert.isDefined(element.timezone, 'timezone is defined');
+          assert.isDefined(element.offsetMinutes, 'timezone-offset is defined');
+          assert.isDefined(element._timeZoneHours, 'timezone-hours is defined');
+          assert.isDefined(element._timeZoneMinutes, 'timezone-minutes is defined');
+          done();
+        });
+
+        test('setting default as time', done => {
+          element.default = '01:02:03.456';
+          element.resetDate();
+          assert.equal(element.date, '1970-01-01', 'date should be set');
+          assert.equal(element.time, '01:02:03.456', 'time should be set');
+          if (element._timeOnly) {
+            assert.equal(element.timezone, '+00:00', 'timezone is defined');
+            assert.equal(element.offsetMinutes, 0, 'timezone-offset is defined');
+            assert.equal(element._timeZoneHours, 0, 'timezone-hours is defined');
+            assert.equal(element._timeZoneMinutes, 0, 'timezone-minutes is defined');
+          } else {
+            assert.isDefined(element.timezone, 'timezone is defined');
+            assert.isDefined(element.offsetMinutes, 'timezone-offset is defined');
+            assert.isDefined(element._timeZoneHours, 'timezone-hours is defined');
+            assert.isDefined(element._timeZoneMinutes, 'timezone-minutes is defined');
+          }
+          done();
+        });
+
+        test('resetting default', done => {
+          element.default = 318244684567;
+          element.resetDate()
+          element.default = '1980-02-01T01:02:03.456+02:30';
+          assert.equal(element._defaultValue, +new Date( '1980-02-01T01:02:03.456+02:30'), 'defaultValue should be set');
+          element.resetDate();
+          assert.equal(element.valueAsNumber, +new Date( '1980-02-01T01:02:03.456+02:30'), 'valueAsNumber should be set');
+          assert.equal(element.timezone, '+02:30', 'timezone is defined');
+          assert.equal(element.offsetMinutes, -150, 'timezone-offset is defined');
+          assert.equal(element._timeZoneHours, 2, 'timezone-hours is defined');
+          assert.equal(element._timeZoneMinutes, 30, 'timezone-minutes is defined');
+          done();
+        });
+
         test('setting year', done => {
           element.setAttribute('year', '1980');
           assert.equal(element.year, 1980, 'year should be set');
