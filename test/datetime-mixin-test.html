@@ -360,7 +360,6 @@
         test('setting default', done => {
           element.setAttribute('default', new Date(318244684567).toISOString());
           assert.equal(element.default, '1980-02-01T09:18:04.567Z', 'default is set');
-          assert.equal(element._defaultValue, 318244684567, 'default is set');
           assert.isDefined(element.date, 'date is defined');
           assert.isDefined(element.time, 'time is defined');
           assert.isDefined(element.datetime, 'datetime is defined');
@@ -386,7 +385,6 @@
         test('setting default as number', done => {
           element.default = 318244684567;
           assert.equal(element.default, 318244684567, 'default is set');
-          assert.equal(element._defaultValue, 318244684567, 'default is set');
           assert.isDefined(element.timezone, 'timezone is defined');
           assert.isDefined(element.offsetMinutes, 'timezone-offset is defined');
           assert.isDefined(element._timeZoneHours, 'timezone-hours is defined');
@@ -398,7 +396,6 @@
 
         test('setting default as datetime with timezone', done => {
           element.default = '1980-02-01T01:02:03.456+02:30';
-          assert.equal(element._defaultValue, +new Date( '1980-02-01T01:02:03.456+02:30'), 'defaultValue should be set');
           element.resetDate();
           assert.equal(element.date, '1980-02-01', 'date should be set');
           assert.equal(element.time, '01:02:03.456', 'time should be set');
@@ -456,7 +453,6 @@
           element.default = 318244684567;
           element.resetDate()
           element.default = '1980-02-01T01:02:03.456+02:30';
-          assert.equal(element._defaultValue, +new Date( '1980-02-01T01:02:03.456+02:30'), 'defaultValue should be set');
           element.resetDate();
           assert.equal(element.valueAsNumber, +new Date( '1980-02-01T01:02:03.456+02:30'), 'valueAsNumber should be set');
           assert.equal(element.timezone, '+02:30', 'timezone is defined');

@@ -22,7 +22,6 @@
          * Regular Expression for datetime-string
          */
         this._regexpDatetime = /^([+-]?\d+-?\d\d-?\d\d)?(?:T?(?:(\d\d:?\d\d(?::?\d\d(?:\.?\d\d\d)?)?)([+-]\d\d:?\d\d|Z)?)?)$/;
-
         /**
          * Regular Expression for timezone-string
          */
@@ -42,7 +41,6 @@
 
       static get properties() {
         return {
-
           /**
            * The year of the selected date
            */
@@ -165,15 +163,8 @@
            * The default value of the input, could be a number, a date-object or an iso-string in time, date or datetime-notation
            */
           default: {
-            type: Object
-          },
-
-          /**
-           * value of the default date
-           */
-          _defaultValue: {
-            type: Number,
-            computed: '_computeDefaultValue(default)'
+            type: Object,
+            observer: '_defaultChanged'
           },
 
           /**
@@ -285,7 +276,6 @@
           '_datetimeChanged(datetime)',
           '_dateTimeChanged(date, time)',
           '_timeZoneHoursMinutesChanged(_timeZoneHours, _timeZoneMinutes)',
-          '_defaultValueChanged(_defaultValue)',
           '_minMaxValueChanged(_minValue, _maxValue)'
         ]
       }
@@ -381,7 +371,7 @@
       resetDate(e) {
         if (e && e.stopPropagation) {
           e.stopPropagation();
-        }        
+        }
         this.setProperties({
           valueAsDate: undefined,
           valueAsNumber: undefined,
@@ -403,39 +393,23 @@
           _timeZoneMinutes: undefined,
           _recentLocalTimezoneOffset: undefined
         });
-        if (!isNaN(this._defaultValue)) {
-          const d = new Date(this._defaultValue);
+        const def = this._fromDatetime(this.default);
+        if (!isNaN(def.valueAsDate)) {
           this.__updatingTimezoneOffset = true;
-          let toSet;
-          if (typeof this.default === 'string') {
-            const match = this._regexpDatetime.exec(this.default);
-            if (match[3]) {
-              // using the timezone of default
-              toSet = this._computeTimezoneOffset(match[3]);
-            } else if (this._timeOnly && !match[1]) {
-              toSet = this._computeTimezone(0);
-            }
-          }
-          if (!toSet) {
-            toSet = this._computeTimezone(d.getTimezoneOffset());
-          }
-          this.setProperties(toSet);
+          this.setProperties(this._computeTimezone(def.offsetMinutes));
+          this._recentLocalTimezoneOffset = def.valueAsDate.getTimezoneOffset();
           this.__updatingTimezoneOffset = false;
-          this.setDate(d);
+          this.setDate(def.valueAsDate);
         }
       }
 
-      _defaultValueChanged(def) {
-        if (isNaN(def)) {
+      _defaultChanged(def) {
+        if (def === undefined) {
           return;
         }
         if (isNaN(this.valueAsDate) || isNaN(this.valueAsNumber)) {
           this.resetDate();
         }
-      }
-
-      _computeDefaultValue(def) {
-        return +this._fromDatetime(def);
       }
 
       /**
@@ -615,47 +589,46 @@
        * @param  datetime
        * @return {Date}   date
        */
-      _fromDatetime(datetime) {
+      _fromDatetime(datetime, offsetMinutes) {
+        let d;
         switch (typeof datetime) {
           case 'object': // falls through
-            if (Array.isArray(datetime)) {
-              return new (Date.bind.apply(Date, [null].concat(datetime)));
-            } else if (datetime === null) {
-              return;
+            if (datetime && datetime.getDate) {
+              d = new Date(datetime);
             }
+            break;
           case 'number':
-            if (isNaN(datetime)) {
-              return;
+            if (!isNaN(datetime)) {
+              d = new Date(datetime);
             }
-            return new Date(datetime);
-          case 'string': {
+            break;
+          case 'string':
             const match = this._regexpDatetime.exec(datetime);
             if (match) {
+              d = new Date(`${match[1] || '1970-01-01'}T${match[2] || '00:00:00'}${match[3] || 'Z'}`);
               if (match[3]) {
-                // datetime-string includes a timezone
-                if (match[1] === undefined) {
-                  match[0] = '1970-01-01T' + match[2] + match[3];
-                }
-                return new Date(match[0]);
+                offsetMinutes = this._computeTimezoneOffset(match[3]).offsetMinutes;
               } else {
-                // datetime-string does not include a timezone
-                // setting to GMT
-                const d = new Date((match[1] || '1970-01-01') + 'T' + (match[2] || '00:00:00.000') + 'Z');
-                if (isNaN(this.offsetMinutes)) {
+                if (isNaN(offsetMinutes)) {
                   if (!this._timeOnly || match[1]) {
                     // apply local offset minutes
-                    d.setMinutes(d.getMinutes() + d.getTimezoneOffset());
+                    offsetMinutes = d.getTimezoneOffset();
+                  } else {
+                    offsetMinutes = 0;
                   }
-                } else {
-                  // apply offset minutes if set
-                  d.setMinutes(d.getMinutes() + this.offsetMinutes);
                 }
-                return d;
+                d.setMinutes(d.getMinutes() + offsetMinutes);
               }
             }
           }
-          default:
-            return;
+        if (!isNaN(d)) {
+          if (isNaN(offsetMinutes)) {
+            offsetMinutes = d.getTimezoneOffset();
+          }
+        }
+        return {
+          valueAsDate: d,
+          offsetMinutes: offsetMinutes
         }
       }
 
@@ -849,7 +822,7 @@
       }
 
       _minChanged(min) {
-        const d = this._fromDatetime(min);
+        const d = this._fromDatetime(min, this.offsetMinutes).valueAsDate;
         if (isNaN(d)) {
           this._minValue = undefined;
           return;
@@ -868,7 +841,7 @@
       }
 
       _maxChanged(max) {
-        const d = this._fromDatetime(max);
+        const d = this._fromDatetime(max, this.offsetMinutes).valueAsDate;
         if (isNaN(d)) {
           this._maxValue = undefined;
           return;
