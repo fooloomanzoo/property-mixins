@@ -309,7 +309,7 @@ export const IntlNumberFormatMixin = dedupingMixin( superClass => {
     }
 
     _computeParseNumber(decimalSeparator, groupingSeparator, numberOptions) {
-      const regexpGrouping = new regexp(`[${(groupingSeparator || '')}]`, 'g');
+      const regexpGrouping = new RegExp(`[${(groupingSeparator || '')}]`, 'g');
 
       let translateInput;
       if (numberOptions.maximumFractionDigits === 0) {

@@ -37,12 +37,10 @@ export const randomRgb = function() {
 /**
  * RegularExpression for parsing color strings by format
  */
-export const regexp = {
-  rgb: /^\s*rgb(a)?\(\s*(-?\d+)\s*,\s*(-?\d+)\s*,\s*(-?\d+)(?:\s*,\s*(-?\d*(?:\.(?:\d*)?)?))?\s*\)\s*$/,
-  hsl: /^\s*hsl(a)?\(\s*(-?\d+(?:\.\d*)?)\s*,\s*(-?\d*(?:\.(?:\d*)?)?%?)\s*,\s*(-?\d*(?:\.(?:\d*)?)?%?)(?:\s*,\s*(-?\d*(?:\.(?:\d*)?)?))?\s*\)\s*$/,
-  hex: /^\s*(?:(#[A-Fa-f0-9]{6})([A-Fa-f0-9]{2})?|(#[A-Fa-f0-9]{3})([A-Fa-f0-9])?)\s*$/,
-  auto: /^\s*(?:[\w]*|#[A-Fa-f0-9]{3,8}|rgba?\([\d,.\s]+\)|hsla?\([\d,.%\s]+\))\s*$/,
-}
+export const regexpRgb = /^\s*rgb(a)?\(\s*(-?\d+)\s*,\s*(-?\d+)\s*,\s*(-?\d+)(?:\s*,\s*(-?\d*(?:\.(?:\d*)?)?))?\s*\)\s*$/;
+export const regexpHsl = /^\s*hsl(a)?\(\s*(-?\d+(?:\.\d*)?)\s*,\s*(-?\d*(?:\.(?:\d*)?)?%?)\s*,\s*(-?\d*(?:\.(?:\d*)?)?%?)(?:\s*,\s*(-?\d*(?:\.(?:\d*)?)?))?\s*\)\s*$/;
+export const regexpHex = /^\s*(?:(#[A-Fa-f0-9]{6})([A-Fa-f0-9]{2})?|(#[A-Fa-f0-9]{3})([A-Fa-f0-9])?)\s*$/;
+export const regexpAuto = /^\s*(?:[\w]*|#[A-Fa-f0-9]{3,8}|rgba?\([\d,.\s]+\)|hsla?\([\d,.%\s]+\))\s*$/;
 
 /**
  * RegularExpression for percent
@@ -492,7 +490,7 @@ export const ColorMixin = dedupingMixin(superClass => {
         } else {
           toSet.l = +match[4];
         }
-        toSet = normalize.hsl(toSet, this.hslPrecision);
+        toSet = normalizeHsl(toSet, this.hslPrecision);
         // rgb-format
       } else if (match = colorString.match(regexpRgb)) {
         format = 'rgb';
@@ -503,7 +501,7 @@ export const ColorMixin = dedupingMixin(superClass => {
           toSet.alpha = normalizedClamp(+match[5]);
           toSet.alphaMode = true;
         }
-        Object.assign(toSet, normalize.rgb({
+        Object.assign(toSet, normalizeRgb({
           r: +match[2],
           g: +match[3],
           b: +match[4]
@@ -572,6 +570,9 @@ export const ColorMixin = dedupingMixin(superClass => {
       if (format === 'auto') {
         // define output format from oldColorstring or if a named color is set
         if (oldColor) {
+          if (!this._testCanvasContext) {
+            this._createTestCanvas();
+          }
           const testRgb = testColor(this._testCanvasContext, oldColor);
           const rgbIsNotSet = !rgb || isNaN(rgb.r) || isNaN(rgb.g) || isNaN(rgb.b);
 
@@ -604,7 +605,7 @@ export const ColorMixin = dedupingMixin(superClass => {
         case 'hsl':
           const hslPrecision = this.hslPrecision || 0;
           if (!hsl && rgb) {
-            hsl = normalize.hsl(rgbToHsl(rgb, this.h));
+            hsl = normalizeHsl(rgbToHsl(rgb, this.h));
           }
           if (hsl && !isNaN(hsl.h) && !isNaN(hsl.s) && !isNaN(hsl.l)) {
             if (alphaMode) {
@@ -630,7 +631,7 @@ export const ColorMixin = dedupingMixin(superClass => {
         default:
           // fallback is rgb
           if (!rgb && hsl) {
-            rgb = normalize.rgb(hslToRgb(hsl));
+            rgb = normalizeRgb(hslToRgb(hsl));
           }
           if (rgb && !(isNaN(rgb.r) || isNaN(rgb.g) || isNaN(rgb.b))) {
             if (alphaMode) {
@@ -674,7 +675,7 @@ export const ColorMixin = dedupingMixin(superClass => {
         return;
       }
 
-      const rgb = normalize.rgb({ r: r, g: g, b: b });
+      const rgb = normalizeRgb({ r: r, g: g, b: b });
       const hex = rgbToHex(rgb);
 
       // set rgb values again if they don't match their normalized version
@@ -691,7 +692,7 @@ export const ColorMixin = dedupingMixin(superClass => {
       }
 
       let toSet = {};
-      const hsl = normalize.hsl(rgbToHsl(rgb, this.h));
+      const hsl = normalizeHsl(rgbToHsl(rgb, this.h));
       const colorString = this._computeColorString(rgb, hsl, hex, this.colorString);
 
       if (!(this.h === hsl.h && this.s === hsl.s && this.l === hsl.l)) {
@@ -720,7 +721,7 @@ export const ColorMixin = dedupingMixin(superClass => {
         return;
       }
 
-      const hsl = normalize.hsl({ h: h, s: s, l: l });
+      const hsl = normalizeHsl({ h: h, s: s, l: l });
 
       // set hsl values again if they don't match their normalized version
       if (!(this.h === hsl.h && this.s === hsl.s && this.l === hsl.l)) {
@@ -736,7 +737,7 @@ export const ColorMixin = dedupingMixin(superClass => {
       }
 
       let toSet = {};
-      const rgb = normalize.rgb(hslToRgb(hsl));
+      const rgb = normalizeRgb(hslToRgb(hsl));
       const hex = rgbToHex(rgb);
       const colorString = this._computeColorString(rgb, hsl, hex, this.colorString);
 

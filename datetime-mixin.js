@@ -516,8 +516,8 @@ export const DatetimeMixin = dedupingMixin( superClass => {
           millisecond = this._dateLocked ? 0 : transformedDate.getUTCMilliseconds(),
           hour12 = (hour === 0) ? 12 : (hour > 12 ? hour - 12 : hour),
           isAm = hour < 12,
-          date = toDateByComponents(year, month, day),
-          time = this._dateLocked ? '00:00:00.000' : toTimeByComponents(hour, minute, second, millisecond),
+          date = toDateStringByComponents(year, month, day),
+          time = this._dateLocked ? '00:00:00.000' : toTimeStringByComponents(hour, minute, second, millisecond),
           datetime = date + 'T' + time + (toSet.timezone || this.timezone);
 
         if(!(year === this.year && month === this.month && day === this.day && hour === this.hour && hour12 === this.hour12 && isAm === this.isAm && minute === this.minute && second === this.second && millisecond === this.millisecond)) {

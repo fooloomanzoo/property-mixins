@@ -174,7 +174,7 @@ export const RangeMixin = dedupingMixin( superClass => { // eslint-disable-line 
       }
       const safeAdd = this._safeAdd,
         safeMult = this._safeMult;
-      const isNegative0 = (this.useNegativeZero && isNegative0(value));
+      const _isNegative0 = (this.useNegativeZero && isNegative0(value));
       if (!isNaN(this.default)) {
         value = safeAdd(safeMult(Math.round((value - this.default) / step), step), this.default);
       } else if (!isNaN(this.min)) {
@@ -184,7 +184,7 @@ export const RangeMixin = dedupingMixin( superClass => { // eslint-disable-line 
       } else {
         value = safeMult(Math.round(value / step), step);
       }
-      return (isNegative0 && value === 0) ? -0 : value;
+      return (_isNegative0 && value === 0) ? -0 : value;
     }
 
     /**
