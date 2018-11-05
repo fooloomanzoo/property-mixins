@@ -31,8 +31,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@polymer/polymer": "^3",
-    "@polymer/iron-overlay-behavior": "^3"
+    "@polymer/polymer": "^3"
   },
   "devDependencies": {
     "@webcomponents/webcomponentsjs": "^2",
