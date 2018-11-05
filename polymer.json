@@ -1,16 +1,18 @@
 {
+  "moduleResolution": "node",
+  "npm": true,
   "sources": [
-    "color-mixin.html",
-    "datetime-mixin.html",
-    "duration-mixin.html",
-    "intl-datetime-format-mixin.html",
-    "intl-number-format-mixin.html",
-    "number-utilities.html",
-    "range-mixin.html"
+    "color-mixin.js",
+    "datetime-mixin.js",
+    "duration-mixin.js",
+    "intl-datetime-format-mixin.js",
+    "intl-number-format-mixin.js",
+    "number-utilities.js",
+    "range-mixin.js"
   ],
   "lint": {
     "rules": [
-      "polymer-2"
+      "polymer-3"
     ]
   }
 }

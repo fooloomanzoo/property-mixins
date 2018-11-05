@@ -6,12 +6,11 @@
 
     <title>range-mixin test</title>
 
-    <script src="../../webcomponentsjs/webcomponents-loader.js"></script>
-    <script src="../../web-component-tester/browser.js"></script>
-    <script src="../../iron-test-helpers/test-helpers.js"></script>
-    <script src="../../input-picker-pattern/utils/wct-mixin-test-helper.js"></script>
+    <script src="../../../@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../../../wct-browser-legacy/browser.js"></script>
+    <script src="../../../@polymer/iron-test-helpers/test-helpers.js" type="module"></script>
 
-    <link rel="import" href="../demo/elements/basic-range-element.html">
+    <script type="module" src="../demo/elements/basic-range-element.js"></script>
   </head>
   <body>
 
@@ -88,8 +87,13 @@
       </template>
     </test-fixture>
 
-    <script>
-      WCT.helpers.mixinSuite('basic-range-element');
+    <script type="module">
+      import { Base } from '@polymer/polymer/polymer-legacy.js';
+      import { isNegative0 } from '../number-utilities.js';
+      import { getParams, mixinSuite } from '@fooloomanzoo/input-picker-pattern/utils/wct-mixin-test-helper.js';
+
+      const params = getParams();
+      mixinSuite(['basic-range-element']);
 
       suite('basic', () => {
         let element;
@@ -182,28 +186,28 @@
 
         test('setting -0', done => {
           element.valueAsNumber = -0;
-          assert.isTrue(numberUtilities.isNegative0(element.valueAsNumber), 'valueAsNumber is negative zero');
+          assert.isTrue(isNegative0(element.valueAsNumber), 'valueAsNumber is negative zero');
           done();
         });
 
         test('setting -0 to +0', done => {
           element.valueAsNumber = -0;
           element.valueAsNumber = +0;
-          assert.isTrue(!numberUtilities.isNegative0(element.valueAsNumber), 'valueAsNumber is positive zero');
+          assert.isTrue(!isNegative0(element.valueAsNumber), 'valueAsNumber is positive zero');
           done();
         });
 
         test('from 1 to +0', done => {
           element.valueAsNumber = 1;
           element.decrease();
-          assert.isTrue(!numberUtilities.isNegative0(element.valueAsNumber) && element.valueAsNumber === 0, 'valueAsNumber decrease to positive zero');
+          assert.isTrue(!isNegative0(element.valueAsNumber) && element.valueAsNumber === 0, 'valueAsNumber decrease to positive zero');
           done();
         });
 
         test('from +0 to -0', done => {
           element.valueAsNumber = 0;
           element.decrease();
-          assert.isTrue(numberUtilities.isNegative0(element.valueAsNumber), 'valueAsNumber should be negative zero'+element.valueAsNumber);
+          assert.isTrue(isNegative0(element.valueAsNumber), 'valueAsNumber should be negative zero'+element.valueAsNumber);
           done();
         });
 
@@ -211,7 +215,7 @@
           element.valueAsNumber = 1;
           element.decrease();
           element.decrease();
-          assert.isTrue(numberUtilities.isNegative0(element.valueAsNumber), 'valueAsNumber should be negative zero'+element.valueAsNumber);
+          assert.isTrue(isNegative0(element.valueAsNumber), 'valueAsNumber should be negative zero'+element.valueAsNumber);
           done();
         });
 
@@ -225,14 +229,14 @@
         test('from -1 to -0', done => {
           element.valueAsNumber = -1;
           element.increase();
-          assert.isTrue(numberUtilities.isNegative0(element.valueAsNumber), 'valueAsNumber should increase to negative zero'+element.valueAsNumber);
+          assert.isTrue(isNegative0(element.valueAsNumber), 'valueAsNumber should increase to negative zero'+element.valueAsNumber);
           done();
         });
 
         test('from -0 to +0', done => {
           element.valueAsNumber = -0;
           element.increase();
-          assert.isTrue(!numberUtilities.isNegative0(element.valueAsNumber) && element.valueAsNumber === 0, 'valueAsNumber should increase to positive zero' + element.valueAsNumber);
+          assert.isTrue(!isNegative0(element.valueAsNumber) && element.valueAsNumber === 0, 'valueAsNumber should increase to positive zero' + element.valueAsNumber);
           done();
         });
 
@@ -274,12 +278,12 @@
         test('propagate negative zero change to positive zero', done => {
           el1.valueAsNumber = -0
 
-          assert.isTrue(numberUtilities.isNegative0(el1.valueAsNumber), 'value of first element is set to -0');
-          assert.isTrue(numberUtilities.isNegative0(el2.valueAsNumber), 'value of second element is set to -0');
+          assert.isTrue(isNegative0(el1.valueAsNumber), 'value of first element is set to -0');
+          assert.isTrue(isNegative0(el2.valueAsNumber), 'value of second element is set to -0');
 
           el1.valueAsNumber = 0;
-          assert.isTrue(!numberUtilities.isNegative0(el1.valueAsNumber) && el1.valueAsNumber === 0, 'value of first element is set to +0');
-          assert.isTrue(!numberUtilities.isNegative0(el2.valueAsNumber) && el2.valueAsNumber === 0, 'value of second element is set to +0');
+          assert.isTrue(!isNegative0(el1.valueAsNumber) && el1.valueAsNumber === 0, 'value of first element is set to +0');
+          assert.isTrue(!isNegative0(el2.valueAsNumber) && el2.valueAsNumber === 0, 'value of second element is set to +0');
           done();
         });
 
@@ -289,12 +293,12 @@
 
           el1.valueAsNumber = -0
 
-          assert.isTrue(numberUtilities.isNegative0(el1.valueAsNumber), 'value of first element is set to -0');
-          assert.isTrue(numberUtilities.isNegative0(el2.valueAsNumber), 'value of second element is set to -0');
+          assert.isTrue(isNegative0(el1.valueAsNumber), 'value of first element is set to -0');
+          assert.isTrue(isNegative0(el2.valueAsNumber), 'value of second element is set to -0');
 
           el1.valueAsNumber = 0;
-          assert.isTrue(!numberUtilities.isNegative0(el1.valueAsNumber) && el1.valueAsNumber === 0, 'value of first element is set to +0');
-          assert.isTrue(!numberUtilities.isNegative0(el2.valueAsNumber) && el2.valueAsNumber === 0, 'value of second element is set to +0');
+          assert.isTrue(!isNegative0(el1.valueAsNumber) && el1.valueAsNumber === 0, 'value of first element is set to +0');
+          assert.isTrue(!isNegative0(el2.valueAsNumber) && el2.valueAsNumber === 0, 'value of second element is set to +0');
           done();
         });
       });
@@ -391,6 +395,5 @@
         });
       });
     </script>
-
   </body>
 </html>

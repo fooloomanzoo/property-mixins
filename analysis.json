@@ -4,7 +4,7 @@
     {
       "description": "Mixin that provides web-color-properties. Its `color-string` converts automatically beetween different formats (hex, rgb and hsl) and provides an alpha-colorString.",
       "summary": "",
-      "path": "color-mixin.html",
+      "path": "color-mixin.js",
       "properties": [
         {
           "name": "hex",
@@ -13,12 +13,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 47,
-              "column": 10
+              "line": 286,
+              "column": 8
             },
             "end": {
-              "line": 51,
-              "column": 11
+              "line": 290,
+              "column": 9
             }
           },
           "metadata": {
@@ -36,12 +36,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 56,
-              "column": 10
+              "line": 295,
+              "column": 8
             },
             "end": {
-              "line": 59,
-              "column": 11
+              "line": 298,
+              "column": 9
             }
           },
           "metadata": {
@@ -58,12 +58,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 64,
-              "column": 10
+              "line": 303,
+              "column": 8
             },
             "end": {
-              "line": 67,
-              "column": 11
+              "line": 306,
+              "column": 9
             }
           },
           "metadata": {
@@ -80,12 +80,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 72,
-              "column": 10
+              "line": 311,
+              "column": 8
             },
             "end": {
-              "line": 75,
-              "column": 11
+              "line": 314,
+              "column": 9
             }
           },
           "metadata": {
@@ -102,12 +102,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 80,
-              "column": 10
+              "line": 319,
+              "column": 8
             },
             "end": {
-              "line": 83,
-              "column": 11
+              "line": 322,
+              "column": 9
             }
           },
           "metadata": {
@@ -124,12 +124,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 88,
-              "column": 10
+              "line": 327,
+              "column": 8
             },
             "end": {
-              "line": 91,
-              "column": 11
+              "line": 330,
+              "column": 9
             }
           },
           "metadata": {
@@ -146,12 +146,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 96,
-              "column": 10
+              "line": 335,
+              "column": 8
             },
             "end": {
-              "line": 99,
-              "column": 11
+              "line": 338,
+              "column": 9
             }
           },
           "metadata": {
@@ -168,12 +168,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 104,
-              "column": 10
+              "line": 343,
+              "column": 8
             },
             "end": {
-              "line": 109,
-              "column": 11
+              "line": 348,
+              "column": 9
             }
           },
           "metadata": {
@@ -192,12 +192,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 114,
-              "column": 10
+              "line": 353,
+              "column": 8
             },
             "end": {
-              "line": 118,
-              "column": 11
+              "line": 357,
+              "column": 9
             }
           },
           "metadata": {
@@ -215,12 +215,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 122,
-              "column": 10
+              "line": 362,
+              "column": 8
             },
             "end": {
-              "line": 125,
-              "column": 11
+              "line": 365,
+              "column": 9
             }
           },
           "metadata": {
@@ -237,12 +237,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 130,
-              "column": 10
+              "line": 370,
+              "column": 8
             },
             "end": {
-              "line": 135,
-              "column": 11
+              "line": 375,
+              "column": 9
             }
           },
           "metadata": {
@@ -261,12 +261,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 140,
-              "column": 10
+              "line": 380,
+              "column": 8
             },
             "end": {
-              "line": 142,
-              "column": 11
+              "line": 382,
+              "column": 9
             }
           },
           "metadata": {
@@ -282,12 +282,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 147,
-              "column": 10
+              "line": 387,
+              "column": 8
             },
             "end": {
-              "line": 150,
-              "column": 11
+              "line": 390,
+              "column": 9
             }
           },
           "metadata": {
@@ -304,12 +304,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 155,
-              "column": 10
+              "line": 395,
+              "column": 8
             },
             "end": {
-              "line": 159,
-              "column": 11
+              "line": 399,
+              "column": 9
             }
           },
           "metadata": {
@@ -328,12 +328,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 170,
-              "column": 6
+              "line": 410,
+              "column": 4
             },
             "end": {
-              "line": 173,
-              "column": 7
+              "line": 413,
+              "column": 5
             }
           },
           "metadata": {},
@@ -348,12 +348,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 178,
-              "column": 6
+              "line": 418,
+              "column": 4
             },
             "end": {
-              "line": 181,
-              "column": 7
+              "line": 421,
+              "column": 5
             }
           },
           "metadata": {},
@@ -368,12 +368,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 186,
-              "column": 6
+              "line": 426,
+              "column": 4
             },
             "end": {
-              "line": 199,
-              "column": 7
+              "line": 439,
+              "column": 5
             }
           },
           "metadata": {},
@@ -388,12 +388,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 204,
-              "column": 6
+              "line": 444,
+              "column": 4
             },
             "end": {
-              "line": 216,
-              "column": 7
+              "line": 457,
+              "column": 5
             }
           },
           "metadata": {},
@@ -403,38 +403,17 @@
           }
         },
         {
-          "name": "_testColor",
-          "description": "test a color string in local browser environment",
-          "privacy": "protected",
-          "sourceRange": {
-            "start": {
-              "line": 221,
-              "column": 6
-            },
-            "end": {
-              "line": 239,
-              "column": 7
-            }
-          },
-          "metadata": {},
-          "params": [
-            {
-              "name": "colorString"
-            }
-          ]
-        },
-        {
           "name": "_colorStringChanged",
           "description": "",
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 241,
-              "column": 6
+              "line": 459,
+              "column": 4
             },
             "end": {
-              "line": 332,
-              "column": 7
+              "line": 554,
+              "column": 5
             }
           },
           "metadata": {},
@@ -453,12 +432,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 342,
-              "column": 6
+              "line": 564,
+              "column": 4
             },
             "end": {
-              "line": 416,
-              "column": 7
+              "line": 643,
+              "column": 5
             }
           },
           "metadata": {},
@@ -475,12 +454,12 @@
             },
             {
               "name": "hex",
-              "type": "String",
+              "type": "string",
               "description": "The hex string"
             },
             {
               "name": "oldColor",
-              "type": "String",
+              "type": "string",
               "description": "The old color string before setting"
             }
           ],
@@ -495,12 +474,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 418,
-              "column": 6
+              "line": 645,
+              "column": 4
             },
             "end": {
-              "line": 438,
-              "column": 7
+              "line": 665,
+              "column": 5
             }
           },
           "metadata": {},
@@ -519,12 +498,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 440,
-              "column": 6
+              "line": 667,
+              "column": 4
             },
             "end": {
-              "line": 484,
-              "column": 7
+              "line": 711,
+              "column": 5
             }
           },
           "metadata": {},
@@ -549,12 +528,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 486,
-              "column": 6
+              "line": 713,
+              "column": 4
             },
             "end": {
-              "line": 529,
-              "column": 7
+              "line": 756,
+              "column": 5
             }
           },
           "metadata": {},
@@ -579,12 +558,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 531,
-              "column": 6
+              "line": 758,
+              "column": 4
             },
             "end": {
-              "line": 547,
-              "column": 7
+              "line": 774,
+              "column": 5
             }
           },
           "metadata": {},
@@ -606,12 +585,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 549,
-              "column": 6
+              "line": 776,
+              "column": 4
             },
             "end": {
-              "line": 571,
-              "column": 7
+              "line": 798,
+              "column": 5
             }
           },
           "metadata": {},
@@ -633,12 +612,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 573,
-              "column": 6
+              "line": 800,
+              "column": 4
             },
             "end": {
-              "line": 577,
-              "column": 7
+              "line": 804,
+              "column": 5
             }
           },
           "metadata": {},
@@ -649,307 +628,6 @@
           ],
           "return": {
             "type": "void"
-          }
-        },
-        {
-          "name": "hexToRgb",
-          "description": "convert hex to rgb",
-          "privacy": "public",
-          "sourceRange": {
-            "start": {
-              "line": 584,
-              "column": 6
-            },
-            "end": {
-              "line": 597,
-              "column": 7
-            }
-          },
-          "metadata": {},
-          "params": [
-            {
-              "name": "hex",
-              "type": "String",
-              "description": "The hex string without alpha"
-            }
-          ],
-          "return": {
-            "type": "rgbObject",
-            "desc": "the rgb object"
-          }
-        },
-        {
-          "name": "rgbToHex",
-          "description": "convert hex to rgb",
-          "privacy": "public",
-          "sourceRange": {
-            "start": {
-              "line": 604,
-              "column": 6
-            },
-            "end": {
-              "line": 609,
-              "column": 7
-            }
-          },
-          "metadata": {},
-          "params": [
-            {
-              "name": "rgb"
-            }
-          ],
-          "return": {
-            "type": "rgbObject",
-            "desc": "the rgb object"
-          }
-        },
-        {
-          "name": "rgbToHsl",
-          "description": "convert rgb to hsl (the values are not rounded)",
-          "privacy": "public",
-          "sourceRange": {
-            "start": {
-              "line": 617,
-              "column": 6
-            },
-            "end": {
-              "line": 653,
-              "column": 7
-            }
-          },
-          "metadata": {},
-          "params": [
-            {
-              "name": "rgb",
-              "type": "rgbObject",
-              "description": "rgb object"
-            },
-            {
-              "name": "defaultH",
-              "type": "Number",
-              "description": "hue to set if saturation is 0"
-            }
-          ],
-          "return": {
-            "type": "hslObject",
-            "desc": "hsl object"
-          }
-        },
-        {
-          "name": "hslToRgb",
-          "description": "convert hsl to rgb (the values are not rounded)",
-          "privacy": "public",
-          "sourceRange": {
-            "start": {
-              "line": 660,
-              "column": 6
-            },
-            "end": {
-              "line": 671,
-              "column": 7
-            }
-          },
-          "metadata": {},
-          "params": [
-            {
-              "name": "hsl",
-              "type": "hslObject",
-              "description": "hsl object"
-            }
-          ],
-          "return": {
-            "type": "rgbObject",
-            "desc": "rgb object"
-          }
-        },
-        {
-          "name": "_componentToHex",
-          "description": "",
-          "privacy": "protected",
-          "sourceRange": {
-            "start": {
-              "line": 673,
-              "column": 6
-            },
-            "end": {
-              "line": 680,
-              "column": 7
-            }
-          },
-          "metadata": {},
-          "params": [
-            {
-              "name": "component"
-            }
-          ]
-        },
-        {
-          "name": "_alphaToHex",
-          "description": "",
-          "privacy": "protected",
-          "sourceRange": {
-            "start": {
-              "line": 682,
-              "column": 6
-            },
-            "end": {
-              "line": 688,
-              "column": 7
-            }
-          },
-          "metadata": {},
-          "params": [
-            {
-              "name": "alpha"
-            },
-            {
-              "name": "length"
-            }
-          ]
-        },
-        {
-          "name": "_hexToAlpha",
-          "description": "",
-          "privacy": "protected",
-          "sourceRange": {
-            "start": {
-              "line": 690,
-              "column": 6
-            },
-            "end": {
-              "line": 694,
-              "column": 7
-            }
-          },
-          "metadata": {},
-          "params": [
-            {
-              "name": "hex"
-            },
-            {
-              "name": "length"
-            }
-          ]
-        },
-        {
-          "name": "_hueToComponent",
-          "description": "",
-          "privacy": "protected",
-          "sourceRange": {
-            "start": {
-              "line": 696,
-              "column": 6
-            },
-            "end": {
-              "line": 703,
-              "column": 7
-            }
-          },
-          "metadata": {},
-          "params": [
-            {
-              "name": "t1"
-            },
-            {
-              "name": "t2"
-            },
-            {
-              "name": "h"
-            }
-          ]
-        },
-        {
-          "name": "_normalizeRgb",
-          "description": "normalize rgb values",
-          "privacy": "protected",
-          "sourceRange": {
-            "start": {
-              "line": 710,
-              "column": 5
-            },
-            "end": {
-              "line": 715,
-              "column": 6
-            }
-          },
-          "metadata": {},
-          "params": [
-            {
-              "name": "rgb",
-              "type": "rgbObject",
-              "description": "The rgb-object of which the values should be normalized"
-            }
-          ],
-          "return": {
-            "type": "rgbObject",
-            "desc": "The normalized rgb-object."
-          }
-        },
-        {
-          "name": "_normalizeHsl",
-          "description": "normalize hsl values",
-          "privacy": "protected",
-          "sourceRange": {
-            "start": {
-              "line": 722,
-              "column": 5
-            },
-            "end": {
-              "line": 727,
-              "column": 6
-            }
-          },
-          "metadata": {},
-          "params": [
-            {
-              "name": "hsl"
-            }
-          ],
-          "return": {
-            "type": "hslObject",
-            "desc": "The normalized hsl-object."
-          }
-        },
-        {
-          "name": "_randomRgb",
-          "description": "generate random rgb-color",
-          "privacy": "protected",
-          "sourceRange": {
-            "start": {
-              "line": 733,
-              "column": 5
-            },
-            "end": {
-              "line": 739,
-              "column": 6
-            }
-          },
-          "metadata": {},
-          "params": [],
-          "return": {
-            "type": "rgbObject",
-            "desc": "rgb-color object"
-          }
-        },
-        {
-          "name": "_randomHsl",
-          "description": "generate random hsl-color",
-          "privacy": "protected",
-          "sourceRange": {
-            "start": {
-              "line": 745,
-              "column": 5
-            },
-            "end": {
-              "line": 751,
-              "column": 6
-            }
-          },
-          "metadata": {},
-          "params": [],
-          "return": {
-            "type": "hslObject",
-            "desc": "hsl-color object"
           }
         }
       ],
@@ -963,11 +641,11 @@
       "metadata": {},
       "sourceRange": {
         "start": {
-          "line": 26,
-          "column": 2
+          "line": 270,
+          "column": 7
         },
         "end": {
-          "line": 753,
+          "line": 806,
           "column": 3
         }
       },
@@ -979,12 +657,12 @@
           "description": "Hex-color",
           "sourceRange": {
             "start": {
-              "line": 47,
-              "column": 10
+              "line": 286,
+              "column": 8
             },
             "end": {
-              "line": 51,
-              "column": 11
+              "line": 290,
+              "column": 9
             }
           },
           "metadata": {},
@@ -995,12 +673,12 @@
           "description": "Red",
           "sourceRange": {
             "start": {
-              "line": 56,
-              "column": 10
+              "line": 295,
+              "column": 8
             },
             "end": {
-              "line": 59,
-              "column": 11
+              "line": 298,
+              "column": 9
             }
           },
           "metadata": {},
@@ -1011,12 +689,12 @@
           "description": "Green",
           "sourceRange": {
             "start": {
-              "line": 64,
-              "column": 10
+              "line": 303,
+              "column": 8
             },
             "end": {
-              "line": 67,
-              "column": 11
+              "line": 306,
+              "column": 9
             }
           },
           "metadata": {},
@@ -1027,12 +705,12 @@
           "description": "Blue",
           "sourceRange": {
             "start": {
-              "line": 72,
-              "column": 10
+              "line": 311,
+              "column": 8
             },
             "end": {
-              "line": 75,
-              "column": 11
+              "line": 314,
+              "column": 9
             }
           },
           "metadata": {},
@@ -1043,12 +721,12 @@
           "description": "Hue",
           "sourceRange": {
             "start": {
-              "line": 80,
-              "column": 10
+              "line": 319,
+              "column": 8
             },
             "end": {
-              "line": 83,
-              "column": 11
+              "line": 322,
+              "column": 9
             }
           },
           "metadata": {},
@@ -1059,12 +737,12 @@
           "description": "Saturation (hsl)",
           "sourceRange": {
             "start": {
-              "line": 88,
-              "column": 10
+              "line": 327,
+              "column": 8
             },
             "end": {
-              "line": 91,
-              "column": 11
+              "line": 330,
+              "column": 9
             }
           },
           "metadata": {},
@@ -1075,12 +753,12 @@
           "description": "Lightness",
           "sourceRange": {
             "start": {
-              "line": 96,
-              "column": 10
+              "line": 335,
+              "column": 8
             },
             "end": {
-              "line": 99,
-              "column": 11
+              "line": 338,
+              "column": 9
             }
           },
           "metadata": {},
@@ -1091,12 +769,12 @@
           "description": "Alpha",
           "sourceRange": {
             "start": {
-              "line": 104,
-              "column": 10
+              "line": 343,
+              "column": 8
             },
             "end": {
-              "line": 109,
-              "column": 11
+              "line": 348,
+              "column": 9
             }
           },
           "metadata": {},
@@ -1107,12 +785,12 @@
           "description": "if true, colorString has alpha",
           "sourceRange": {
             "start": {
-              "line": 114,
-              "column": 10
+              "line": 353,
+              "column": 8
             },
             "end": {
-              "line": 118,
-              "column": 11
+              "line": 357,
+              "column": 9
             }
           },
           "metadata": {},
@@ -1123,12 +801,12 @@
           "description": "Precision of hsl-colorStrings, if the format is 'hsl' (for saturation and lightness it is applied according to their percentage colorString)",
           "sourceRange": {
             "start": {
-              "line": 122,
-              "column": 10
+              "line": 362,
+              "column": 8
             },
             "end": {
-              "line": 125,
-              "column": 11
+              "line": 365,
+              "column": 9
             }
           },
           "metadata": {},
@@ -1139,12 +817,12 @@
           "description": "format of the colorString (possible colorStrings: 'rgb', 'hex', 'hsl', 'auto')",
           "sourceRange": {
             "start": {
-              "line": 130,
-              "column": 10
+              "line": 370,
+              "column": 8
             },
             "end": {
-              "line": 135,
-              "column": 11
+              "line": 375,
+              "column": 9
             }
           },
           "metadata": {},
@@ -1155,12 +833,12 @@
           "description": "format is locked and does not switch according to the colorString",
           "sourceRange": {
             "start": {
-              "line": 140,
-              "column": 10
+              "line": 380,
+              "column": 8
             },
             "end": {
-              "line": 142,
-              "column": 11
+              "line": 382,
+              "column": 9
             }
           },
           "metadata": {},
@@ -1171,12 +849,12 @@
           "description": "value as color-string",
           "sourceRange": {
             "start": {
-              "line": 155,
-              "column": 10
+              "line": 395,
+              "column": 8
             },
             "end": {
-              "line": 159,
-              "column": 11
+              "line": 399,
+              "column": 9
             }
           },
           "metadata": {},
@@ -1193,7 +871,7 @@
     {
       "description": "Mixin that provides intl-format-locale for datetime and computes some separation strings for usage.",
       "summary": "",
-      "path": "intl-datetime-format-mixin.html",
+      "path": "intl-datetime-format-mixin.js",
       "properties": [
         {
           "name": "locale",
@@ -1202,12 +880,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 19,
-              "column": 10
+              "line": 23,
+              "column": 8
             },
             "end": {
-              "line": 22,
-              "column": 11
+              "line": 26,
+              "column": 9
             }
           },
           "metadata": {
@@ -1223,12 +901,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 28,
-              "column": 10
+              "line": 32,
+              "column": 8
             },
             "end": {
-              "line": 31,
-              "column": 11
+              "line": 35,
+              "column": 9
             }
           },
           "metadata": {
@@ -1245,12 +923,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 37,
-              "column": 10
+              "line": 41,
+              "column": 8
             },
             "end": {
-              "line": 40,
-              "column": 11
+              "line": 44,
+              "column": 9
             }
           },
           "metadata": {
@@ -1267,12 +945,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 46,
-              "column": 10
+              "line": 50,
+              "column": 8
             },
             "end": {
-              "line": 49,
-              "column": 11
+              "line": 53,
+              "column": 9
             }
           },
           "metadata": {
@@ -1289,12 +967,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 54,
-              "column": 10
+              "line": 58,
+              "column": 8
             },
             "end": {
-              "line": 57,
-              "column": 11
+              "line": 61,
+              "column": 9
             }
           },
           "metadata": {
@@ -1311,12 +989,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 62,
-              "column": 10
+              "line": 66,
+              "column": 8
             },
             "end": {
-              "line": 65,
-              "column": 11
+              "line": 69,
+              "column": 9
             }
           },
           "metadata": {
@@ -1333,12 +1011,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 70,
-              "column": 10
+              "line": 74,
+              "column": 8
             },
             "end": {
-              "line": 81,
-              "column": 11
+              "line": 85,
+              "column": 9
             }
           },
           "metadata": {
@@ -1358,12 +1036,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 91,
-              "column": 6
+              "line": 95,
+              "column": 4
             },
             "end": {
-              "line": 279,
-              "column": 7
+              "line": 283,
+              "column": 5
             }
           },
           "metadata": {},
@@ -1382,11 +1060,11 @@
       "metadata": {},
       "sourceRange": {
         "start": {
-          "line": 10,
-          "column": 2
+          "line": 14,
+          "column": 7
         },
         "end": {
-          "line": 281,
+          "line": 285,
           "column": 3
         }
       },
@@ -1398,12 +1076,12 @@
           "description": "The current locale",
           "sourceRange": {
             "start": {
-              "line": 19,
-              "column": 10
+              "line": 23,
+              "column": 8
             },
             "end": {
-              "line": 22,
-              "column": 11
+              "line": 26,
+              "column": 9
             }
           },
           "metadata": {},
@@ -1414,12 +1092,12 @@
           "description": "locale separator for local decimal values",
           "sourceRange": {
             "start": {
-              "line": 28,
-              "column": 10
+              "line": 32,
+              "column": 8
             },
             "end": {
-              "line": 31,
-              "column": 11
+              "line": 35,
+              "column": 9
             }
           },
           "metadata": {},
@@ -1430,12 +1108,12 @@
           "description": "Separator for local date values (date-string is still in ISO-Format)",
           "sourceRange": {
             "start": {
-              "line": 37,
-              "column": 10
+              "line": 41,
+              "column": 8
             },
             "end": {
-              "line": 40,
-              "column": 11
+              "line": 44,
+              "column": 9
             }
           },
           "metadata": {},
@@ -1446,12 +1124,12 @@
           "description": "Separator for local time values (time-string is still in ISO-Format)",
           "sourceRange": {
             "start": {
-              "line": 46,
-              "column": 10
+              "line": 50,
+              "column": 8
             },
             "end": {
-              "line": 49,
-              "column": 11
+              "line": 53,
+              "column": 9
             }
           },
           "metadata": {},
@@ -1462,12 +1140,12 @@
           "description": "locale representation of 'AM'",
           "sourceRange": {
             "start": {
-              "line": 54,
-              "column": 10
+              "line": 58,
+              "column": 8
             },
             "end": {
-              "line": 57,
-              "column": 11
+              "line": 61,
+              "column": 9
             }
           },
           "metadata": {},
@@ -1478,12 +1156,12 @@
           "description": "locale representation of 'PM'",
           "sourceRange": {
             "start": {
-              "line": 62,
-              "column": 10
+              "line": 66,
+              "column": 8
             },
             "end": {
-              "line": 65,
-              "column": 11
+              "line": 69,
+              "column": 9
             }
           },
           "metadata": {},
@@ -1494,12 +1172,12 @@
           "description": "order of date-parts",
           "sourceRange": {
             "start": {
-              "line": 70,
-              "column": 10
+              "line": 74,
+              "column": 8
             },
             "end": {
-              "line": 81,
-              "column": 11
+              "line": 85,
+              "column": 9
             }
           },
           "metadata": {},
@@ -1516,7 +1194,7 @@
     {
       "description": "Mixin that provides datetime-properties",
       "summary": "",
-      "path": "datetime-mixin.html",
+      "path": "datetime-mixin.js",
       "properties": [
         {
           "name": "locale",
@@ -1524,14 +1202,14 @@
           "description": "The current locale",
           "privacy": "public",
           "sourceRange": {
-            "file": "intl-datetime-format-mixin.html",
+            "file": "intl-datetime-format-mixin.js",
             "start": {
-              "line": 19,
-              "column": 10
+              "line": 23,
+              "column": 8
             },
             "end": {
-              "line": 22,
-              "column": 11
+              "line": 26,
+              "column": 9
             }
           },
           "metadata": {
@@ -1547,14 +1225,14 @@
           "description": "locale separator for local decimal values",
           "privacy": "public",
           "sourceRange": {
-            "file": "intl-datetime-format-mixin.html",
+            "file": "intl-datetime-format-mixin.js",
             "start": {
-              "line": 28,
-              "column": 10
+              "line": 32,
+              "column": 8
             },
             "end": {
-              "line": 31,
-              "column": 11
+              "line": 35,
+              "column": 9
             }
           },
           "metadata": {
@@ -1571,14 +1249,14 @@
           "description": "Separator for local date values (date-string is still in ISO-Format)",
           "privacy": "public",
           "sourceRange": {
-            "file": "intl-datetime-format-mixin.html",
+            "file": "intl-datetime-format-mixin.js",
             "start": {
-              "line": 37,
-              "column": 10
+              "line": 41,
+              "column": 8
             },
             "end": {
-              "line": 40,
-              "column": 11
+              "line": 44,
+              "column": 9
             }
           },
           "metadata": {
@@ -1595,14 +1273,14 @@
           "description": "Separator for local time values (time-string is still in ISO-Format)",
           "privacy": "public",
           "sourceRange": {
-            "file": "intl-datetime-format-mixin.html",
+            "file": "intl-datetime-format-mixin.js",
             "start": {
-              "line": 46,
-              "column": 10
+              "line": 50,
+              "column": 8
             },
             "end": {
-              "line": 49,
-              "column": 11
+              "line": 53,
+              "column": 9
             }
           },
           "metadata": {
@@ -1619,14 +1297,14 @@
           "description": "locale representation of 'AM'",
           "privacy": "public",
           "sourceRange": {
-            "file": "intl-datetime-format-mixin.html",
+            "file": "intl-datetime-format-mixin.js",
             "start": {
-              "line": 54,
-              "column": 10
+              "line": 58,
+              "column": 8
             },
             "end": {
-              "line": 57,
-              "column": 11
+              "line": 61,
+              "column": 9
             }
           },
           "metadata": {
@@ -1643,14 +1321,14 @@
           "description": "locale representation of 'PM'",
           "privacy": "public",
           "sourceRange": {
-            "file": "intl-datetime-format-mixin.html",
+            "file": "intl-datetime-format-mixin.js",
             "start": {
-              "line": 62,
-              "column": 10
+              "line": 66,
+              "column": 8
             },
             "end": {
-              "line": 65,
-              "column": 11
+              "line": 69,
+              "column": 9
             }
           },
           "metadata": {
@@ -1667,14 +1345,14 @@
           "description": "order of date-parts",
           "privacy": "public",
           "sourceRange": {
-            "file": "intl-datetime-format-mixin.html",
+            "file": "intl-datetime-format-mixin.js",
             "start": {
-              "line": 70,
-              "column": 10
+              "line": 74,
+              "column": 8
             },
             "end": {
-              "line": 81,
-              "column": 11
+              "line": 85,
+              "column": 9
             }
           },
           "metadata": {
@@ -1694,12 +1372,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 46,
-              "column": 10
+              "line": 225,
+              "column": 8
             },
             "end": {
-              "line": 49,
-              "column": 11
+              "line": 228,
+              "column": 9
             }
           },
           "metadata": {
@@ -1716,12 +1394,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 54,
-              "column": 10
+              "line": 233,
+              "column": 8
             },
             "end": {
-              "line": 57,
-              "column": 11
+              "line": 236,
+              "column": 9
             }
           },
           "metadata": {
@@ -1738,12 +1416,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 62,
-              "column": 10
+              "line": 241,
+              "column": 8
             },
             "end": {
-              "line": 65,
-              "column": 11
+              "line": 244,
+              "column": 9
             }
           },
           "metadata": {
@@ -1760,12 +1438,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 70,
-              "column": 10
+              "line": 249,
+              "column": 8
             },
             "end": {
-              "line": 73,
-              "column": 11
+              "line": 252,
+              "column": 9
             }
           },
           "metadata": {
@@ -1782,12 +1460,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 79,
-              "column": 10
+              "line": 258,
+              "column": 8
             },
             "end": {
-              "line": 83,
-              "column": 11
+              "line": 262,
+              "column": 9
             }
           },
           "metadata": {
@@ -1805,12 +1483,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 89,
-              "column": 10
+              "line": 268,
+              "column": 8
             },
             "end": {
-              "line": 93,
-              "column": 11
+              "line": 272,
+              "column": 9
             }
           },
           "metadata": {
@@ -1828,12 +1506,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 98,
-              "column": 10
+              "line": 277,
+              "column": 8
             },
             "end": {
-              "line": 101,
-              "column": 11
+              "line": 280,
+              "column": 9
             }
           },
           "metadata": {
@@ -1850,12 +1528,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 106,
-              "column": 10
+              "line": 285,
+              "column": 8
             },
             "end": {
-              "line": 109,
-              "column": 11
+              "line": 288,
+              "column": 9
             }
           },
           "metadata": {
@@ -1872,12 +1550,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 114,
-              "column": 10
+              "line": 293,
+              "column": 8
             },
             "end": {
-              "line": 117,
-              "column": 11
+              "line": 296,
+              "column": 9
             }
           },
           "metadata": {
@@ -1894,12 +1572,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 122,
-              "column": 10
+              "line": 301,
+              "column": 8
             },
             "end": {
-              "line": 125,
-              "column": 11
+              "line": 304,
+              "column": 9
             }
           },
           "metadata": {
@@ -1916,12 +1594,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 130,
-              "column": 10
+              "line": 309,
+              "column": 8
             },
             "end": {
-              "line": 133,
-              "column": 11
+              "line": 312,
+              "column": 9
             }
           },
           "metadata": {
@@ -1938,12 +1616,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 138,
-              "column": 10
+              "line": 317,
+              "column": 8
             },
             "end": {
-              "line": 141,
-              "column": 11
+              "line": 320,
+              "column": 9
             }
           },
           "metadata": {
@@ -1960,12 +1638,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 146,
-              "column": 10
+              "line": 325,
+              "column": 8
             },
             "end": {
-              "line": 150,
-              "column": 11
+              "line": 329,
+              "column": 9
             }
           },
           "metadata": {
@@ -1983,12 +1661,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 155,
-              "column": 10
+              "line": 334,
+              "column": 8
             },
             "end": {
-              "line": 159,
-              "column": 11
+              "line": 338,
+              "column": 9
             }
           },
           "metadata": {
@@ -2006,12 +1684,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 164,
-              "column": 10
+              "line": 343,
+              "column": 8
             },
             "end": {
-              "line": 167,
-              "column": 11
+              "line": 346,
+              "column": 9
             }
           },
           "metadata": {
@@ -2028,12 +1706,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 172,
-              "column": 10
+              "line": 351,
+              "column": 8
             },
             "end": {
-              "line": 176,
-              "column": 11
+              "line": 355,
+              "column": 9
             }
           },
           "metadata": {
@@ -2051,12 +1729,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 181,
-              "column": 10
+              "line": 360,
+              "column": 8
             },
             "end": {
-              "line": 183,
-              "column": 11
+              "line": 362,
+              "column": 9
             }
           },
           "metadata": {
@@ -2072,12 +1750,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 188,
-              "column": 10
+              "line": 367,
+              "column": 8
             },
             "end": {
-              "line": 192,
-              "column": 11
+              "line": 371,
+              "column": 9
             }
           },
           "metadata": {
@@ -2095,12 +1773,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 197,
-              "column": 10
+              "line": 376,
+              "column": 8
             },
             "end": {
-              "line": 199,
-              "column": 11
+              "line": 378,
+              "column": 9
             }
           },
           "metadata": {
@@ -2116,12 +1794,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 205,
-              "column": 10
+              "line": 384,
+              "column": 8
             },
             "end": {
-              "line": 209,
-              "column": 11
+              "line": 388,
+              "column": 9
             }
           },
           "metadata": {
@@ -2138,12 +1816,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 215,
-              "column": 10
+              "line": 394,
+              "column": 8
             },
             "end": {
-              "line": 219,
-              "column": 11
+              "line": 398,
+              "column": 9
             }
           },
           "metadata": {
@@ -2161,12 +1839,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 224,
-              "column": 10
+              "line": 403,
+              "column": 8
             },
             "end": {
-              "line": 228,
-              "column": 11
+              "line": 407,
+              "column": 9
             }
           },
           "metadata": {
@@ -2184,12 +1862,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 233,
-              "column": 10
+              "line": 412,
+              "column": 8
             },
             "end": {
-              "line": 237,
-              "column": 11
+              "line": 416,
+              "column": 9
             }
           },
           "metadata": {
@@ -2207,12 +1885,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 239,
-              "column": 10
+              "line": 418,
+              "column": 8
             },
             "end": {
-              "line": 241,
-              "column": 11
+              "line": 420,
+              "column": 9
             }
           },
           "metadata": {
@@ -2228,12 +1906,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 243,
-              "column": 10
+              "line": 422,
+              "column": 8
             },
             "end": {
-              "line": 245,
-              "column": 11
+              "line": 424,
+              "column": 9
             }
           },
           "metadata": {
@@ -2249,12 +1927,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 250,
-              "column": 10
+              "line": 429,
+              "column": 8
             },
             "end": {
-              "line": 252,
-              "column": 11
+              "line": 431,
+              "column": 9
             }
           },
           "metadata": {
@@ -2270,12 +1948,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 257,
-              "column": 10
+              "line": 436,
+              "column": 8
             },
             "end": {
-              "line": 260,
-              "column": 11
+              "line": 439,
+              "column": 9
             }
           },
           "metadata": {
@@ -2292,12 +1970,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 265,
-              "column": 10
+              "line": 444,
+              "column": 8
             },
             "end": {
-              "line": 268,
-              "column": 11
+              "line": 447,
+              "column": 9
             }
           },
           "metadata": {
@@ -2314,14 +1992,14 @@
           "description": "",
           "privacy": "protected",
           "sourceRange": {
-            "file": "intl-datetime-format-mixin.html",
+            "file": "intl-datetime-format-mixin.js",
             "start": {
-              "line": 91,
-              "column": 6
+              "line": 95,
+              "column": 4
             },
             "end": {
-              "line": 279,
-              "column": 7
+              "line": 283,
+              "column": 5
             }
           },
           "metadata": {},
@@ -2341,12 +2019,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 33,
-              "column": 6
+              "line": 212,
+              "column": 4
             },
             "end": {
-              "line": 39,
-              "column": 7
+              "line": 218,
+              "column": 5
             }
           },
           "metadata": {},
@@ -2368,12 +2046,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 285,
-              "column": 6
+              "line": 464,
+              "column": 4
             },
             "end": {
-              "line": 301,
-              "column": 7
+              "line": 480,
+              "column": 5
             }
           },
           "metadata": {},
@@ -2388,12 +2066,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 307,
-              "column": 6
+              "line": 486,
+              "column": 4
             },
             "end": {
-              "line": 364,
-              "column": 7
+              "line": 543,
+              "column": 5
             }
           },
           "metadata": {},
@@ -2414,12 +2092,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 370,
-              "column": 6
+              "line": 549,
+              "column": 4
             },
             "end": {
-              "line": 403,
-              "column": 7
+              "line": 582,
+              "column": 5
             }
           },
           "metadata": {},
@@ -2440,12 +2118,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 405,
-              "column": 6
+              "line": 584,
+              "column": 4
             },
             "end": {
-              "line": 412,
-              "column": 7
+              "line": 591,
+              "column": 5
             }
           },
           "metadata": {},
@@ -2464,12 +2142,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 424,
-              "column": 6
+              "line": 603,
+              "column": 4
             },
             "end": {
-              "line": 490,
-              "column": 7
+              "line": 669,
+              "column": 5
             }
           },
           "metadata": {},
@@ -2513,12 +2191,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 492,
-              "column": 6
+              "line": 671,
+              "column": 4
             },
             "end": {
-              "line": 519,
-              "column": 7
+              "line": 698,
+              "column": 5
             }
           },
           "metadata": {},
@@ -2540,12 +2218,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 521,
-              "column": 6
+              "line": 700,
+              "column": 4
             },
             "end": {
-              "line": 563,
-              "column": 7
+              "line": 742,
+              "column": 5
             }
           },
           "metadata": {},
@@ -2564,12 +2242,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 565,
-              "column": 6
+              "line": 744,
+              "column": 4
             },
             "end": {
-              "line": 571,
-              "column": 7
+              "line": 750,
+              "column": 5
             }
           },
           "metadata": {},
@@ -2588,12 +2266,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 573,
-              "column": 6
+              "line": 752,
+              "column": 4
             },
             "end": {
-              "line": 584,
-              "column": 7
+              "line": 763,
+              "column": 5
             }
           },
           "metadata": {},
@@ -2607,45 +2285,17 @@
           }
         },
         {
-          "name": "_fromDatetime",
-          "description": "compute a date object",
-          "privacy": "protected",
-          "sourceRange": {
-            "start": {
-              "line": 591,
-              "column": 6
-            },
-            "end": {
-              "line": 632,
-              "column": 7
-            }
-          },
-          "metadata": {},
-          "params": [
-            {
-              "name": "datetime"
-            },
-            {
-              "name": "offsetMinutes"
-            }
-          ],
-          "return": {
-            "type": "Date",
-            "desc": "date"
-          }
-        },
-        {
           "name": "_checkThreshold",
           "description": "test date object against thresholds",
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 639,
-              "column": 6
+              "line": 770,
+              "column": 4
             },
             "end": {
-              "line": 650,
-              "column": 7
+              "line": 781,
+              "column": 5
             }
           },
           "metadata": {},
@@ -2661,197 +2311,17 @@
           }
         },
         {
-          "name": "_toDate",
-          "description": "get date string from a date object",
-          "privacy": "protected",
-          "sourceRange": {
-            "start": {
-              "line": 657,
-              "column": 6
-            },
-            "end": {
-              "line": 663,
-              "column": 7
-            }
-          },
-          "metadata": {},
-          "params": [
-            {
-              "name": "d",
-              "type": "Date",
-              "description": "the Date to serialize"
-            }
-          ],
-          "return": {
-            "type": "String",
-            "desc": "date string"
-          }
-        },
-        {
-          "name": "_toTime",
-          "description": "get UTC time string from a date object",
-          "privacy": "protected",
-          "sourceRange": {
-            "start": {
-              "line": 670,
-              "column": 6
-            },
-            "end": {
-              "line": 675,
-              "column": 7
-            }
-          },
-          "metadata": {},
-          "params": [
-            {
-              "name": "d",
-              "type": "Date",
-              "description": "the Date to serialize"
-            }
-          ],
-          "return": {
-            "type": "String",
-            "desc": "date string"
-          }
-        },
-        {
-          "name": "_toUTCDate",
-          "description": "get UTC date string from a date object",
-          "privacy": "protected",
-          "sourceRange": {
-            "start": {
-              "line": 682,
-              "column": 6
-            },
-            "end": {
-              "line": 688,
-              "column": 7
-            }
-          },
-          "metadata": {},
-          "params": [
-            {
-              "name": "d",
-              "type": "Date",
-              "description": "the Date to serialize"
-            }
-          ],
-          "return": {
-            "type": "String",
-            "desc": "date string"
-          }
-        },
-        {
-          "name": "_toUTCTime",
-          "description": "get UTC time string from a date object",
-          "privacy": "protected",
-          "sourceRange": {
-            "start": {
-              "line": 695,
-              "column": 6
-            },
-            "end": {
-              "line": 700,
-              "column": 7
-            }
-          },
-          "metadata": {},
-          "params": [
-            {
-              "name": "d",
-              "type": "Date",
-              "description": "the Date to serialize"
-            }
-          ],
-          "return": {
-            "type": "String",
-            "desc": "time string"
-          }
-        },
-        {
-          "name": "__toDate",
-          "description": "get date string from date components",
-          "privacy": "private",
-          "sourceRange": {
-            "start": {
-              "line": 709,
-              "column": 6
-            },
-            "end": {
-              "line": 711,
-              "column": 7
-            }
-          },
-          "metadata": {},
-          "params": [
-            {
-              "name": "year",
-              "type": "Number"
-            },
-            {
-              "name": "month",
-              "type": "Number"
-            },
-            {
-              "name": "day",
-              "type": "Number"
-            }
-          ],
-          "return": {
-            "type": "String",
-            "desc": "date string"
-          }
-        },
-        {
-          "name": "__toTime",
-          "description": "get time string from date components",
-          "privacy": "private",
-          "sourceRange": {
-            "start": {
-              "line": 721,
-              "column": 6
-            },
-            "end": {
-              "line": 723,
-              "column": 7
-            }
-          },
-          "metadata": {},
-          "params": [
-            {
-              "name": "hour",
-              "type": "Number"
-            },
-            {
-              "name": "minute",
-              "type": "Number"
-            },
-            {
-              "name": "second",
-              "type": "Number"
-            },
-            {
-              "name": "millisecond",
-              "type": "Number"
-            }
-          ],
-          "return": {
-            "type": "String",
-            "desc": "time string"
-          }
-        },
-        {
-          "name": "_clampUTC",
+          "name": "_clampUTCComponents",
           "description": "clamp UTC values",
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 731,
-              "column": 6
+              "line": 789,
+              "column": 4
             },
             "end": {
-              "line": 748,
-              "column": 7
+              "line": 806,
+              "column": 5
             }
           },
           "metadata": {},
@@ -2859,49 +2329,17 @@
             {
               "name": "d",
               "type": "Date",
-              "description": "the Date to clamp"
+              "description": "The Date to clamp"
             },
             {
               "name": "clamp",
-              "type": "String",
-              "description": "the date component to clamp"
+              "type": "string",
+              "description": "The date component to clamp"
             }
           ],
           "return": {
             "type": "Date",
-            "desc": "the clamped date"
-          }
-        },
-        {
-          "name": "_pad",
-          "description": "pad a string with 0",
-          "privacy": "protected",
-          "sourceRange": {
-            "start": {
-              "line": 756,
-              "column": 6
-            },
-            "end": {
-              "line": 762,
-              "column": 7
-            }
-          },
-          "metadata": {},
-          "params": [
-            {
-              "name": "n",
-              "type": "Number",
-              "description": "number to pad"
-            },
-            {
-              "name": "padLength",
-              "type": "Number",
-              "description": "total length of strings"
-            }
-          ],
-          "return": {
-            "type": "String",
-            "desc": "padded string"
+            "desc": "The clamped date"
           }
         },
         {
@@ -2910,12 +2348,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 767,
-              "column": 6
+              "line": 811,
+              "column": 4
             },
             "end": {
-              "line": 771,
-              "column": 7
+              "line": 815,
+              "column": 5
             }
           },
           "metadata": {},
@@ -2937,12 +2375,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 775,
-              "column": 6
+              "line": 819,
+              "column": 4
             },
             "end": {
-              "line": 777,
-              "column": 7
+              "line": 821,
+              "column": 5
             }
           },
           "metadata": {},
@@ -2964,12 +2402,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 783,
-              "column": 6
+              "line": 827,
+              "column": 4
             },
             "end": {
-              "line": 796,
-              "column": 7
+              "line": 840,
+              "column": 5
             }
           },
           "metadata": {},
@@ -2989,12 +2427,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 802,
-              "column": 6
+              "line": 846,
+              "column": 4
             },
             "end": {
-              "line": 811,
-              "column": 7
+              "line": 855,
+              "column": 5
             }
           },
           "metadata": {},
@@ -3011,12 +2449,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 813,
-              "column": 6
+              "line": 857,
+              "column": 4
             },
             "end": {
-              "line": 821,
-              "column": 7
+              "line": 865,
+              "column": 5
             }
           },
           "metadata": {},
@@ -3035,12 +2473,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 823,
-              "column": 6
+              "line": 867,
+              "column": 4
             },
             "end": {
-              "line": 840,
-              "column": 7
+              "line": 884,
+              "column": 5
             }
           },
           "metadata": {},
@@ -3059,12 +2497,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 842,
-              "column": 6
+              "line": 886,
+              "column": 4
             },
             "end": {
-              "line": 859,
-              "column": 7
+              "line": 903,
+              "column": 5
             }
           },
           "metadata": {},
@@ -3083,12 +2521,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 861,
-              "column": 6
+              "line": 905,
+              "column": 4
             },
             "end": {
-              "line": 865,
-              "column": 7
+              "line": 909,
+              "column": 5
             }
           },
           "metadata": {},
@@ -3103,12 +2541,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 867,
-              "column": 6
+              "line": 911,
+              "column": 4
             },
             "end": {
-              "line": 873,
-              "column": 7
+              "line": 917,
+              "column": 5
             }
           },
           "metadata": {},
@@ -3130,12 +2568,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 875,
-              "column": 6
+              "line": 919,
+              "column": 4
             },
             "end": {
-              "line": 879,
-              "column": 7
+              "line": 923,
+              "column": 5
             }
           },
           "metadata": {},
@@ -3157,12 +2595,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 881,
-              "column": 6
+              "line": 925,
+              "column": 4
             },
             "end": {
-              "line": 904,
-              "column": 7
+              "line": 948,
+              "column": 5
             }
           },
           "metadata": {},
@@ -3184,12 +2622,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 906,
-              "column": 6
+              "line": 950,
+              "column": 4
             },
             "end": {
-              "line": 916,
-              "column": 7
+              "line": 960,
+              "column": 5
             }
           },
           "metadata": {},
@@ -3208,12 +2646,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 918,
-              "column": 6
+              "line": 962,
+              "column": 4
             },
             "end": {
-              "line": 937,
-              "column": 7
+              "line": 981,
+              "column": 5
             }
           },
           "metadata": {},
@@ -3228,92 +2666,6 @@
           "return": {
             "type": "void"
           }
-        },
-        {
-          "name": "_computeTimezone",
-          "description": "compute the timezone properties from given offset minutes",
-          "privacy": "protected",
-          "sourceRange": {
-            "start": {
-              "line": 952,
-              "column": 6
-            },
-            "end": {
-              "line": 974,
-              "column": 7
-            }
-          },
-          "metadata": {},
-          "params": [
-            {
-              "name": "offsetMinutes",
-              "type": "Number",
-              "description": "The offset minutes"
-            }
-          ],
-          "return": {
-            "type": "TimeZoneProperties",
-            "desc": "The timezone properties"
-          }
-        },
-        {
-          "name": "_computeTimezoneOffset",
-          "description": "compute the timezone properties from a given timezone-string",
-          "privacy": "protected",
-          "sourceRange": {
-            "start": {
-              "line": 981,
-              "column": 6
-            },
-            "end": {
-              "line": 1011,
-              "column": 7
-            }
-          },
-          "metadata": {},
-          "params": [
-            {
-              "name": "timezone",
-              "type": "String",
-              "description": "The timezone-string"
-            }
-          ],
-          "return": {
-            "type": "TimeZoneProperties",
-            "desc": "The timezone properties"
-          }
-        },
-        {
-          "name": "_computeMaxDayOfMonth",
-          "description": "compute the last day of a month in a year",
-          "privacy": "protected",
-          "sourceRange": {
-            "start": {
-              "line": 1019,
-              "column": 6
-            },
-            "end": {
-              "line": 1027,
-              "column": 7
-            }
-          },
-          "metadata": {},
-          "params": [
-            {
-              "name": "year",
-              "type": "Number",
-              "description": "the year"
-            },
-            {
-              "name": "month",
-              "type": "Number",
-              "description": "the month"
-            }
-          ],
-          "return": {
-            "type": "Number",
-            "desc": "the last day of the month"
-          }
         }
       ],
       "staticMethods": [],
@@ -3326,11 +2678,11 @@
       "metadata": {},
       "sourceRange": {
         "start": {
-          "line": 14,
-          "column": 2
+          "line": 206,
+          "column": 7
         },
         "end": {
-          "line": 1029,
+          "line": 983,
           "column": 3
         }
       },
@@ -3341,14 +2693,14 @@
           "name": "locale",
           "description": "The current locale",
           "sourceRange": {
-            "file": "intl-datetime-format-mixin.html",
+            "file": "intl-datetime-format-mixin.js",
             "start": {
-              "line": 19,
-              "column": 10
+              "line": 23,
+              "column": 8
             },
             "end": {
-              "line": 22,
-              "column": 11
+              "line": 26,
+              "column": 9
             }
           },
           "metadata": {},
@@ -3359,14 +2711,14 @@
           "name": "decimal-separator",
           "description": "locale separator for local decimal values",
           "sourceRange": {
-            "file": "intl-datetime-format-mixin.html",
+            "file": "intl-datetime-format-mixin.js",
             "start": {
-              "line": 28,
-              "column": 10
+              "line": 32,
+              "column": 8
             },
             "end": {
-              "line": 31,
-              "column": 11
+              "line": 35,
+              "column": 9
             }
           },
           "metadata": {},
@@ -3377,14 +2729,14 @@
           "name": "date-separator",
           "description": "Separator for local date values (date-string is still in ISO-Format)",
           "sourceRange": {
-            "file": "intl-datetime-format-mixin.html",
+            "file": "intl-datetime-format-mixin.js",
             "start": {
-              "line": 37,
-              "column": 10
+              "line": 41,
+              "column": 8
             },
             "end": {
-              "line": 40,
-              "column": 11
+              "line": 44,
+              "column": 9
             }
           },
           "metadata": {},
@@ -3395,14 +2747,14 @@
           "name": "time-separator",
           "description": "Separator for local time values (time-string is still in ISO-Format)",
           "sourceRange": {
-            "file": "intl-datetime-format-mixin.html",
+            "file": "intl-datetime-format-mixin.js",
             "start": {
-              "line": 46,
-              "column": 10
+              "line": 50,
+              "column": 8
             },
             "end": {
-              "line": 49,
-              "column": 11
+              "line": 53,
+              "column": 9
             }
           },
           "metadata": {},
@@ -3413,14 +2765,14 @@
           "name": "am-string",
           "description": "locale representation of 'AM'",
           "sourceRange": {
-            "file": "intl-datetime-format-mixin.html",
+            "file": "intl-datetime-format-mixin.js",
             "start": {
-              "line": 54,
-              "column": 10
+              "line": 58,
+              "column": 8
             },
             "end": {
-              "line": 57,
-              "column": 11
+              "line": 61,
+              "column": 9
             }
           },
           "metadata": {},
@@ -3431,14 +2783,14 @@
           "name": "pm-string",
           "description": "locale representation of 'PM'",
           "sourceRange": {
-            "file": "intl-datetime-format-mixin.html",
+            "file": "intl-datetime-format-mixin.js",
             "start": {
-              "line": 62,
-              "column": 10
+              "line": 66,
+              "column": 8
             },
             "end": {
-              "line": 65,
-              "column": 11
+              "line": 69,
+              "column": 9
             }
           },
           "metadata": {},
@@ -3449,14 +2801,14 @@
           "name": "date-order",
           "description": "order of date-parts",
           "sourceRange": {
-            "file": "intl-datetime-format-mixin.html",
+            "file": "intl-datetime-format-mixin.js",
             "start": {
-              "line": 70,
-              "column": 10
+              "line": 74,
+              "column": 8
             },
             "end": {
-              "line": 81,
-              "column": 11
+              "line": 85,
+              "column": 9
             }
           },
           "metadata": {},
@@ -3468,12 +2820,12 @@
           "description": "The year of the selected date",
           "sourceRange": {
             "start": {
-              "line": 46,
-              "column": 10
+              "line": 225,
+              "column": 8
             },
             "end": {
-              "line": 49,
-              "column": 11
+              "line": 228,
+              "column": 9
             }
           },
           "metadata": {},
@@ -3484,12 +2836,12 @@
           "description": "The month of the selected date (starts with 1)",
           "sourceRange": {
             "start": {
-              "line": 54,
-              "column": 10
+              "line": 233,
+              "column": 8
             },
             "end": {
-              "line": 57,
-              "column": 11
+              "line": 236,
+              "column": 9
             }
           },
           "metadata": {},
@@ -3500,12 +2852,12 @@
           "description": "The day of the selected date",
           "sourceRange": {
             "start": {
-              "line": 62,
-              "column": 10
+              "line": 241,
+              "column": 8
             },
             "end": {
-              "line": 65,
-              "column": 11
+              "line": 244,
+              "column": 9
             }
           },
           "metadata": {},
@@ -3516,12 +2868,12 @@
           "description": "The hour of the selected time",
           "sourceRange": {
             "start": {
-              "line": 70,
-              "column": 10
+              "line": 249,
+              "column": 8
             },
             "end": {
-              "line": 73,
-              "column": 11
+              "line": 252,
+              "column": 9
             }
           },
           "metadata": {},
@@ -3532,12 +2884,12 @@
           "description": "hour in 12-hour-format",
           "sourceRange": {
             "start": {
-              "line": 79,
-              "column": 10
+              "line": 258,
+              "column": 8
             },
             "end": {
-              "line": 83,
-              "column": 11
+              "line": 262,
+              "column": 9
             }
           },
           "metadata": {},
@@ -3548,12 +2900,12 @@
           "description": "true, when A.M. (when `hour` < 12)",
           "sourceRange": {
             "start": {
-              "line": 89,
-              "column": 10
+              "line": 268,
+              "column": 8
             },
             "end": {
-              "line": 93,
-              "column": 11
+              "line": 272,
+              "column": 9
             }
           },
           "metadata": {},
@@ -3564,12 +2916,12 @@
           "description": "The minute of the selected time",
           "sourceRange": {
             "start": {
-              "line": 98,
-              "column": 10
+              "line": 277,
+              "column": 8
             },
             "end": {
-              "line": 101,
-              "column": 11
+              "line": 280,
+              "column": 9
             }
           },
           "metadata": {},
@@ -3580,12 +2932,12 @@
           "description": "The second of the selected time",
           "sourceRange": {
             "start": {
-              "line": 106,
-              "column": 10
+              "line": 285,
+              "column": 8
             },
             "end": {
-              "line": 109,
-              "column": 11
+              "line": 288,
+              "column": 9
             }
           },
           "metadata": {},
@@ -3596,12 +2948,12 @@
           "description": "The millisecond of the selected time",
           "sourceRange": {
             "start": {
-              "line": 114,
-              "column": 10
+              "line": 293,
+              "column": 8
             },
             "end": {
-              "line": 117,
-              "column": 11
+              "line": 296,
+              "column": 9
             }
           },
           "metadata": {},
@@ -3612,12 +2964,12 @@
           "description": "the selected date and time (format: iso8601)",
           "sourceRange": {
             "start": {
-              "line": 122,
-              "column": 10
+              "line": 301,
+              "column": 8
             },
             "end": {
-              "line": 125,
-              "column": 11
+              "line": 304,
+              "column": 9
             }
           },
           "metadata": {},
@@ -3628,12 +2980,12 @@
           "description": "the selected date (format: iso8601)",
           "sourceRange": {
             "start": {
-              "line": 130,
-              "column": 10
+              "line": 309,
+              "column": 8
             },
             "end": {
-              "line": 133,
-              "column": 11
+              "line": 312,
+              "column": 9
             }
           },
           "metadata": {},
@@ -3644,12 +2996,12 @@
           "description": "the selected time (format: iso8601)",
           "sourceRange": {
             "start": {
-              "line": 138,
-              "column": 10
+              "line": 317,
+              "column": 8
             },
             "end": {
-              "line": 141,
-              "column": 11
+              "line": 320,
+              "column": 9
             }
           },
           "metadata": {},
@@ -3660,12 +3012,12 @@
           "description": "The date-object of the selected date",
           "sourceRange": {
             "start": {
-              "line": 146,
-              "column": 10
+              "line": 325,
+              "column": 8
             },
             "end": {
-              "line": 150,
-              "column": 11
+              "line": 329,
+              "column": 9
             }
           },
           "metadata": {},
@@ -3676,12 +3028,12 @@
           "description": "The value of the selected date",
           "sourceRange": {
             "start": {
-              "line": 155,
-              "column": 10
+              "line": 334,
+              "column": 8
             },
             "end": {
-              "line": 159,
-              "column": 11
+              "line": 338,
+              "column": 9
             }
           },
           "metadata": {},
@@ -3692,12 +3044,12 @@
           "description": "The default value of the input, could be a number, a date-object or an iso-string in time, date or datetime-notation",
           "sourceRange": {
             "start": {
-              "line": 164,
-              "column": 10
+              "line": 343,
+              "column": 8
             },
             "end": {
-              "line": 167,
-              "column": 11
+              "line": 346,
+              "column": 9
             }
           },
           "metadata": {},
@@ -3708,12 +3060,12 @@
           "description": "The minimal date, could be a number, a date-object or an iso-string in time, date or datetime-notation",
           "sourceRange": {
             "start": {
-              "line": 172,
-              "column": 10
+              "line": 351,
+              "column": 8
             },
             "end": {
-              "line": 176,
-              "column": 11
+              "line": 355,
+              "column": 9
             }
           },
           "metadata": {},
@@ -3724,12 +3076,12 @@
           "description": "The maximal date, could be a number, a date-object or an iso-string in time, date or datetime-notation",
           "sourceRange": {
             "start": {
-              "line": 188,
-              "column": 10
+              "line": 367,
+              "column": 8
             },
             "end": {
-              "line": 192,
-              "column": 11
+              "line": 371,
+              "column": 9
             }
           },
           "metadata": {},
@@ -3740,12 +3092,12 @@
           "description": "when true, 12-hour time format, else 24-hour",
           "sourceRange": {
             "start": {
-              "line": 205,
-              "column": 10
+              "line": 384,
+              "column": 8
             },
             "end": {
-              "line": 209,
-              "column": 11
+              "line": 388,
+              "column": 9
             }
           },
           "metadata": {},
@@ -3756,12 +3108,12 @@
           "description": "Clamp datetime to a property\npossible values:'month', 'day', 'hour', 'minute', 'second', 'millisecond'",
           "sourceRange": {
             "start": {
-              "line": 215,
-              "column": 10
+              "line": 394,
+              "column": 8
             },
             "end": {
-              "line": 219,
-              "column": 11
+              "line": 398,
+              "column": 9
             }
           },
           "metadata": {},
@@ -3772,12 +3124,12 @@
           "description": "The timezone offset in '±hh:mm' format",
           "sourceRange": {
             "start": {
-              "line": 224,
-              "column": 10
+              "line": 403,
+              "column": 8
             },
             "end": {
-              "line": 228,
-              "column": 11
+              "line": 407,
+              "column": 9
             }
           },
           "metadata": {},
@@ -3788,12 +3140,12 @@
           "description": "The offset minutes of the set timezone",
           "sourceRange": {
             "start": {
-              "line": 233,
-              "column": 10
+              "line": 412,
+              "column": 8
             },
             "end": {
-              "line": 237,
-              "column": 11
+              "line": 416,
+              "column": 9
             }
           },
           "metadata": {},
@@ -3813,7 +3165,7 @@
     {
       "description": "Mixin that extends duration properties of a time period to an element.",
       "summary": "",
-      "path": "duration-mixin.html",
+      "path": "duration-mixin.js",
       "properties": [
         {
           "name": "start",
@@ -3822,12 +3174,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 20,
-              "column": 10
+              "line": 77,
+              "column": 8
             },
             "end": {
-              "line": 22,
-              "column": 11
+              "line": 79,
+              "column": 9
             }
           },
           "metadata": {
@@ -3843,12 +3195,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 27,
-              "column": 10
+              "line": 84,
+              "column": 8
             },
             "end": {
-              "line": 29,
-              "column": 11
+              "line": 86,
+              "column": 9
             }
           },
           "metadata": {
@@ -3864,12 +3216,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 34,
-              "column": 10
+              "line": 91,
+              "column": 8
             },
             "end": {
-              "line": 37,
-              "column": 11
+              "line": 94,
+              "column": 9
             }
           },
           "metadata": {
@@ -3886,39 +3238,18 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 42,
-              "column": 10
+              "line": 99,
+              "column": 8
             },
             "end": {
-              "line": 45,
-              "column": 11
+              "line": 102,
+              "column": 9
             }
           },
           "metadata": {
             "polymer": {
               "observer": "\"_valueAsNumberChanged\"",
               "attributeType": "Number"
-            }
-          }
-        },
-        {
-          "name": "_regExpValueString",
-          "type": "RegExp | null | undefined",
-          "description": "RegExp of a valueString",
-          "privacy": "protected",
-          "sourceRange": {
-            "start": {
-              "line": 50,
-              "column": 10
-            },
-            "end": {
-              "line": 53,
-              "column": 11
-            }
-          },
-          "metadata": {
-            "polymer": {
-              "attributeType": "RegExp"
             }
           }
         }
@@ -3930,12 +3261,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 63,
-              "column": 6
+              "line": 112,
+              "column": 4
             },
             "end": {
-              "line": 92,
-              "column": 7
+              "line": 141,
+              "column": 5
             }
           },
           "metadata": {},
@@ -3957,12 +3288,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 94,
-              "column": 6
+              "line": 143,
+              "column": 4
             },
             "end": {
-              "line": 130,
-              "column": 7
+              "line": 179,
+              "column": 5
             }
           },
           "metadata": {},
@@ -3981,12 +3312,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 132,
-              "column": 6
+              "line": 181,
+              "column": 4
             },
             "end": {
-              "line": 134,
-              "column": 7
+              "line": 183,
+              "column": 5
             }
           },
           "metadata": {},
@@ -3998,48 +3329,6 @@
           "return": {
             "type": "void"
           }
-        },
-        {
-          "name": "_computeDurationString",
-          "description": "",
-          "privacy": "protected",
-          "sourceRange": {
-            "start": {
-              "line": 136,
-              "column": 6
-            },
-            "end": {
-              "line": 169,
-              "column": 7
-            }
-          },
-          "metadata": {},
-          "params": [
-            {
-              "name": "value"
-            }
-          ]
-        },
-        {
-          "name": "_computeDurationValue",
-          "description": "",
-          "privacy": "protected",
-          "sourceRange": {
-            "start": {
-              "line": 171,
-              "column": 6
-            },
-            "end": {
-              "line": 179,
-              "column": 7
-            }
-          },
-          "metadata": {},
-          "params": [
-            {
-              "name": "valueString"
-            }
-          ]
         }
       ],
       "staticMethods": [],
@@ -4047,11 +3336,11 @@
       "metadata": {},
       "sourceRange": {
         "start": {
-          "line": 11,
-          "column": 2
+          "line": 68,
+          "column": 7
         },
         "end": {
-          "line": 181,
+          "line": 185,
           "column": 3
         }
       },
@@ -4063,12 +3352,12 @@
           "description": "start of the time period",
           "sourceRange": {
             "start": {
-              "line": 20,
-              "column": 10
+              "line": 77,
+              "column": 8
             },
             "end": {
-              "line": 22,
-              "column": 11
+              "line": 79,
+              "column": 9
             }
           },
           "metadata": {},
@@ -4079,12 +3368,12 @@
           "description": "end of the time period",
           "sourceRange": {
             "start": {
-              "line": 27,
-              "column": 10
+              "line": 84,
+              "column": 8
             },
             "end": {
-              "line": 29,
-              "column": 11
+              "line": 86,
+              "column": 9
             }
           },
           "metadata": {},
@@ -4095,12 +3384,12 @@
           "description": "string representation of the time period",
           "sourceRange": {
             "start": {
-              "line": 34,
-              "column": 10
+              "line": 91,
+              "column": 8
             },
             "end": {
-              "line": 37,
-              "column": 11
+              "line": 94,
+              "column": 9
             }
           },
           "metadata": {},
@@ -4111,12 +3400,12 @@
           "description": "value of the time period in milliseconds",
           "sourceRange": {
             "start": {
-              "line": 42,
-              "column": 10
+              "line": 99,
+              "column": 8
             },
             "end": {
-              "line": 45,
-              "column": 11
+              "line": 102,
+              "column": 9
             }
           },
           "metadata": {},
@@ -4133,7 +3422,7 @@
     {
       "description": "Mixin that provides intl-format-locale for numbers and computes some separation strings for usage (only `latn`-numeral-system is possible).",
       "summary": "",
-      "path": "intl-number-format-mixin.html",
+      "path": "intl-number-format-mixin.js",
       "properties": [
         {
           "name": "locale",
@@ -4142,12 +3431,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 32,
-              "column": 10
+              "line": 30,
+              "column": 8
             },
             "end": {
-              "line": 35,
-              "column": 11
+              "line": 33,
+              "column": 9
             }
           },
           "metadata": {
@@ -4163,12 +3452,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 40,
-              "column": 10
+              "line": 38,
+              "column": 8
             },
             "end": {
-              "line": 43,
-              "column": 11
+              "line": 41,
+              "column": 9
             }
           },
           "metadata": {
@@ -4185,12 +3474,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 48,
-              "column": 10
+              "line": 46,
+              "column": 8
             },
             "end": {
-              "line": 51,
-              "column": 11
+              "line": 49,
+              "column": 9
             }
           },
           "metadata": {
@@ -4207,12 +3496,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 56,
-              "column": 10
+              "line": 54,
+              "column": 8
             },
             "end": {
-              "line": 58,
-              "column": 11
+              "line": 56,
+              "column": 9
             }
           },
           "metadata": {
@@ -4228,12 +3517,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 63,
-              "column": 10
+              "line": 61,
+              "column": 8
             },
             "end": {
-              "line": 65,
-              "column": 11
+              "line": 63,
+              "column": 9
             }
           },
           "metadata": {
@@ -4249,12 +3538,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 70,
-              "column": 10
+              "line": 68,
+              "column": 8
             },
             "end": {
-              "line": 72,
-              "column": 11
+              "line": 70,
+              "column": 9
             }
           },
           "metadata": {
@@ -4270,12 +3559,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 77,
-              "column": 10
+              "line": 75,
+              "column": 8
             },
             "end": {
-              "line": 79,
-              "column": 11
+              "line": 77,
+              "column": 9
             }
           },
           "metadata": {
@@ -4291,12 +3580,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 84,
-              "column": 10
+              "line": 82,
+              "column": 8
             },
             "end": {
-              "line": 86,
-              "column": 11
+              "line": 84,
+              "column": 9
             }
           },
           "metadata": {
@@ -4312,12 +3601,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 91,
-              "column": 10
+              "line": 89,
+              "column": 8
             },
             "end": {
-              "line": 93,
-              "column": 11
+              "line": 91,
+              "column": 9
             }
           },
           "metadata": {
@@ -4333,12 +3622,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 98,
-              "column": 10
+              "line": 96,
+              "column": 8
             },
             "end": {
-              "line": 101,
-              "column": 11
+              "line": 99,
+              "column": 9
             }
           },
           "metadata": {
@@ -4355,12 +3644,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 106,
-              "column": 10
+              "line": 104,
+              "column": 8
             },
             "end": {
-              "line": 108,
-              "column": 11
+              "line": 106,
+              "column": 9
             }
           },
           "metadata": {
@@ -4376,12 +3665,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 114,
-              "column": 10
+              "line": 112,
+              "column": 8
             },
             "end": {
-              "line": 117,
-              "column": 11
+              "line": 115,
+              "column": 9
             }
           },
           "metadata": {
@@ -4398,12 +3687,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 122,
-              "column": 10
+              "line": 120,
+              "column": 8
             },
             "end": {
-              "line": 124,
-              "column": 11
+              "line": 122,
+              "column": 9
             }
           },
           "metadata": {
@@ -4419,12 +3708,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 129,
-              "column": 10
+              "line": 127,
+              "column": 8
             },
             "end": {
-              "line": 131,
-              "column": 11
+              "line": 129,
+              "column": 9
             }
           },
           "metadata": {
@@ -4440,12 +3729,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 136,
-              "column": 10
+              "line": 134,
+              "column": 8
             },
             "end": {
-              "line": 138,
-              "column": 11
+              "line": 136,
+              "column": 9
             }
           },
           "metadata": {
@@ -4461,12 +3750,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 143,
-              "column": 10
+              "line": 141,
+              "column": 8
             },
             "end": {
-              "line": 146,
-              "column": 11
+              "line": 144,
+              "column": 9
             }
           },
           "metadata": {
@@ -4483,12 +3772,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 151,
-              "column": 10
+              "line": 149,
+              "column": 8
             },
             "end": {
-              "line": 155,
-              "column": 11
+              "line": 153,
+              "column": 9
             }
           },
           "metadata": {
@@ -4506,12 +3795,12 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 160,
-              "column": 10
+              "line": 158,
+              "column": 8
             },
             "end": {
-              "line": 164,
-              "column": 11
+              "line": 162,
+              "column": 9
             }
           },
           "metadata": {
@@ -4530,12 +3819,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 174,
-              "column": 6
+              "line": 172,
+              "column": 4
             },
             "end": {
-              "line": 236,
-              "column": 7
+              "line": 234,
+              "column": 5
             }
           },
           "metadata": {},
@@ -4554,12 +3843,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 238,
-              "column": 6
+              "line": 236,
+              "column": 4
             },
             "end": {
-              "line": 281,
-              "column": 7
+              "line": 279,
+              "column": 5
             }
           },
           "metadata": {},
@@ -4599,12 +3888,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 283,
-              "column": 6
+              "line": 281,
+              "column": 4
             },
             "end": {
-              "line": 310,
-              "column": 7
+              "line": 308,
+              "column": 5
             }
           },
           "metadata": {},
@@ -4632,12 +3921,12 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 312,
-              "column": 6
+              "line": 310,
+              "column": 4
             },
             "end": {
-              "line": 398,
-              "column": 7
+              "line": 395,
+              "column": 5
             }
           },
           "metadata": {},
@@ -4659,11 +3948,11 @@
       "metadata": {},
       "sourceRange": {
         "start": {
-          "line": 15,
-          "column": 2
+          "line": 21,
+          "column": 7
         },
         "end": {
-          "line": 400,
+          "line": 397,
           "column": 3
         }
       },
@@ -4675,12 +3964,12 @@
           "description": "The current locale",
           "sourceRange": {
             "start": {
-              "line": 32,
-              "column": 10
+              "line": 30,
+              "column": 8
             },
             "end": {
-              "line": 35,
-              "column": 11
+              "line": 33,
+              "column": 9
             }
           },
           "metadata": {},
@@ -4691,12 +3980,12 @@
           "description": "locale separator for local decimal values",
           "sourceRange": {
             "start": {
-              "line": 40,
-              "column": 10
+              "line": 38,
+              "column": 8
             },
             "end": {
-              "line": 43,
-              "column": 11
+              "line": 41,
+              "column": 9
             }
           },
           "metadata": {},
@@ -4707,12 +3996,12 @@
           "description": "locale separator for grouping decimal values",
           "sourceRange": {
             "start": {
-              "line": 48,
-              "column": 10
+              "line": 46,
+              "column": 8
             },
             "end": {
-              "line": 51,
-              "column": 11
+              "line": 49,
+              "column": 9
             }
           },
           "metadata": {},
@@ -4723,12 +4012,12 @@
           "description": "The minimum number of fraction digits to use. Possible values are from 0 to 20; the default for plain number and percent formatting is 0; the default for currency formatting is the number of minor unit digits provided by the ISO 4217 currency code list (2 if the list doesn't provide that information).",
           "sourceRange": {
             "start": {
-              "line": 56,
-              "column": 10
+              "line": 54,
+              "column": 8
             },
             "end": {
-              "line": 58,
-              "column": 11
+              "line": 56,
+              "column": 9
             }
           },
           "metadata": {},
@@ -4739,12 +4028,12 @@
           "description": "The maximum number of fraction digits to use. Possible values are from 0 to 20; the default for plain number formatting is the larger of minimumFractionDigits and 3; the default for currency formatting is the larger of minimumFractionDigits and the number of minor unit digits provided by the ISO 4217 currency code list (2 if the list doesn't provide that information); the default for percent formatting is the larger of minimumFractionDigits and 0.",
           "sourceRange": {
             "start": {
-              "line": 63,
-              "column": 10
+              "line": 61,
+              "column": 8
             },
             "end": {
-              "line": 65,
-              "column": 11
+              "line": 63,
+              "column": 9
             }
           },
           "metadata": {},
@@ -4755,12 +4044,12 @@
           "description": "The minimum number of integer digits to use. Possible values are from 1 to 21; the default is 1.",
           "sourceRange": {
             "start": {
-              "line": 70,
-              "column": 10
+              "line": 68,
+              "column": 8
             },
             "end": {
-              "line": 72,
-              "column": 11
+              "line": 70,
+              "column": 9
             }
           },
           "metadata": {},
@@ -4771,12 +4060,12 @@
           "description": "The minimum number of significant digits to use. Possible values are from 1 to 21; the default is 1.",
           "sourceRange": {
             "start": {
-              "line": 77,
-              "column": 10
+              "line": 75,
+              "column": 8
             },
             "end": {
-              "line": 79,
-              "column": 11
+              "line": 77,
+              "column": 9
             }
           },
           "metadata": {},
@@ -4787,12 +4076,12 @@
           "description": "The maximum number of significant digits to use. Possible values are from 1 to 21; the default is minimumSignificantDigits.",
           "sourceRange": {
             "start": {
-              "line": 84,
-              "column": 10
+              "line": 82,
+              "column": 8
             },
             "end": {
-              "line": 86,
-              "column": 11
+              "line": 84,
+              "column": 9
             }
           },
           "metadata": {},
@@ -4803,12 +4092,12 @@
           "description": "unit of the output (only used when `number-style=\"decimal\"`)",
           "sourceRange": {
             "start": {
-              "line": 91,
-              "column": 10
+              "line": 89,
+              "column": 8
             },
             "end": {
-              "line": 93,
-              "column": 11
+              "line": 91,
+              "column": 9
             }
           },
           "metadata": {},
@@ -4819,12 +4108,12 @@
           "description": "the separator to separate value and unit (default: '\\u202F')",
           "sourceRange": {
             "start": {
-              "line": 98,
-              "column": 10
+              "line": 96,
+              "column": 8
             },
             "end": {
-              "line": 101,
-              "column": 11
+              "line": 99,
+              "column": 9
             }
           },
           "metadata": {},
@@ -4835,12 +4124,12 @@
           "description": "always put the sign at the beginning",
           "sourceRange": {
             "start": {
-              "line": 106,
-              "column": 10
+              "line": 104,
+              "column": 8
             },
             "end": {
-              "line": 108,
-              "column": 11
+              "line": 106,
+              "column": 9
             }
           },
           "metadata": {},
@@ -4851,12 +4140,12 @@
           "description": "The formatting style to use. Possible values are \"decimal\" for plain number formatting, \"currency\" for currency formatting, and \"percent\" for percent formatting; the default is \"decimal\".\nnotice: min, max and step are not in percent (so e.g. if step is 0.01, it means that the step is 1%)",
           "sourceRange": {
             "start": {
-              "line": 114,
-              "column": 10
+              "line": 112,
+              "column": 8
             },
             "end": {
-              "line": 117,
-              "column": 11
+              "line": 115,
+              "column": 9
             }
           },
           "metadata": {},
@@ -4867,12 +4156,12 @@
           "description": "if true the number will be grouped according to the locale.",
           "sourceRange": {
             "start": {
-              "line": 122,
-              "column": 10
+              "line": 120,
+              "column": 8
             },
             "end": {
-              "line": 124,
-              "column": 11
+              "line": 122,
+              "column": 9
             }
           },
           "metadata": {},
@@ -4883,12 +4172,12 @@
           "description": "The currency to use in currency formatting. Possible values are the ISO 4217 currency codes, such as \"USD\" for the US dollar, \"EUR\" for the euro, or \"CNY\" for the Chinese RMB — see http://www.currency-iso.org/en/home/tables/table-a1.html. There is no default value; if the style is \"currency\", the currency property must be provided.",
           "sourceRange": {
             "start": {
-              "line": 129,
-              "column": 10
+              "line": 127,
+              "column": 8
             },
             "end": {
-              "line": 131,
-              "column": 11
+              "line": 129,
+              "column": 9
             }
           },
           "metadata": {},
@@ -4899,12 +4188,12 @@
           "description": "How to display the currency in currency formatting. Possible values are \"symbol\" to use a localized currency symbol such as €, \"code\" to use the ISO currency code, \"name\" to use a localized currency name such as \"dollar\"; the default is \"symbol\".",
           "sourceRange": {
             "start": {
-              "line": 136,
-              "column": 10
+              "line": 134,
+              "column": 8
             },
             "end": {
-              "line": 138,
-              "column": 11
+              "line": 136,
+              "column": 9
             }
           },
           "metadata": {},
@@ -4915,12 +4204,12 @@
           "description": "number format function",
           "sourceRange": {
             "start": {
-              "line": 151,
-              "column": 10
+              "line": 149,
+              "column": 8
             },
             "end": {
-              "line": 155,
-              "column": 11
+              "line": 153,
+              "column": 9
             }
           },
           "metadata": {},
@@ -4931,12 +4220,12 @@
           "description": "function to parse the input",
           "sourceRange": {
             "start": {
-              "line": 160,
-              "column": 10
+              "line": 158,
+              "column": 8
             },
             "end": {
-              "line": 164,
-              "column": 11
+              "line": 162,
+              "column": 9
             }
           },
           "metadata": {},
@@ -4953,7 +4242,7 @@
     {
       "description": "mixin to provide a range behavior for a given value",
       "summary": "",
-      "path": "range-mixin.html",
+      "path": "range-mixin.js",
       "properties": [
         {
           "name": "min",
@@ -4963,11 +4252,11 @@
           "sourceRange": {
             "start": {
               "line": 19,
-              "column": 10
+              "column": 8
             },
             "end": {
               "line": 21,
-              "column": 11
+              "column": 9
             }
           },
           "metadata": {
@@ -4984,11 +4273,11 @@
           "sourceRange": {
             "start": {
               "line": 26,
-              "column": 10
+              "column": 8
             },
             "end": {
               "line": 28,
-              "column": 11
+              "column": 9
             }
           },
           "metadata": {
@@ -5005,11 +4294,11 @@
           "sourceRange": {
             "start": {
               "line": 34,
-              "column": 10
+              "column": 8
             },
             "end": {
               "line": 37,
-              "column": 11
+              "column": 9
             }
           },
           "metadata": {
@@ -5027,11 +4316,11 @@
           "sourceRange": {
             "start": {
               "line": 43,
-              "column": 10
+              "column": 8
             },
             "end": {
               "line": 45,
-              "column": 11
+              "column": 9
             }
           },
           "metadata": {
@@ -5048,11 +4337,11 @@
           "sourceRange": {
             "start": {
               "line": 50,
-              "column": 10
+              "column": 8
             },
             "end": {
               "line": 54,
-              "column": 11
+              "column": 9
             }
           },
           "metadata": {
@@ -5071,11 +4360,11 @@
           "sourceRange": {
             "start": {
               "line": 59,
-              "column": 10
+              "column": 8
             },
             "end": {
               "line": 62,
-              "column": 11
+              "column": 9
             }
           },
           "metadata": {
@@ -5093,11 +4382,11 @@
           "sourceRange": {
             "start": {
               "line": 67,
-              "column": 10
+              "column": 8
             },
             "end": {
               "line": 70,
-              "column": 11
+              "column": 9
             }
           },
           "metadata": {
@@ -5115,11 +4404,11 @@
           "sourceRange": {
             "start": {
               "line": 75,
-              "column": 10
+              "column": 8
             },
             "end": {
               "line": 78,
-              "column": 11
+              "column": 9
             }
           },
           "metadata": {
@@ -5137,11 +4426,11 @@
           "sourceRange": {
             "start": {
               "line": 83,
-              "column": 10
+              "column": 8
             },
             "end": {
               "line": 86,
-              "column": 11
+              "column": 9
             }
           },
           "metadata": {
@@ -5160,11 +4449,11 @@
           "sourceRange": {
             "start": {
               "line": 96,
-              "column": 6
+              "column": 4
             },
             "end": {
               "line": 105,
-              "column": 7
+              "column": 5
             }
           },
           "metadata": {},
@@ -5187,11 +4476,11 @@
           "sourceRange": {
             "start": {
               "line": 107,
-              "column": 6
+              "column": 4
             },
             "end": {
               "line": 119,
-              "column": 7
+              "column": 5
             }
           },
           "metadata": {},
@@ -5214,11 +4503,11 @@
           "sourceRange": {
             "start": {
               "line": 121,
-              "column": 6
+              "column": 4
             },
             "end": {
               "line": 127,
-              "column": 7
+              "column": 5
             }
           },
           "metadata": {},
@@ -5238,11 +4527,11 @@
           "sourceRange": {
             "start": {
               "line": 129,
-              "column": 6
+              "column": 4
             },
             "end": {
               "line": 134,
-              "column": 7
+              "column": 5
             }
           },
           "metadata": {},
@@ -5259,11 +4548,11 @@
           "sourceRange": {
             "start": {
               "line": 136,
-              "column": 6
+              "column": 4
             },
             "end": {
               "line": 161,
-              "column": 7
+              "column": 5
             }
           },
           "metadata": {},
@@ -5283,11 +4572,11 @@
           "sourceRange": {
             "start": {
               "line": 163,
-              "column": 6
+              "column": 4
             },
             "end": {
               "line": 168,
-              "column": 7
+              "column": 5
             }
           },
           "metadata": {},
@@ -5303,11 +4592,11 @@
           "sourceRange": {
             "start": {
               "line": 170,
-              "column": 6
+              "column": 4
             },
             "end": {
               "line": 187,
-              "column": 7
+              "column": 5
             }
           },
           "metadata": {},
@@ -5327,11 +4616,11 @@
           "sourceRange": {
             "start": {
               "line": 195,
-              "column": 6
+              "column": 4
             },
             "end": {
               "line": 197,
-              "column": 7
+              "column": 5
             }
           },
           "metadata": {},
@@ -5359,11 +4648,11 @@
           "sourceRange": {
             "start": {
               "line": 205,
-              "column": 6
+              "column": 4
             },
             "end": {
               "line": 207,
-              "column": 7
+              "column": 5
             }
           },
           "metadata": {},
@@ -5391,11 +4680,11 @@
           "sourceRange": {
             "start": {
               "line": 209,
-              "column": 6
+              "column": 4
             },
             "end": {
               "line": 217,
-              "column": 7
+              "column": 5
             }
           },
           "metadata": {},
@@ -5415,11 +4704,11 @@
           "sourceRange": {
             "start": {
               "line": 222,
-              "column": 6
+              "column": 4
             },
             "end": {
               "line": 224,
-              "column": 7
+              "column": 5
             }
           },
           "metadata": {},
@@ -5435,11 +4724,11 @@
           "sourceRange": {
             "start": {
               "line": 229,
-              "column": 6
+              "column": 4
             },
             "end": {
               "line": 231,
-              "column": 7
+              "column": 5
             }
           },
           "metadata": {},
@@ -5455,11 +4744,11 @@
           "sourceRange": {
             "start": {
               "line": 233,
-              "column": 6
+              "column": 4
             },
             "end": {
               "line": 265,
-              "column": 7
+              "column": 5
             }
           },
           "metadata": {},
@@ -5479,11 +4768,11 @@
           "sourceRange": {
             "start": {
               "line": 270,
-              "column": 6
+              "column": 4
             },
             "end": {
               "line": 276,
-              "column": 7
+              "column": 5
             }
           },
           "metadata": {},
@@ -5506,7 +4795,7 @@
       "sourceRange": {
         "start": {
           "line": 9,
-          "column": 2
+          "column": 7
         },
         "end": {
           "line": 278,
@@ -5522,11 +4811,11 @@
           "sourceRange": {
             "start": {
               "line": 19,
-              "column": 10
+              "column": 8
             },
             "end": {
               "line": 21,
-              "column": 11
+              "column": 9
             }
           },
           "metadata": {},
@@ -5538,11 +4827,11 @@
           "sourceRange": {
             "start": {
               "line": 26,
-              "column": 10
+              "column": 8
             },
             "end": {
               "line": 28,
-              "column": 11
+              "column": 9
             }
           },
           "metadata": {},
@@ -5554,11 +4843,11 @@
           "sourceRange": {
             "start": {
               "line": 34,
-              "column": 10
+              "column": 8
             },
             "end": {
               "line": 37,
-              "column": 11
+              "column": 9
             }
           },
           "metadata": {},
@@ -5570,11 +4859,11 @@
           "sourceRange": {
             "start": {
               "line": 43,
-              "column": 10
+              "column": 8
             },
             "end": {
               "line": 45,
-              "column": 11
+              "column": 9
             }
           },
           "metadata": {},
@@ -5586,11 +4875,11 @@
           "sourceRange": {
             "start": {
               "line": 50,
-              "column": 10
+              "column": 8
             },
             "end": {
               "line": 54,
-              "column": 11
+              "column": 9
             }
           },
           "metadata": {},
@@ -5602,11 +4891,11 @@
           "sourceRange": {
             "start": {
               "line": 59,
-              "column": 10
+              "column": 8
             },
             "end": {
               "line": 62,
-              "column": 11
+              "column": 9
             }
           },
           "metadata": {},
@@ -5618,11 +4907,11 @@
           "sourceRange": {
             "start": {
               "line": 67,
-              "column": 10
+              "column": 8
             },
             "end": {
               "line": 70,
-              "column": 11
+              "column": 9
             }
           },
           "metadata": {},
@@ -5634,11 +4923,11 @@
           "sourceRange": {
             "start": {
               "line": 75,
-              "column": 10
+              "column": 8
             },
             "end": {
               "line": 78,
-              "column": 11
+              "column": 9
             }
           },
           "metadata": {},
@@ -5650,11 +4939,11 @@
           "sourceRange": {
             "start": {
               "line": 83,
-              "column": 10
+              "column": 8
             },
             "end": {
               "line": 86,
-              "column": 11
+              "column": 9
             }
           },
           "metadata": {},
@@ -5667,6 +4956,811 @@
         "selectors": []
       },
       "slots": []
+    }
+  ],
+  "functions": [
+    {
+      "name": "safeAdd",
+      "description": "emulating handwritten addition to keep precision",
+      "summary": "",
+      "sourceRange": {
+        "file": "number-utilities.js",
+        "start": {
+          "line": 9,
+          "column": 23
+        },
+        "end": {
+          "line": 28,
+          "column": 1
+        }
+      },
+      "privacy": "public",
+      "params": [
+        {
+          "type": "Number",
+          "desc": "summand",
+          "name": "a"
+        },
+        {
+          "type": "Number",
+          "desc": "summand",
+          "name": "b"
+        }
+      ],
+      "return": {
+        "type": "Number",
+        "desc": "sum"
+      }
+    },
+    {
+      "name": "safeMult",
+      "description": "emulating handwritten multiplication to keep precision",
+      "summary": "",
+      "sourceRange": {
+        "file": "number-utilities.js",
+        "start": {
+          "line": 36,
+          "column": 24
+        },
+        "end": {
+          "line": 59,
+          "column": 1
+        }
+      },
+      "privacy": "public",
+      "params": [
+        {
+          "type": "number",
+          "desc": "factor",
+          "name": "a"
+        },
+        {
+          "type": "number",
+          "desc": "factor",
+          "name": "b"
+        }
+      ],
+      "return": {
+        "type": "type",
+        "desc": "product"
+      }
+    },
+    {
+      "name": "decimalPrecision",
+      "description": "get decimal precision of a number (of decimal and exponential notation)",
+      "summary": "",
+      "sourceRange": {
+        "file": "number-utilities.js",
+        "start": {
+          "line": 66,
+          "column": 32
+        },
+        "end": {
+          "line": 71,
+          "column": 1
+        }
+      },
+      "privacy": "public",
+      "params": [
+        {
+          "type": "number",
+          "desc": "[number]",
+          "name": "a"
+        }
+      ],
+      "return": {
+        "type": "type",
+        "desc": "[precision]"
+      }
+    },
+    {
+      "name": "mathMod",
+      "description": "mathematical modulor",
+      "summary": "",
+      "sourceRange": {
+        "file": "number-utilities.js",
+        "start": {
+          "line": 79,
+          "column": 23
+        },
+        "end": {
+          "line": 81,
+          "column": 1
+        }
+      },
+      "privacy": "public",
+      "params": [
+        {
+          "type": "Number",
+          "desc": "",
+          "name": "dividend"
+        },
+        {
+          "type": "Number",
+          "desc": "",
+          "name": "divisor"
+        }
+      ],
+      "return": {
+        "type": "Number"
+      }
+    },
+    {
+      "name": "normalizedClamp",
+      "description": "clamp to 0 or 1",
+      "summary": "",
+      "sourceRange": {
+        "file": "number-utilities.js",
+        "start": {
+          "line": 88,
+          "column": 31
+        },
+        "end": {
+          "line": 90,
+          "column": 1
+        }
+      },
+      "privacy": "public",
+      "params": [
+        {
+          "type": "Number",
+          "desc": "",
+          "name": "n"
+        }
+      ],
+      "return": {
+        "type": "Number"
+      }
+    },
+    {
+      "name": "isNegative",
+      "description": "computes, if a number is negative (including -0)",
+      "summary": "",
+      "sourceRange": {
+        "file": "number-utilities.js",
+        "start": {
+          "line": 97,
+          "column": 26
+        },
+        "end": {
+          "line": 99,
+          "column": 1
+        }
+      },
+      "privacy": "public",
+      "params": [
+        {
+          "type": "Number",
+          "desc": "",
+          "name": "n"
+        }
+      ],
+      "return": {
+        "type": "Boolean"
+      }
+    },
+    {
+      "name": "isNegative0",
+      "description": "computes if a number is negative zero",
+      "summary": "",
+      "sourceRange": {
+        "file": "number-utilities.js",
+        "start": {
+          "line": 106,
+          "column": 27
+        },
+        "end": {
+          "line": 108,
+          "column": 1
+        }
+      },
+      "privacy": "public",
+      "params": [
+        {
+          "type": "Number",
+          "desc": "",
+          "name": "n"
+        }
+      ],
+      "return": {
+        "type": "Boolean"
+      }
+    },
+    {
+      "name": "randomRgb",
+      "description": "generate random rgb-color",
+      "summary": "",
+      "sourceRange": {
+        "file": "color-mixin.js",
+        "start": {
+          "line": 28,
+          "column": 25
+        },
+        "end": {
+          "line": 34,
+          "column": 1
+        }
+      },
+      "privacy": "public",
+      "params": [],
+      "return": {
+        "type": "rgbObject",
+        "desc": "rgb-color object"
+      }
+    },
+    {
+      "name": "normalizeRgb",
+      "description": "normalize rgb properties",
+      "summary": "",
+      "sourceRange": {
+        "file": "color-mixin.js",
+        "start": {
+          "line": 54,
+          "column": 28
+        },
+        "end": {
+          "line": 59,
+          "column": 1
+        }
+      },
+      "privacy": "public",
+      "params": [
+        {
+          "type": "rgbObject",
+          "desc": "The rgb-object of which the values should be normalized",
+          "name": "rgb"
+        }
+      ],
+      "return": {
+        "type": "rgbObject",
+        "desc": "The normalized rgb-object."
+      }
+    },
+    {
+      "name": "normalizeHsl",
+      "description": "normalize hsl values",
+      "summary": "",
+      "sourceRange": {
+        "file": "color-mixin.js",
+        "start": {
+          "line": 67,
+          "column": 28
+        },
+        "end": {
+          "line": 73,
+          "column": 1
+        }
+      },
+      "privacy": "public",
+      "params": [
+        {
+          "type": "hslObject",
+          "desc": "The hsl-object of which the values should be normalized",
+          "name": "hsl"
+        },
+        {
+          "type": "number",
+          "desc": "The precision of the hsl properties",
+          "name": "hslPrecision"
+        }
+      ],
+      "return": {
+        "type": "hslObject",
+        "desc": "The normalized hsl-object."
+      }
+    },
+    {
+      "name": "hexToRgb",
+      "description": "convert hex to rgb",
+      "summary": "",
+      "sourceRange": {
+        "file": "color-mixin.js",
+        "start": {
+          "line": 80,
+          "column": 24
+        },
+        "end": {
+          "line": 93,
+          "column": 1
+        }
+      },
+      "privacy": "public",
+      "params": [
+        {
+          "type": "string",
+          "desc": "The hex string without alpha",
+          "name": "hex"
+        }
+      ],
+      "return": {
+        "type": "rgbObject",
+        "desc": "the rgb object"
+      }
+    },
+    {
+      "name": "rgbToHex",
+      "description": "convert hex to rgb",
+      "summary": "",
+      "sourceRange": {
+        "file": "color-mixin.js",
+        "start": {
+          "line": 114,
+          "column": 24
+        },
+        "end": {
+          "line": 119,
+          "column": 1
+        }
+      },
+      "privacy": "public",
+      "params": [
+        {
+          "type": "string",
+          "desc": "The hex string without alpha",
+          "name": "hex"
+        }
+      ],
+      "return": {
+        "type": "rgbObject",
+        "desc": "the rgb object"
+      }
+    },
+    {
+      "name": "rgbToHsl",
+      "description": "convert rgb to hsl (the values are not rounded)",
+      "summary": "",
+      "sourceRange": {
+        "file": "color-mixin.js",
+        "start": {
+          "line": 127,
+          "column": 24
+        },
+        "end": {
+          "line": 163,
+          "column": 1
+        }
+      },
+      "privacy": "public",
+      "params": [
+        {
+          "type": "rgbObject",
+          "desc": "rgb object",
+          "name": "rgb"
+        },
+        {
+          "type": "Number",
+          "desc": "hue to set if saturation is 0",
+          "name": "defaultH"
+        }
+      ],
+      "return": {
+        "type": "hslObject",
+        "desc": "hsl object"
+      }
+    },
+    {
+      "name": "hslToRgb",
+      "description": "convert hsl to rgb (the values are not rounded)",
+      "summary": "",
+      "sourceRange": {
+        "file": "color-mixin.js",
+        "start": {
+          "line": 187,
+          "column": 24
+        },
+        "end": {
+          "line": 198,
+          "column": 1
+        }
+      },
+      "privacy": "public",
+      "params": [
+        {
+          "type": "hslObject",
+          "desc": "hsl object",
+          "name": "hsl"
+        }
+      ],
+      "return": {
+        "type": "rgbObject",
+        "desc": "rgb object"
+      }
+    },
+    {
+      "name": "alphaToHex",
+      "description": "convert alpha number to hex-alpha-string",
+      "summary": "",
+      "sourceRange": {
+        "file": "color-mixin.js",
+        "start": {
+          "line": 206,
+          "column": 26
+        },
+        "end": {
+          "line": 212,
+          "column": 1
+        }
+      },
+      "privacy": "public",
+      "params": [
+        {
+          "type": "number",
+          "desc": "The alpha number",
+          "name": "alpha"
+        },
+        {
+          "type": "number",
+          "desc": "The expected string length",
+          "name": "length"
+        }
+      ],
+      "return": {
+        "type": "string",
+        "desc": "The computed hex-alpha-string"
+      }
+    },
+    {
+      "name": "hexToAlpha",
+      "description": "convert hex-alpha-string to alpha number",
+      "summary": "",
+      "sourceRange": {
+        "file": "color-mixin.js",
+        "start": {
+          "line": 220,
+          "column": 26
+        },
+        "end": {
+          "line": 224,
+          "column": 1
+        }
+      },
+      "privacy": "public",
+      "params": [
+        {
+          "type": "string",
+          "desc": "The hex-alpha-string",
+          "name": "hex"
+        },
+        {
+          "type": "number",
+          "desc": "The concidered string length",
+          "name": "length"
+        }
+      ],
+      "return": {
+        "type": "number",
+        "desc": "The computed alpha number"
+      }
+    },
+    {
+      "name": "testColor",
+      "description": "test a color string in local browser environment",
+      "summary": "",
+      "sourceRange": {
+        "file": "color-mixin.js",
+        "start": {
+          "line": 252,
+          "column": 25
+        },
+        "end": {
+          "line": 260,
+          "column": 1
+        }
+      },
+      "privacy": "public",
+      "params": [
+        {
+          "type": "CanvasRenderingContext2D",
+          "desc": "The canvas context to test on",
+          "name": "canvasContext"
+        },
+        {
+          "type": "string",
+          "desc": "The color string to tests",
+          "name": "colorString"
+        }
+      ],
+      "return": {
+        "type": "imgData",
+        "desc": "The resulted color data of the test"
+      }
+    },
+    {
+      "name": "pad",
+      "description": "pad a string with 0",
+      "summary": "",
+      "sourceRange": {
+        "file": "datetime-mixin.js",
+        "start": {
+          "line": 20,
+          "column": 19
+        },
+        "end": {
+          "line": 26,
+          "column": 1
+        }
+      },
+      "privacy": "public",
+      "params": [
+        {
+          "type": "number",
+          "desc": "number to pad",
+          "name": "n"
+        },
+        {
+          "type": "number",
+          "desc": "total length of strings",
+          "name": "padLength"
+        }
+      ],
+      "return": {
+        "type": "string",
+        "desc": "padded string"
+      }
+    },
+    {
+      "name": "toDateStringByComponents",
+      "description": "get date string from date components",
+      "summary": "",
+      "sourceRange": {
+        "file": "datetime-mixin.js",
+        "start": {
+          "line": 35,
+          "column": 40
+        },
+        "end": {
+          "line": 37,
+          "column": 1
+        }
+      },
+      "privacy": "public",
+      "params": [
+        {
+          "type": "number",
+          "desc": "",
+          "name": "year"
+        },
+        {
+          "type": "number",
+          "desc": "",
+          "name": "month"
+        },
+        {
+          "type": "number",
+          "desc": "",
+          "name": "day"
+        }
+      ],
+      "return": {
+        "type": "string",
+        "desc": "date string"
+      }
+    },
+    {
+      "name": "toTimeStringByComponents",
+      "description": "get time string from date components",
+      "summary": "",
+      "sourceRange": {
+        "file": "datetime-mixin.js",
+        "start": {
+          "line": 47,
+          "column": 40
+        },
+        "end": {
+          "line": 49,
+          "column": 1
+        }
+      },
+      "privacy": "public",
+      "params": [
+        {
+          "type": "number",
+          "desc": "",
+          "name": "hour"
+        },
+        {
+          "type": "number",
+          "desc": "",
+          "name": "minute"
+        },
+        {
+          "type": "number",
+          "desc": "",
+          "name": "second"
+        },
+        {
+          "type": "number",
+          "desc": "",
+          "name": "millisecond"
+        }
+      ],
+      "return": {
+        "type": "string",
+        "desc": "time string"
+      }
+    },
+    {
+      "name": "computeTimezone",
+      "description": "compute the timezone properties from given offset minutes",
+      "summary": "",
+      "sourceRange": {
+        "file": "datetime-mixin.js",
+        "start": {
+          "line": 64,
+          "column": 31
+        },
+        "end": {
+          "line": 86,
+          "column": 1
+        }
+      },
+      "privacy": "public",
+      "params": [
+        {
+          "type": "number",
+          "desc": "The offset minutes",
+          "name": "offsetMinutes"
+        }
+      ],
+      "return": {
+        "type": "TimeZoneProperties",
+        "desc": "The timezone properties"
+      }
+    },
+    {
+      "name": "computeTimezoneOffset",
+      "description": "compute the timezone properties from a given timezone-string",
+      "summary": "",
+      "sourceRange": {
+        "file": "datetime-mixin.js",
+        "start": {
+          "line": 93,
+          "column": 37
+        },
+        "end": {
+          "line": 123,
+          "column": 1
+        }
+      },
+      "privacy": "public",
+      "params": [
+        {
+          "type": "string",
+          "desc": "The timezone-string",
+          "name": "timezone"
+        }
+      ],
+      "return": {
+        "type": "TimeZoneProperties",
+        "desc": "The timezone properties"
+      }
+    },
+    {
+      "name": "maxDayOfMonth",
+      "description": "compute the last day of a month in a year",
+      "summary": "",
+      "sourceRange": {
+        "file": "datetime-mixin.js",
+        "start": {
+          "line": 131,
+          "column": 29
+        },
+        "end": {
+          "line": 139,
+          "column": 1
+        }
+      },
+      "privacy": "public",
+      "params": [
+        {
+          "type": "number",
+          "desc": "the year",
+          "name": "year"
+        },
+        {
+          "type": "number",
+          "desc": "the month",
+          "name": "month"
+        }
+      ],
+      "return": {
+        "type": "number",
+        "desc": "the last day of the month"
+      }
+    },
+    {
+      "name": "fromDatetime",
+      "description": "compute a date object",
+      "summary": "",
+      "sourceRange": {
+        "file": "datetime-mixin.js",
+        "start": {
+          "line": 153,
+          "column": 28
+        },
+        "end": {
+          "line": 194,
+          "column": 1
+        }
+      },
+      "privacy": "public",
+      "params": [
+        {
+          "type": "(string | number | object)",
+          "desc": "",
+          "name": "datetime"
+        },
+        {
+          "type": "number",
+          "desc": "",
+          "name": "offsetMinutes"
+        },
+        {
+          "type": "boolean",
+          "desc": "Defies weather the the datetime-string should be treated as timeOnly",
+          "name": "timeOnly"
+        }
+      ],
+      "return": {
+        "type": "DateTimezone",
+        "desc": "date"
+      }
+    },
+    {
+      "name": "toDurationString",
+      "description": "computes from a number the duration string",
+      "summary": "",
+      "sourceRange": {
+        "file": "duration-mixin.js",
+        "start": {
+          "line": 12,
+          "column": 32
+        },
+        "end": {
+          "line": 45,
+          "column": 1
+        }
+      },
+      "privacy": "public",
+      "params": [
+        {
+          "type": "number",
+          "desc": "The duration as a number in milliseconds",
+          "name": "value"
+        }
+      ],
+      "return": {
+        "type": "string",
+        "desc": "The duration string"
+      }
+    },
+    {
+      "name": "toDurationNumber",
+      "description": "computes from a duration string the number of milliseconds of the duration",
+      "summary": "",
+      "sourceRange": {
+        "file": "duration-mixin.js",
+        "start": {
+          "line": 52,
+          "column": 32
+        },
+        "end": {
+          "line": 60,
+          "column": 1
+        }
+      },
+      "privacy": "public",
+      "params": [
+        {
+          "type": "string",
+          "desc": "The duration string",
+          "name": "valueString"
+        }
+      ],
+      "return": {
+        "type": "number",
+        "desc": "The number of milliseconds of the duration"
+      }
     }
   ]
 }
