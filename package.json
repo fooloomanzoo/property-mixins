@@ -1,18 +1,5 @@
 {
-  "name": "@fooloomanzoo/property-mixins",
-  "version": "2.5.4",
   "description": "mixin for custom elements to extends property mixins for data formats",
-  "scripts": {
-    "prepublish": "npm run analyze && git add . && git commit -m \"publish new version\" && npm version patch && git push",
-    "analyze": "polymer analyze > analysis.json",
-    "start": "npm run analyze && polymer serve -o",
-    "test": "polymer test",
-    "test:p": "polymer test -p --config-file=wct.p.conf.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/fooloomanzoo/property-mixins.git"
-  },
   "keywords": [
     "mixin",
     "polymer",
@@ -23,21 +10,38 @@
     "range",
     "color"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fooloomanzoo/property-mixins.git"
+  },
+  "homepage": "https://github.com/fooloomanzoo/property-mixins",
+  "name": "@fooloomanzoo/property-mixins",
+  "version": "3.0.0",
   "author": "fooloomanzoo",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/fooloomanzoo/property-mixins/issues"
   },
+  "scripts": {
+    "prepublishOnly": "npm run build && git add . && git commit -m \"publish new version\" && npm version patch && git push",
+    "build": "git pull && npm install && npm run analyze",
+    "start": "npm run analyze && polymer serve -o",
+    "analyze": "polymer analyze > analysis.json",
+    "test": "polymer test",
+    "test:p": "polymer test -p --config-file=wct.p.conf.js"
+  },
+  "license": "MIT",
   "dependencies": {
-    "@polymer/polymer": "^2.6.1"
+    "@polymer/polymer": "^3",
+    "@polymer/iron-overlay-behavior": "^3"
   },
   "devDependencies": {
-    "web-component-tester": "^6.5.0",
-    "@webcomponents/webcomponentsjs": "^1",
-    "@polymer/iron-component-page": "^3",
-    "@polymer/iron-flex-layout": "^2",
-    "@polymer/iron-demo-helpers": "^2",
-    "@polymer/iron-form": "^2",
-    "@fooloomanzoo/input-picker-pattern": "^2"
+    "@webcomponents/webcomponentsjs": "^2",
+    "@polymer/iron-component-page": "^4",
+    "@polymer/iron-flex-layout": "^3",
+    "@polymer/iron-demo-helpers": "^3",
+    "@polymer/iron-form": "^3",
+    "@polymer/iron-test-helpers": "^3",
+    "@fooloomanzoo/input-picker-pattern": "^3",
+    "wct-browser-legacy": "^1"
   }
 }

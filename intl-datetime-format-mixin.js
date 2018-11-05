@@ -1,0 +1,286 @@
+import { dedupingMixin } from '@polymer/polymer/lib/utils/mixin.js';
+
+/**
+ * prediscovered and cached locale datetime-format resolved options
+ * @type {Map}
+ */
+const knownLocaleDateFormatOptions = new Map();
+
+/**
+ * Mixin that provides intl-format-locale for datetime and computes some separation strings for usage.
+ *
+ * @mixinFunction
+ * @polymer
+ */
+export const IntlDatetimeFormatMixin = dedupingMixin( superClass => {
+
+  return class extends superClass {
+
+    static get properties() {
+      return {
+        /**
+         * The current locale
+         */
+        locale: {
+          type: String,
+          value: navigator.language
+        },
+
+        /**
+         * locale separator for local decimal values
+         * @type {string}
+         */
+        decimalSeparator: {
+          type: String,
+          readOnly: true
+        },
+
+        /**
+         * Separator for local date values (date-string is still in ISO-Format)
+         * @type {string}
+         */
+        dateSeparator: {
+          type: String,
+          readOnly: true
+        },
+
+        /**
+         * Separator for local time values (time-string is still in ISO-Format)
+         * @type {string}
+         */
+        timeSeparator: {
+          type: String,
+          readOnly: true
+        },
+
+        /**
+         * locale representation of 'AM'
+         */
+        amString: {
+          type: String,
+          readOnly: true
+        },
+
+        /**
+         * locale representation of 'PM'
+         */
+        pmString: {
+          type: String,
+          readOnly: true
+        },
+
+        /**
+         * order of date-parts
+         */
+        dateOrder: {
+          type: Object,
+          value: function() {
+            return {
+              parts: [],
+              timeFirst: false,
+              dateFirst: true
+            };
+          },
+          notify: true,
+          readOnly: true
+        }
+      }
+    }
+
+    static get observers() {
+      return [
+        '_localeChanged(locale)'
+      ]
+    }
+
+    _localeChanged(locale) {
+      if (!(locale && Intl.DateTimeFormat && Intl.DateTimeFormat.supportedLocalesOf(locale))) {
+        this.locale = navigator.language;
+        return;
+      }
+
+      // resolve standard options
+      // only `gregory`-calendar-system is possible to use
+      const resolvedOptions = new Intl.DateTimeFormat(locale).resolvedOptions();
+      if (resolvedOptions.calendar !== 'gregory' && resolvedOptions.calendar !== 'iso8601') {
+        // test if calendar system is part of the locale
+        if (locale.indexOf('-u-') !== -1) {
+          let pos;
+          if ((pos = locale.indexOf('-ca-')) !== -1) {
+            const end = locale.indexOf('-', pos + 4);
+            if (end !== -1) {
+              // `latn` is in beetween
+              this.locale = locale.slice(0, pos + 4) + 'gregory' + locale.slice(end);
+            } else {
+              // `latn` is at end position
+              this.locale = locale.slice(0, pos + 4) + 'gregory';
+            }
+          } else {
+            // calendar-system is not part of locale
+            this.locale = locale + '-ca-gregory';
+          }
+        } else {
+          // locale has no modifier
+          this.locale = locale + '-u-ca-gregory';
+        }
+        return;
+      }
+
+      // skip when once resolved format
+      if (!knownLocaleDateFormatOptions.has(locale)) {
+        // decimal separator
+        const numberString = (0.5).toLocaleString(locale, {
+          minimumIntergerDigits: 1,
+          maximumIntergerDigits: 1,
+          minimumFractionsDigits: 1,
+          maximumFractionsDigits: 1
+        });
+        const decimalSeparator = numberString[1];
+
+        let d = new Date(Date.UTC(1970, 0, 22, 11, 44, 55));
+
+        // create datestring in locale format
+        const formatedDateParts = [
+          d.toLocaleDateString(locale, {
+            year: '2-digit',
+            timeZone: 'UTC',
+            hour12: false
+          }).replace(/[\u200E\u200F]/g, '').slice(0, 2),
+          d.toLocaleDateString(locale, {
+            month: '2-digit',
+            timeZone: 'UTC',
+            hour12: false
+          }).replace(/[\u200E\u200F]/g, '').slice(0, 2),
+          d.toLocaleDateString(locale, {
+            day: '2-digit',
+            timeZone: 'UTC',
+            hour12: false
+          }).replace(/[\u200E\u200F]/g, '').slice(0, 2),
+          d.toLocaleTimeString(locale, {
+            hour: '2-digit',
+            timeZone: 'UTC',
+            hour12: false
+          }).replace(/[\u200E\u200F]/g, '').slice(0, 2),
+        ];
+
+        // using UTC-timezone to avoid conflicts when comparing
+        const localeDateString = d.toLocaleString(locale, {
+          year: '2-digit',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          timeZone: 'UTC',
+          hour12: false
+        }).replace(/[\u200E\u200F]/g, '');
+
+        // date separator
+        // using UTC-timezone to avoid conflicts when comparing
+        const dateSeparator = formatedDateParts.reduce((acc, currentValue) => {
+          // filter the number in the current locale representation and unicode-left- or right-control-marks
+          // (only internet explorer: https://www.csgpro.com/blog/2016/08/a-bad-date-with-internet-explorer-11-trouble-with-new-unicode-characters-in-javascript-date-strings)
+          return acc.replace(currentValue, '').replace(/[\u200E\u200F]/g, '');
+        }, d.toLocaleDateString(locale, {
+          day: '2-digit',
+          month: '2-digit',
+          year: '2-digit',
+          timeZone: 'UTC',
+          hour12: false
+        }))[0];
+
+        let occurrence = {
+          year: localeDateString.indexOf(formatedDateParts[0]),
+          month: localeDateString.indexOf(formatedDateParts[1]),
+          day: localeDateString.indexOf(formatedDateParts[2]),
+          hour: localeDateString.indexOf(formatedDateParts[3])
+        };
+
+        // setting datetime order
+        const order = {
+          parts: [],
+          timeFirst: occurrence.year > occurrence.hour,
+          dateFirst: occurrence.year < occurrence.hour
+        };
+
+        if (occurrence.year < occurrence.month) {
+          if (occurrence.year < occurrence.day) {
+            order.parts.push('year');
+            if (occurrence.month < occurrence.day) {
+              order.parts.push('month', 'day');
+            } else {
+              order.parts.push('day', 'month');
+            }
+          } else {
+            order.parts.push('day', 'year', 'month');
+          }
+        } else {
+          if (occurrence.month < occurrence.day) {
+            order.parts.push('month');
+            if (occurrence.year < occurrence.day) {
+              order.parts.push('year', 'day');
+            } else {
+              order.parts.push('day', 'year');
+            }
+          } else {
+            order.parts.push('day', 'month', 'year');
+          }
+        }
+
+        // time separator
+        // create datestring in locale format
+        let formatedTimeString = d.toLocaleTimeString(locale, {
+            hour: '2-digit',
+            minute: '2-digit',
+            timeZone: 'UTC',
+            hour12: false
+          }).replace(/[\u200E\u200F]/g, '');
+
+        // using UTC-timezone to avoid conflicts when comparing
+        const timeSeparator = formatedTimeString.replace(/[\u200E\u200F]/g, '')[2];
+
+        // am-pm strings
+        let formatedTimeParts = formatedTimeString.split(timeSeparator);
+        formatedTimeParts.push(timeSeparator);
+
+        // am
+        const amString = formatedTimeParts.reduce((acc, currentValue) => {
+          return acc.replace(currentValue, '').replace(/[\u200E\u200F\s]/g, '');
+        }, d.toLocaleTimeString(locale, {
+          hour: '2-digit',
+          minute: '2-digit',
+          timeZone: 'UTC',
+          hour12: true,
+          hourCycle: 'h12'
+        }));
+
+        formatedTimeParts.push(amString);
+
+        // pm
+        d.setUTCHours(23);
+        const pmString = formatedTimeParts.reduce((acc, currentValue) => {
+          return acc.replace(currentValue, '').replace(/[\u200E\u200F\s]/g, '');
+        }, d.toLocaleTimeString(locale, {
+          hour: '2-digit',
+          minute: '2-digit',
+          timeZone: 'UTC',
+          hour12: true,
+          hourCycle: 'h12'
+        }));
+
+        knownLocaleDateFormatOptions.set(locale, {
+          decimalSeparator: decimalSeparator,
+          dateSeparator: dateSeparator,
+          timeSeparator: timeSeparator,
+          amString: (!amString || amString === '.') ? 'AM' : amString, // IE fix for languages that usually don't use am-pm suffixes
+          pmString: (!pmString || pmString === '.') ? 'PM' : pmString,
+          dateOrder: order
+        });
+      }
+
+      let options = knownLocaleDateFormatOptions.get(locale);
+      options.hour12Format = this.hour12Format === undefined ? Boolean(resolvedOptions.hour12) : this.hour12Format;
+
+      this.setProperties(options, true);
+    }
+  }
+});
