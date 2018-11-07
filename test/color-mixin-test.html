@@ -274,6 +274,33 @@
         });
       });
 
+      test('without alpha', done => {
+        element.format = 'rgb';
+        element.randomColor();
+        // wait a tick for possible template stamping
+        Polymer.Base.async(() => {
+          const r = element.r,
+            g = element.g,
+            b = element.b,
+            hex = element.hex,
+            h = element.h,
+            s = element.s,
+            l = element.l;
+          element.withoutAlpha = true;;
+          assert.equal(element.alpha, 1, 'alpha is set to 1');
+          element.alpha = 0.1;
+          assert.equal(element.alpha, 1, 'alpha does not change');
+          assert.equal(element.r, r, 'r does not change');
+          assert.equal(element.g, g, 'g does not change');
+          assert.equal(element.b, b, 'b does not change');
+          assert.equal(element.hex, hex, 'hex does not change');
+          assert.equal(element.h, h, 'h does not change');
+          assert.equal(element.s, s, 's does not change');
+          assert.equal(element.l, l, 'l does not change');
+          done();
+        });
+      });
+
       test('use hex alpha', done => {
         element.colorString = '#12312380';
         assert.equal(element.alpha, 0.5, 'alpha should be 0.5')
@@ -367,7 +394,7 @@
           assert.equal(element.format, 'hsl', 'format should not change');
           assert.match(element.colorString, element._validateHsl, 'colorString is in hsl');
           // auto
-          element.format = 'auto';  
+          element.format = 'auto';
           assert.equal(element.format, 'auto', 'format should not change');
           element.colorString = 'red';
           assert.equal(element.format, 'auto', 'format should not change');

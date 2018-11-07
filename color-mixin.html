@@ -110,12 +110,12 @@
           },
 
           /**
-           * if true, colorString has alpha
+           * if true, colorString does not use alpha
            */
-          alphaMode: {
+          withoutAlpha: {
             type: Boolean,
             notify: true,
-            observer: '_alphaModeChanged'
+            observer: '_withoutAlphaChanged'
           },
           /**
            * Precision of hsl-colorStrings, if the format is 'hsl' (for saturation and lightness it is applied according to their percentage colorString)
@@ -234,8 +234,7 @@
           r: imgData.data[0],
           g: imgData.data[1],
           b: imgData.data[2],
-          alpha: this._hexToAlpha(imgData.data[3].toString(16), 2),
-          alphaMode: imgData.data[3] !== 255
+          alpha: this._hexToAlpha(imgData.data[3].toString(16), 2)
         }
       }
 
@@ -255,10 +254,8 @@
           format = 'hsl';
           if (match[1] === undefined) { // no alpha
             toSet.alpha = 1;
-            toSet.alphaMode = false;
           } else { // with alpha
             toSet.alpha = numberUtilities.normalizedClamp(+match[5]);
-            toSet.alphaMode = true;
           }
           toSet.h = +match[2];
           let matchPercent;
@@ -278,10 +275,8 @@
           format = 'rgb';
           if (match[1] === undefined) { // no alpha
             toSet.alpha = 1;
-            toSet.alphaMode = false;
           } else { // with alpha
             toSet.alpha = numberUtilities.normalizedClamp(+match[5]);
-            toSet.alphaMode = true;
           }
           Object.assign(toSet, this._normalizeRgb({r: +match[2], g: +match[3], b: +match[4]}));
           // hex-format
@@ -291,27 +286,24 @@
             toSet.hex = match[1];
             if (match[2] !== undefined) { // alpha channel has two hex numbers
               toSet.alpha = this._hexToAlpha(match[2], 2);
-              toSet.alphaMode = true;
               if (!this._hexAlphaSupported) {
                 format = 'rgb';
                 fixedFormat = false;
               }
             } else { // no alpha channel
               toSet.alpha = 1;
-              toSet.alphaMode = false;
             }
           } else if (match[3] !== undefined) { // three hex numbers
             toSet.hex = match[3];
             if (match[4] !== undefined) { // alpha channel has one hex number
               toSet.alpha = this._hexToAlpha(match[4], 1);
-              toSet.alphaMode = true;
+              toSet.withoutAlpha = true;
               if (!this._hexAlphaSupported) {
                 format = 'rgb';
                 fixedFormat = false;
               }
             } else { // no alpha channel
               toSet.alpha = 1;
-              toSet.alphaMode = false;
             }
           }
         } else {
@@ -342,6 +334,7 @@
        */
       _computeColorString(rgb, hsl, hex, oldColor) {
         const alpha = isNaN(this.alpha) ? 1 : this.alpha;
+        const alphaMode = alpha !== 1;
         let format = this.format;
 
         if (format === 'auto') {
@@ -351,7 +344,7 @@
             const rgbIsNotSet = !rgb || isNaN(rgb.r) || isNaN(rgb.g) || isNaN(rgb.b);
 
             // test old color string if it changes in comparisson to the given color properties
-            if (!this.alphaMode && (rgbIsNotSet || (rgb.r === testRgb.r && rgb.b === testRgb.b && rgb.g === testRgb.g))) {
+            if (!alphaMode && (rgbIsNotSet || (rgb.r === testRgb.r && rgb.b === testRgb.b && rgb.g === testRgb.g))) {
               // keeping color string if possible
               return oldColor;
             }
@@ -381,7 +374,7 @@
               hsl = this._normalizeHsl(this.rgbToHsl(rgb));
             }
             if (hsl && !isNaN(hsl.h) && !isNaN(hsl.s) && !isNaN(hsl.l)) {
-              if (this.alphaMode === true || alpha !== 1) {
+              if (!this.withoutAlpha && alphaMode) {
                 return `hsla(${hsl.h.toFixed(this.hslPrecision || 0)}, ${numberUtilities.safeMult(hsl.s,100)}%, ${numberUtilities.safeMult(hsl.l,100)}%, ${alpha})`;
               } else {
                 return `hsl(${hsl.h.toFixed(this.hslPrecision || 0)}, ${numberUtilities.safeMult(hsl.s,100)}%, ${numberUtilities.safeMult(hsl.l,100)}%)`;
@@ -392,7 +385,7 @@
               hex = this.rgbToHex(rgb);
             }
             if (hex) {
-              if (this.alphaMode === true) {
+              if (!this.withoutAlpha) {
                 if (this._hexAlphaSupported) {
                   return `${hex}${this._alphaToHex(alpha, hex.length <= 4 ? 1 : 2)}`;
                 }
@@ -407,7 +400,7 @@
               rgb = this._normalizeRgb(this.hslToRgb(hsl));
             }
             if (rgb && !(isNaN(rgb.r) || isNaN(rgb.g) || isNaN(rgb.b))) {
-              if (this.alphaMode === true || alpha !== 1) {
+              if (!this.withoutAlpha && alphaMode) {
                 return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})`;
               } else {
                 return `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
@@ -551,7 +544,7 @@
         if (alpha === undefined) {
           return;
         }
-        if (isNaN(alpha)) {
+        if ((isNaN(alpha) || this.withoutAlpha) && alpha !== 1) {
           this.alpha = 1;
           return;
         }
@@ -559,9 +552,6 @@
         if (alpha !== this.alpha) {
           this.alpha = alpha;
           return;
-        }
-        if (alpha !== 1) {
-          this.alphaMode = true;
         }
         if (this.colorString) {
           const colorString = this._computeColorString({r: this.r, g: this.g, b: this.b}, {h: this.h, s: this.s, l: this.l}, this.hex, this.colorString);
@@ -571,8 +561,8 @@
         }
       }
 
-      _alphaModeChanged(alphaMode) {
-        if (alphaMode !== true) {
+      _withoutAlphaChanged(withoutAlpha) {
+        if (withoutAlpha === true) {
           this.alpha = 1;
         }
       }

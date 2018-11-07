@@ -186,7 +186,7 @@
           "defaultValue": "1"
         },
         {
-          "name": "alphaMode",
+          "name": "withoutAlpha",
           "type": "boolean | null | undefined",
           "description": "if true, colorString has alpha",
           "privacy": "public",
@@ -203,7 +203,7 @@
           "metadata": {
             "polymer": {
               "notify": true,
-              "observer": "\"_alphaModeChanged\"",
+              "observer": "\"_withoutAlphaChanged\"",
               "attributeType": "Boolean"
             }
           }
@@ -628,7 +628,7 @@
           }
         },
         {
-          "name": "_alphaModeChanged",
+          "name": "_withoutAlphaChanged",
           "description": "",
           "privacy": "protected",
           "sourceRange": {
@@ -644,7 +644,7 @@
           "metadata": {},
           "params": [
             {
-              "name": "alphaMode"
+              "name": "withoutAlpha"
             }
           ],
           "return": {
