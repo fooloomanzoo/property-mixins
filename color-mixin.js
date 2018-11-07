@@ -358,6 +358,14 @@ export const ColorMixin = dedupingMixin(superClass => {
         },
 
         /**
+         * if true, alpha won't be used
+         */
+        withoutAlpha: {
+          type: Boolean,
+          observer: '_withoutAlphaChanged'
+        },
+
+        /**
          * Precision of hsl-colorStrings, if the format is 'hsl' (for saturation and lightness it is applied according to their percentage colorString)
          */
         hslPrecision: {
@@ -471,7 +479,7 @@ export const ColorMixin = dedupingMixin(superClass => {
       // hsl-format
       if (match = colorString.match(regexpHsl)) {
         format = 'hsl';
-        if (match[1] === undefined) { // no alpha
+        if (this.withoutAlpha || match[1] === undefined) { // no alpha
           toSet.alpha = 1;
           toSet.alphaMode = false;
         } else { // with alpha
@@ -494,7 +502,7 @@ export const ColorMixin = dedupingMixin(superClass => {
         // rgb-format
       } else if (match = colorString.match(regexpRgb)) {
         format = 'rgb';
-        if (match[1] === undefined) { // no alpha
+        if (this.withoutAlpha || match[1] === undefined) { // no alpha
           toSet.alpha = 1;
           toSet.alphaMode = false;
         } else { // with alpha
@@ -511,7 +519,7 @@ export const ColorMixin = dedupingMixin(superClass => {
         format = 'hex';
         if (match[1] !== undefined) { // six hex numbers
           toSet.hex = match[1];
-          if (match[2] !== undefined) { // alpha channel has two hex numbers
+          if (!this.withoutAlpha && match[2] !== undefined) { // alpha channel has two hex numbers
             toSet.alpha = hexToAlpha(match[2], 2);
             toSet.alphaMode = true;
             if (!this._hexAlphaSupported) {
@@ -524,7 +532,7 @@ export const ColorMixin = dedupingMixin(superClass => {
           }
         } else if (match[3] !== undefined) { // three hex numbers
           toSet.hex = match[3];
-          if (match[4] !== undefined) { // alpha channel has one hex number
+          if (!this.withoutAlpha && match[4] !== undefined) { // alpha channel has one hex number
             toSet.alpha = hexToAlpha(match[4], 1);
             toSet.alphaMode = true;
             if (!this._hexAlphaSupported) {
@@ -564,7 +572,7 @@ export const ColorMixin = dedupingMixin(superClass => {
      */
     _computeColorString(rgb, hsl, hex, oldColor) {
       const alpha = isNaN(this.alpha) ? 1 : this.alpha;
-      const alphaMode = (this.alphaMode === true || alpha !== 1);
+      const alphaMode = !this.withoutAlpha && (this.alphaMode === true || alpha !== 1);
       let format = this.format;
 
       if (format === 'auto') {
@@ -787,11 +795,19 @@ export const ColorMixin = dedupingMixin(superClass => {
         this.alpha = alpha;
         return;
       }
-      if (alpha !== 1) {
-        this.alphaMode = true;
+      if (this.withoutAlpha && (alpha !== 1 || this.alphaMode)) {
+        let toSet = {};
+        toSet.alpha = 1;
+        toSet.alphaMode = false;
+        this.setProperties(toSet);
+        return;
       }
-      if (this.colorString) {
-        const colorString = this._computeColorString({ r: this.r, g: this.g, b: this.b }, { h: this.h, s: this.s, l: this.l }, this.hex, this.colorString);
+      if (!this.withoutAlpha && alpha !== 1) {
+        this.alphaMode = true;
+        return
+      }
+      if (this.colorString && !this.__updateByColorString) {
+        const colorString = this._computeColorString({r: this.r, g: this.g, b: this.b}, {h: this.h, s: this.s, l: this.l}, this.hex, this.colorString);
         if (colorString !== this.colorString) {
           this.colorString = colorString;
         }
@@ -799,8 +815,37 @@ export const ColorMixin = dedupingMixin(superClass => {
     }
 
     _alphaModeChanged(alphaMode) {
-      if (alphaMode !== true) {
+      if (alphaMode === undefined) {
+        return;
+      }
+      if (this.withoutAlpha === true && (this.alpha !== 1 || alphaMode)) {
+        let toSet = {};
+        toSet.alpha = 1;
+        toSet.alphaMode = false;
+        this.setProperties(toSet);
+        return;
+      }
+      if (!alphaMode && this.alpha !== 1) {
         this.alpha = 1;
+        return;
+      }
+      if (this.colorString && !this.__updateByColorString) {
+        const colorString = this._computeColorString({r: this.r, g: this.g, b: this.b}, {h: this.h, s: this.s, l: this.l}, this.hex, this.colorString);
+        if (colorString !== this.colorString) {
+          this.colorString = colorString;
+        }
+      }
+    }
+
+    _withoutAlphaChanged(withoutAlpha) {
+      if (withoutAlpha === undefined) {
+        return;
+      }
+      if (withoutAlpha === true && (this.alpha !== 1 || this.alphaMode)) {
+        let toSet = {};
+        toSet.alpha = 1;
+        toSet.alphaMode = false;
+        this.setProperties(toSet);
       }
     }
   }
