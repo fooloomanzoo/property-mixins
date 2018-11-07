@@ -34,6 +34,7 @@
         <basic-color-element id="hex-property" hex="#0f0"></basic-color-element>
         <basic-color-element id="rgb-properties" r="0" g="255" b="0"></basic-color-element>
         <basic-color-element id="hsl-properties" h="120" s="1" l="0.5"></basic-color-element>
+        <basic-color-element id="without-alpha" without-alpha color-string="hsla(180,100%,50%,0.5)"></basic-color-element>
       </div>
     </template>
   </test-fixture>
@@ -51,7 +52,9 @@
       test('default properties', done => {
         assert.isUndefined(element.hex, 'hex is not defined');
         assert.equal(element.format, 'auto', 'format is "auto"');
-        assert.equal(element.alpha, 1, 'alpha is defined');
+        assert.equal(element.alpha, 1, 'alpha is 1');
+        assert.isNotOk(element.alphaMode, false, 'alphaMode is not set');
+        assert.isNotOk(element.withoutAlpha, 'withoutAlpha is not set');
         assert.isUndefined(element.colorString, 'colorString is not defined');
         assert.isUndefined(element.r, 'r is not defined');
         assert.isUndefined(element.g, 'g is not defined');
@@ -643,6 +646,25 @@
           assert.equal(element.alpha, 1, 'alpha should be set');
           assert.equal(element.hex, '#00ff00', 'hex should be set');
           assert.isDefined(element.colorString, 'colorString is defined');
+          done();
+        });
+      });
+
+      test('without alpha', done => {
+        let element = f.querySelector('#without-alpha');
+        Polymer.Base.async(() => {
+          assert.isTrue(element.withoutAlpha, 'withoutAlpha is set');
+          assert.isFalse(element.alphaMode, 'alphaMode is set');
+          assert.equal(element.alpha, 1, 'alpha should be set');
+          assert.isDefined(element.colorString, 'colorString is defined');
+          assert.isFalse(element.colorString.split('a') > 1, 'colorString does not contain an alpha');
+          element.alpha = 0.5;
+          assert.equal(element.alpha, 1, 'alpha should be reset');
+          assert.isFalse(element.alphaMode, 'alphaMode does not change');
+          assert.isFalse(element.colorString.split('a') > 1, 'colorString does not contain an alpha');
+          element.alphaMode = true;
+          assert.equal(element.alpha, 1, 'alpha does not change');
+          assert.isFalse(element.alphaMode, 'alphaMode should be reset');
           done();
         });
       });
