@@ -1,4 +1,4 @@
-import { dedupingMixin } from '@polymer/polymer/lib/utils/mixin.js';
+import { dedupingMixin } from '../../@polymer/polymer/lib/utils/mixin.js';
 import { safeMult, isNegative0 } from './number-utilities.js';
 
 

@@ -1,6 +1,6 @@
 import {
   dedupingMixin
-} from '@polymer/polymer/lib/utils/mixin.js';
+} from '../../@polymer/polymer/lib/utils/mixin.js';
 import {
   safeAdd,
   safeMult,
