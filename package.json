@@ -34,7 +34,7 @@
     "@polymer/polymer": "^3"
   },
   "devDependencies": {
-    "@fooloomanzoo/input-picker-pattern": "^3.0.3",
+    "@fooloomanzoo/input-picker-pattern": "^3",
     "@polymer/iron-component-page": "^4",
     "@polymer/iron-demo-helpers": "^3",
     "@polymer/iron-flex-layout": "^3",
