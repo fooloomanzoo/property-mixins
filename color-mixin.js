@@ -612,10 +612,10 @@ export const ColorMixin = dedupingMixin(superClass => {
       switch (format) {
         case 'hsl':
           const hslPrecision = this.hslPrecision || 0;
-          if (!hsl && rgb) {
-            hsl = normalizeHsl(rgbToHsl(rgb, this.h));
+          if ((isNaN(hsl.h) || isNaN(hsl.s) || isNaN(hsl.l)) && !(isNaN(rgb.r) || isNaN(rgb.g) || isNaN(rgb.b))) {
+            hsl = normalizeHsl(this.rgbToHsl(rgb, this.h));
           }
-          if (hsl && !isNaN(hsl.h) && !isNaN(hsl.s) && !isNaN(hsl.l)) {
+          if (!(isNaN(hsl.h) || isNaN(hsl.s) || isNaN(hsl.l))) {
             if (alphaMode) {
               return `hsla(${hsl.h}, ${safeMult(hsl.s,100)}%, ${safeMult(hsl.l,100)}%, ${alpha})`;
             } else {
@@ -623,25 +623,26 @@ export const ColorMixin = dedupingMixin(superClass => {
             }
           } // falls through
         case 'hex':
-          if (!hex && rgb) {
+          if (!hex) {
+            if ((isNaN(rgb.r) || isNaN(rgb.g) || isNaN(rgb.b)) && !(isNaN(hsl.h) || isNaN(hsl.s) || isNaN(hsl.l))) {
+              rgb = normalizeRgb(hslToRgb(hsl));
+            }
             hex = rgbToHex(rgb);
           }
-          if (hex) {
-            if (alphaMode) {
-              if (this._hexAlphaSupported) {
-                return `${hex}${alphaToHex(alpha, hex.length <= 4 ? 1 : 2)}`;
-              }
-              // if hexAlphaSupported is not supported, fall through to rgb
-            } else {
-              return hex;
+          if (alphaMode) {
+            if (this._hexAlphaSupported) {
+              return `${hex}${alphaToHex(alpha, hex.length <= 4 ? 1 : 2)}`;
             }
+            // if hexAlphaSupported is not supported, fall through to rgb
+          } else {
+            return hex;
           } // falls through
         default:
           // fallback is rgb
-          if (!rgb && hsl) {
+          if ((isNaN(rgb.r) || isNaN(rgb.g) || isNaN(rgb.b)) && !(isNaN(hsl.h) || isNaN(hsl.s) || isNaN(hsl.l))) {
             rgb = normalizeRgb(hslToRgb(hsl));
           }
-          if (rgb && !(isNaN(rgb.r) || isNaN(rgb.g) || isNaN(rgb.b))) {
+          if (!(isNaN(rgb.r) || isNaN(rgb.g) || isNaN(rgb.b))) {
             if (alphaMode) {
               return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})`;
             } else {

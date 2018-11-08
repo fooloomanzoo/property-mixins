@@ -209,9 +209,9 @@
           }
         },
         {
-          "name": "hslPrecision",
-          "type": "number | null | undefined",
-          "description": "Precision of hsl-colorStrings, if the format is 'hsl' (for saturation and lightness it is applied according to their percentage colorString)",
+          "name": "withoutAlpha",
+          "type": "boolean | null | undefined",
+          "description": "if true, alpha won't be used",
           "privacy": "public",
           "sourceRange": {
             "start": {
@@ -220,6 +220,28 @@
             },
             "end": {
               "line": 365,
+              "column": 9
+            }
+          },
+          "metadata": {
+            "polymer": {
+              "observer": "\"_withoutAlphaChanged\"",
+              "attributeType": "Boolean"
+            }
+          }
+        },
+        {
+          "name": "hslPrecision",
+          "type": "number | null | undefined",
+          "description": "Precision of hsl-colorStrings, if the format is 'hsl' (for saturation and lightness it is applied according to their percentage colorString)",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 370,
+              "column": 8
+            },
+            "end": {
+              "line": 373,
               "column": 9
             }
           },
@@ -237,11 +259,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 370,
+              "line": 378,
               "column": 8
             },
             "end": {
-              "line": 375,
+              "line": 383,
               "column": 9
             }
           },
@@ -261,11 +283,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 380,
+              "line": 388,
               "column": 8
             },
             "end": {
-              "line": 382,
+              "line": 390,
               "column": 9
             }
           },
@@ -282,11 +304,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 387,
+              "line": 395,
               "column": 8
             },
             "end": {
-              "line": 390,
+              "line": 398,
               "column": 9
             }
           },
@@ -304,11 +326,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 395,
+              "line": 403,
               "column": 8
             },
             "end": {
-              "line": 399,
+              "line": 407,
               "column": 9
             }
           },
@@ -328,26 +350,6 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 410,
-              "column": 4
-            },
-            "end": {
-              "line": 413,
-              "column": 5
-            }
-          },
-          "metadata": {},
-          "params": [],
-          "return": {
-            "type": "void"
-          }
-        },
-        {
-          "name": "randomColor",
-          "description": "generate random color",
-          "privacy": "public",
-          "sourceRange": {
-            "start": {
               "line": 418,
               "column": 4
             },
@@ -363,8 +365,8 @@
           }
         },
         {
-          "name": "resetColor",
-          "description": "reset all color properties",
+          "name": "randomColor",
+          "description": "generate random color",
           "privacy": "public",
           "sourceRange": {
             "start": {
@@ -372,7 +374,27 @@
               "column": 4
             },
             "end": {
-              "line": 439,
+              "line": 429,
+              "column": 5
+            }
+          },
+          "metadata": {},
+          "params": [],
+          "return": {
+            "type": "void"
+          }
+        },
+        {
+          "name": "resetColor",
+          "description": "reset all color properties",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 434,
+              "column": 4
+            },
+            "end": {
+              "line": 447,
               "column": 5
             }
           },
@@ -388,11 +410,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 444,
+              "line": 452,
               "column": 4
             },
             "end": {
-              "line": 457,
+              "line": 465,
               "column": 5
             }
           },
@@ -408,11 +430,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 459,
+              "line": 467,
               "column": 4
             },
             "end": {
-              "line": 554,
+              "line": 562,
               "column": 5
             }
           },
@@ -432,11 +454,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 564,
+              "line": 572,
               "column": 4
             },
             "end": {
-              "line": 643,
+              "line": 652,
               "column": 5
             }
           },
@@ -474,11 +496,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 645,
+              "line": 654,
               "column": 4
             },
             "end": {
-              "line": 665,
+              "line": 674,
               "column": 5
             }
           },
@@ -498,11 +520,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 667,
+              "line": 676,
               "column": 4
             },
             "end": {
-              "line": 711,
+              "line": 720,
               "column": 5
             }
           },
@@ -528,11 +550,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 713,
+              "line": 722,
               "column": 4
             },
             "end": {
-              "line": 756,
+              "line": 765,
               "column": 5
             }
           },
@@ -558,11 +580,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 758,
+              "line": 767,
               "column": 4
             },
             "end": {
-              "line": 774,
+              "line": 783,
               "column": 5
             }
           },
@@ -585,11 +607,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 776,
+              "line": 785,
               "column": 4
             },
             "end": {
-              "line": 798,
+              "line": 815,
               "column": 5
             }
           },
@@ -612,11 +634,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 800,
+              "line": 817,
               "column": 4
             },
             "end": {
-              "line": 804,
+              "line": 838,
               "column": 5
             }
           },
@@ -624,6 +646,30 @@
           "params": [
             {
               "name": "alphaMode"
+            }
+          ],
+          "return": {
+            "type": "void"
+          }
+        },
+        {
+          "name": "_withoutAlphaChanged",
+          "description": "",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 840,
+              "column": 4
+            },
+            "end": {
+              "line": 850,
+              "column": 5
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "withoutAlpha"
             }
           ],
           "return": {
@@ -645,7 +691,7 @@
           "column": 7
         },
         "end": {
-          "line": 806,
+          "line": 852,
           "column": 3
         }
       },
@@ -797,8 +843,8 @@
           "type": "boolean | null | undefined"
         },
         {
-          "name": "hsl-precision",
-          "description": "Precision of hsl-colorStrings, if the format is 'hsl' (for saturation and lightness it is applied according to their percentage colorString)",
+          "name": "without-alpha",
+          "description": "if true, alpha won't be used",
           "sourceRange": {
             "start": {
               "line": 362,
@@ -810,6 +856,22 @@
             }
           },
           "metadata": {},
+          "type": "boolean | null | undefined"
+        },
+        {
+          "name": "hsl-precision",
+          "description": "Precision of hsl-colorStrings, if the format is 'hsl' (for saturation and lightness it is applied according to their percentage colorString)",
+          "sourceRange": {
+            "start": {
+              "line": 370,
+              "column": 8
+            },
+            "end": {
+              "line": 373,
+              "column": 9
+            }
+          },
+          "metadata": {},
           "type": "number | null | undefined"
         },
         {
@@ -817,11 +879,11 @@
           "description": "format of the colorString (possible colorStrings: 'rgb', 'hex', 'hsl', 'auto')",
           "sourceRange": {
             "start": {
-              "line": 370,
+              "line": 378,
               "column": 8
             },
             "end": {
-              "line": 375,
+              "line": 383,
               "column": 9
             }
           },
@@ -833,11 +895,11 @@
           "description": "format is locked and does not switch according to the colorString",
           "sourceRange": {
             "start": {
-              "line": 380,
+              "line": 388,
               "column": 8
             },
             "end": {
-              "line": 382,
+              "line": 390,
               "column": 9
             }
           },
@@ -849,11 +911,11 @@
           "description": "value as color-string",
           "sourceRange": {
             "start": {
-              "line": 395,
+              "line": 403,
               "column": 8
             },
             "end": {
-              "line": 399,
+              "line": 407,
               "column": 9
             }
           },
