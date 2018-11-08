@@ -807,7 +807,7 @@ export const ColorMixin = dedupingMixin(superClass => {
         this.alphaMode = true;
         return
       }
-      if (this.colorString && !this.__updateByColorString) {
+      if (this.colorString) {
         const colorString = this._computeColorString({r: this.r, g: this.g, b: this.b}, {h: this.h, s: this.s, l: this.l}, this.hex, this.colorString);
         if (colorString !== this.colorString) {
           this.colorString = colorString;
@@ -830,7 +830,7 @@ export const ColorMixin = dedupingMixin(superClass => {
         this.alpha = 1;
         return;
       }
-      if (this.colorString && !this.__updateByColorString) {
+      if (this.colorString) {
         const colorString = this._computeColorString({r: this.r, g: this.g, b: this.b}, {h: this.h, s: this.s, l: this.l}, this.hex, this.colorString);
         if (colorString !== this.colorString) {
           this.colorString = colorString;
