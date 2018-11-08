@@ -11,8 +11,8 @@
   <script src="../../../@webcomponents/webcomponentsjs/webcomponents-bundle.js"></script>
 
   <script type="module">
-    import '../../../@polymer/iron-demo-helpers/demo-pages-shared-styles';
-    import '../../../@polymer/iron-demo-helpers/demo-snippet';
+    import '../../../@polymer/iron-demo-helpers/demo-pages-shared-styles.js';
+    import '../../../@polymer/iron-demo-helpers/demo-snippet.js';
   </script>
 
   <script type="module" src="./elements/basic-datetime-element.js"></script>
@@ -105,7 +105,7 @@
             </b></div>
           <div><code>timezone</code>: <b><input pattern="[+-]\\d\\d:\\d\\d" value="{{timezone::change}}"></b></div>
           <div><code>year</code>: <b>
-            <input type="range" name="year" value="{{year::input}}" step="1" min="-1000" max="3000">
+            <input type="range" name="year" value="{{year::input}}" step="1" min="1970" max="2100">
             <input size="4" type="number" class="for_range" id="year" value="{{year::input}}" step="1">
             </b></div>
           <div><code>month</code>: <b>
