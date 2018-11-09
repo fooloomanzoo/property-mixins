@@ -613,7 +613,7 @@ export const ColorMixin = dedupingMixin(superClass => {
         case 'hsl':
           const hslPrecision = this.hslPrecision || 0;
           if ((isNaN(hsl.h) || isNaN(hsl.s) || isNaN(hsl.l)) && !(isNaN(rgb.r) || isNaN(rgb.g) || isNaN(rgb.b))) {
-            hsl = normalizeHsl(this.rgbToHsl(rgb, this.h));
+            hsl = normalizeHsl(rgbToHsl(rgb, this.h));
           }
           if (!(isNaN(hsl.h) || isNaN(hsl.s) || isNaN(hsl.l))) {
             if (alphaMode) {
