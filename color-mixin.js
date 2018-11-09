@@ -803,7 +803,7 @@ export const ColorMixin = dedupingMixin(superClass => {
         this.setProperties(toSet);
         return;
       }
-      if (!this.withoutAlpha && alpha !== 1) {
+      if (!this.withoutAlpha && alpha !== 1 && !this.alphaMode) {
         this.alphaMode = true;
         return
       }
@@ -819,7 +819,7 @@ export const ColorMixin = dedupingMixin(superClass => {
       if (alphaMode === undefined) {
         return;
       }
-      if (this.withoutAlpha === true && (this.alpha !== 1 || alphaMode)) {
+      if (this.withoutAlpha && (this.alpha !== 1 || alphaMode)) {
         let toSet = {};
         toSet.alpha = 1;
         toSet.alphaMode = false;
