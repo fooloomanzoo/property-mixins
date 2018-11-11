@@ -547,6 +547,9 @@ export const ColorMixin = dedupingMixin(superClass => {
       } else {
         // last try
         format = 'auto';
+        if (!this._testCanvasContext) {
+          this._createTestCanvas();
+        }
         toSet = testColor(this._testCanvasContext, colorString);
       }
 
