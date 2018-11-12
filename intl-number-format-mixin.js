@@ -14,6 +14,35 @@ export const regexpNotInNumber = /[^\d\-+.e]/g;
 const knownLocaleNumberFormatOptions = new Map();
 
 /**
+ * default parse function
+ * @param  {string} input
+ * @return {number|undefined}  value of the parsed number
+ */
+const defaultParseNumber = function(input) {
+  switch (typeof input) {
+    case 'number':
+      return input;
+    case 'string':
+      if (input.length !== 0)
+        return input;
+    case 'object':
+      if (input !== null && input.valueOf) {
+        return defaultParseNumber(input.valueOf());
+      }
+  }
+}
+
+/**
+ * default format number
+ * @param  {number} n
+ * @return {string}   the formated number
+ */
+const defaultFormatNumber = function(n) {
+  if (isNaN(n)) return '';
+  return String(n)
+}
+
+/**
  * Mixin that provides intl-format-locale for numbers and computes some separation strings for usage (only `latn`-numeral-system is possible).
  *
  * @mixinFunction
@@ -22,6 +51,12 @@ const knownLocaleNumberFormatOptions = new Map();
 export const IntlNumberFormatMixin = dedupingMixin( superClass => {
 
   return class extends superClass {
+
+    constructor() {
+      super();
+      this.formatNumber = defaultFormatNumber.bind(this);
+      this.parseNumber = defaultParseNumber.bind(this);
+    }
 
     static get properties() {
       return {
