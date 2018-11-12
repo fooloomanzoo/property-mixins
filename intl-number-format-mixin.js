@@ -184,7 +184,7 @@ export const IntlNumberFormatMixin = dedupingMixin( superClass => {
          */
         formatNumber: {
           type: Function,
-          computed: '_computeFormatNumber(locale, _numberOptions, unit, unitSeparator, alwaysSign)',
+          readOnly: true,
           notify: true
         },
 
@@ -193,7 +193,7 @@ export const IntlNumberFormatMixin = dedupingMixin( superClass => {
          */
         parseNumber: {
           type: Function,
-          computed: '_computeParseNumber(decimalSeparator, groupingSeparator, _numberOptions)',
+          readOnly: true,
           notify: true
         }
       }
@@ -201,7 +201,9 @@ export const IntlNumberFormatMixin = dedupingMixin( superClass => {
 
     static get observers() {
       return [
-        '_localeChanged(locale)'
+        '_localeChanged(locale)',
+        '_computeFormatNumber(locale, _numberOptions, unit, unitSeparator, alwaysSign)',
+        '_computeParseNumber(decimalSeparator, groupingSeparator, _numberOptions)'
       ]
     }
 
@@ -319,28 +321,31 @@ export const IntlNumberFormatMixin = dedupingMixin( superClass => {
         unit = '';
       }
       const format = new Intl.NumberFormat(locale, numberOptions).format;
+      let formatNumber;
       if (unit) {
         if (alwaysSign) {
-          return function(n) {
+          formatNumber = function(n) {
             if (isNaN(n)) return '';
             return `${n > 0 ? '+' : (n < 0 ? '' : (isNegative0(n) ? '-' : '+'))}${format(n)}${unitSeparator}${unit}`;
           }
+        } else {
+          formatNumber = function(n) {
+            if (isNaN(n)) return '';
+            return `${isNegative0(n) ? '-' : ''}${format(n)}${unitSeparator}${unit}`;
+          }
         }
-        return function(n) {
-          if (isNaN(n)) return '';
-          return `${isNegative0(n) ? '-' : ''}${format(n)}${unitSeparator}${unit}`;
-        }
-      }
-      if (alwaysSign) {
-        return function(n) {
+      } else if (alwaysSign) {
+        formatNumber = function(n) {
           if (isNaN(n)) return '';
           return `${n > 0 ? '+' : (n < 0 ? '' : (isNegative0(n) ? '-' : '+'))}${format(n)}`;
         }
+      } else {
+        formatNumber = function(n) {
+          if (isNaN(n)) return '';
+          return `${isNegative0(n) ? '-' : ''}${format(n)}`;
+        }        
       }
-      return function(n) {
-        if (isNaN(n)) return '';
-        return `${isNegative0(n) ? '-' : ''}${format(n)}`;
-      }
+      this._setFormatNumber(formatNumber);
     }
 
     _computeParseNumber(decimalSeparator, groupingSeparator, numberOptions) {
@@ -427,7 +432,7 @@ export const IntlNumberFormatMixin = dedupingMixin( superClass => {
         }
       }
 
-      return parse;
+      return this._setParseNumber(parse);
     }
   }
 });
