@@ -1,4 +1,4 @@
-import { PolymerElement } from '../../../../@polymer/polymer/polymer-element.js';
+import { PolymerElement } from '@polymer/polymer/polymer-element.js';
 import { IntlDatetimeFormatMixin } from '../../intl-datetime-format-mixin.js';
 
 class BasicIntlDatetimeFormatElement extends IntlDatetimeFormatMixin(PolymerElement) {

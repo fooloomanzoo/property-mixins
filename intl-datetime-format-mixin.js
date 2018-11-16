@@ -1,4 +1,4 @@
-import { dedupingMixin } from '../../@polymer/polymer/lib/utils/mixin.js';
+import { dedupingMixin } from '@polymer/polymer/lib/utils/mixin.js';
 
 /**
  * prediscovered and cached locale datetime-format resolved options

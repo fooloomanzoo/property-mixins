@@ -1,4 +1,4 @@
-import { dedupingMixin } from '../../@polymer/polymer/lib/utils/mixin.js';
+import { dedupingMixin } from '@polymer/polymer/lib/utils/mixin.js';
 import { IntlDatetimeFormatMixin } from './intl-datetime-format-mixin.js';
 import { isNegative } from './number-utilities.js';
 

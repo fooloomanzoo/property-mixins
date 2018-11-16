@@ -1,4 +1,4 @@
-import { PolymerElement, html } from '../../../../@polymer/polymer/polymer-element.js';
+import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
 import { RangeMixin } from '../../range-mixin.js';
 
 class BasicRangeElement extends RangeMixin(PolymerElement) {

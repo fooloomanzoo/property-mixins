@@ -1,4 +1,4 @@
-import { PolymerElement, html } from '../../../../@polymer/polymer/polymer-element.js';
+import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
 import { ColorMixin } from '../../color-mixin.js';
 
 class BasicColorElement extends ColorMixin(PolymerElement) {

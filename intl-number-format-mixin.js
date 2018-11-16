@@ -1,4 +1,4 @@
-import { dedupingMixin } from '../../@polymer/polymer/lib/utils/mixin.js';
+import { dedupingMixin } from '@polymer/polymer/lib/utils/mixin.js';
 import { safeMult, isNegative0 } from './number-utilities.js';
 
 
@@ -343,7 +343,7 @@ export const IntlNumberFormatMixin = dedupingMixin( superClass => {
         formatNumber = function(n) {
           if (isNaN(n)) return '';
           return `${isNegative0(n) ? '-' : ''}${format(n)}`;
-        }        
+        }
       }
       this._setFormatNumber(formatNumber);
     }
